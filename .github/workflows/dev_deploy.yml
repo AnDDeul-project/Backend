@@ -92,7 +92,7 @@ jobs:
 
       - name: Generate deployment package
         run: 
-          mkdir -p delply
+          mkdir -p delploy
           cp build/libs/*.jar deploy/application.jar
           cp Procfile deploy/Procfile
           cp - .platform deploy/.platform
