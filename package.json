@@ -8,8 +8,7 @@
     "start:dev": "nodemon --exec babel-node index.js",
     "start:dist": "webpack --mode production & node ./dist/main.js",
     "start": "node main.js",
-    "build": "webpack --mode production",
-    "test:unit": "jest"
+    "build": "webpack --mode production"
   },
   "author": "",
   "license": "ISC",

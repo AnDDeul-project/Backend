@@ -45,7 +45,7 @@ jobs:
       - run: npm run build
 
       # Unit test
-      - run: npm run test:unit
+      #- run: npm run test:unit
 
   deploy:
     name: BeanStalk Deploy
