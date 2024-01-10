@@ -29,6 +29,18 @@ app.use((req, res, next) => {
     next(err);
 });
 
+app.use('/health', healthRoute);
+
+app.get('/', (req, res, next) => {
+    res.send(response(status.SUCCESS, "루트 페이지!"));
+})
+
+// error handling
+app.use((req, res, next) => {
+    const err = new BaseError(status.NOT_FOUND);
+    next(err);
+});
+
 app.use((err, req, res, next) => {
     // 템플릿 엔진 변수 설정
     res.locals.message = err.message;   
