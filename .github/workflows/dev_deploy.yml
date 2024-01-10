@@ -2,9 +2,9 @@ name: Backend CI/CD
 
 on:
   push:
-    branches: [ dev_eb ]
+    branches: [ dev ]
   pull_request:
-    branches: [ dev_eb ]
+    branches: [ dev ]
 
 jobs:
   build:
@@ -89,6 +89,15 @@ jobs:
       # Make upload zip file
       - name: Generate deployment package
         run: zip -r deploy.zip . -x '*.git*' './aws/*' './node_modules/*' './dist/*' awscliv2.zip
+
+      - name: Generate deployment package
+        run: 
+          mkdir -p delply
+          cp build/libs/*.jar deploy/application.jar
+          cp Procfile deploy/Procfile
+          cp - .platform deploy/.platform
+          cp deploy && zip -r deploy.zip
+          
 
       # Deploy to Elastic Beanstalk
       - name: Deploy to EB
