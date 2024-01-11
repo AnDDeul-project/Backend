@@ -114,10 +114,10 @@ jobs:
           
       - name: Get Zip Inside
         run: zipinfo -1 dist/deploy.zip
-        
+
       # Deploy to Elastic Beanstalk
       - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v18
+        uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
