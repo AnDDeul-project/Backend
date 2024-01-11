@@ -1,6 +1,6 @@
 // ./webpack.config.js
-const nodeExternals = require("webpack-node-externals");
-const path = require("path");
+import nodeExternals from "webpack-node-externals";
+import path from "path";
 
 module.exports = {
     mode: "development",
