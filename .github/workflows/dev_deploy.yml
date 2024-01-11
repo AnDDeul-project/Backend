@@ -112,7 +112,9 @@ jobs:
           cd dist
           zip -r deploy.zip .
           
-
+      - name: Get Zip Inside
+        run: zipinfo -1 dist/deploy.zip
+        
       # Deploy to Elastic Beanstalk
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v18
