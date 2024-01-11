@@ -122,4 +122,5 @@ jobs:
           application_name: ${{ secrets.APPLICATION_NAME }}
           environment_name: ${{ secrets.ENVIRONMENT_NAME }}
           region: ${{ secrets.AWS_REGION }}
+          deployment_package: dist/deploy.zip
           version_label: "v1.0.${{ github.run_number }}-${{ github.SHA }}"
