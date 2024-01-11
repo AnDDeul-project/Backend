@@ -7,7 +7,7 @@ export default {
         app: './index.js',
     },
     output: {
-        path: path.resolve(__dirname, "dist"),
+        path: path.resolve('./dist'),
         filename: "main.js",
     },
     module: {
