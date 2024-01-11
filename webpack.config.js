@@ -4,7 +4,6 @@ const path = require("path");
 
 module.exports = {
     mode: "development",
-    context: __dirname + '/src',
     entry: {
         app: './index.js',
     },
