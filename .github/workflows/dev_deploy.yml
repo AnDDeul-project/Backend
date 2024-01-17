@@ -50,8 +50,6 @@ jobs:
 
       # Build
       - run: npm run build
-      - run: npm install swagger-jsdoc    
-      - run: npm i --save-dev @types/swagger-jsdoc
       # Unit test
       #- run: npm run test:unit
 
