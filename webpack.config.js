@@ -8,7 +8,7 @@ export default {
     },
     output: {
         path: path.resolve('./dist'),
-        filename: "main.js",
+        filename: "main.cjs",
     },
     module: {
         rules: [
