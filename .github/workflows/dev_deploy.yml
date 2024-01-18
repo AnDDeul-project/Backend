@@ -50,7 +50,6 @@ jobs:
 
       # Build
       - run: npm run build
-
       # Unit test
       #- run: npm run test:unit
 
@@ -65,7 +64,7 @@ jobs:
           
       - name: Get Zip Inside
         run: zipinfo -1 dist/deploy.zip
-        
+
       # 현재 시간 얻기 (Build 시점의 시간 얻기)
       - name: Get current time
         uses: 1466587594/get-current-time@v2
