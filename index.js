@@ -1,12 +1,12 @@
 import express from 'express';
-import { specs } from './config/swagger.config.js';
+import { specs } from './src/config/swagger.config.js';
 import SwaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import {healthRoute} from './routes/health.route.js'
-import { response } from './config/response.js';
-import { BaseError } from './config/error.js';
-import { status } from './config/response.status.js';
+import {healthRoute} from './src/routes/health.route.js'
+import { response } from './src/config/response.js';
+import { BaseError } from './src/config/error.js';
+import { status } from './src/config/response.status.js';
 
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
 
