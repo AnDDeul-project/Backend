@@ -8,6 +8,7 @@ import { response } from './src/config/response.js';
 import { BaseError } from './src/config/error.js';
 import { status } from './src/config/response.status.js';
 import { kakaoRouter } from './src/routes/kakao.route.js';
+import { homeRoute } from './src/routes/home.route.js';
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({extended: false})); // 단순 객체 문자열 형�
 app.use('/auth', kakaoRouter);
 app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 app.use('/health', healthRoute);
+app.use('/home', homeRoute);
 
 app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));

@@ -1,5 +1,3 @@
-// ./src/middleware/image.uploader.js
-
 import AWS from 'aws-sdk'
 import multer from 'multer';
 import multerS3 from 'multer-s3';
@@ -9,13 +7,13 @@ import { createUUID } from './uuid.js';
 import path from 'path';
 import dotenv from 'dotenv';
 
-import { BaseError } from '../../config/error';
-import { status } from '../../config/response.status';
+import { BaseError } from '../config/error.js';
+import { status } from '../config/response.status.js';
 
 dotenv.config();    // .env 파일 사용
 
 const s3 = new AWS.S3({
-    region: process.env.AWS_S3_REAGION,
+    region: process.env.AWS_S3_REGION,
     accessKeyId: process.env.AWS_S3_ACCESS_KEY,
     secretAccessKey: process.env.AWS_S3_SECRET_KEY
 });

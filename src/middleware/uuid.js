@@ -1,5 +1,3 @@
-// middleware/uuid.js
-
 import { v4 } from 'uuid';  // uuid4 사용
 
 // uuid 생성
