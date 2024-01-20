@@ -46,7 +46,9 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       # npm install for ci
-      - run: npm install
+      - run: |
+          npm install
+          npm i passport passport-kakao -S
 
       # Build
       - run: npm run build
