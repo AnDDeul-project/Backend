@@ -4,15 +4,20 @@ paths:
       tags:
         - User
       summary: 회원가입
-      parameters: 
-        - name: Content-Type
-          in: header
-          type: string
-          example: application/json
-      - name: Authorization
-          in: header
-          type: string
-          example: Bearer cJ1UcbxNxgucOGmipqDbJ6lLHvj3jXpJWJcKKiUNAAABjSWPQ8XOkqTnJF629A/KakaoAK ${APP_ADMIN_KEY}
+      parameters:
+      - name: signIn
+        in: body
+        description: 헤더에 다음과 같이 추가해서 보내주시면 됩니다! Authorization은 카카오 어세스 토큰으로 넣어주세요!(각 계정별 상이함)
+        required: true
+        schema:
+          properties: 
+            Content-Type:
+              type: string
+              example: application/json
+            Authorization:
+              type: string
+              example: Bearer cJ1UcbxNxgucOGmipqDbJ6lLHvj3jXpJWJcKKiUNAAABjSWPQ8XOkqTnJF629A /KakaoAK ${APP_ADMIN_KEY}
+
       responses:
         '200':
           description: 회원 가입 성공!
