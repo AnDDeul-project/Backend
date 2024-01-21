@@ -49,6 +49,9 @@ jobs:
       - run: |
           npm install
           npm i passport passport-kakao -S
+          npm install swagger-jsdoc --save-dev
+          npm install swagger-ui-express --save-dev
+
 
       # Build
       - run: npm run build
