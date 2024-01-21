@@ -8,7 +8,7 @@ const options = {
             description: 'API 설명'
         },
         host: 'umc-garden.store',
-        basepath: '../'
+        basepath: '/'
     },
     apis: ['./src/routes/*.js', './swagger/*']
 };
