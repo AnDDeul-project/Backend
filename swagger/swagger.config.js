@@ -10,7 +10,7 @@ const options = {
         host: 'umc-garden.store',
         basepath: '/'
     },
-    apis: ['./src/routes/*.js', './swagger/*']
+    apis: ['./src/**/*.js', './swagger/*']
 };
 
 export const specs = SwaggerJsdoc(options);
