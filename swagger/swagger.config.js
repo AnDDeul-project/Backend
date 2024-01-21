@@ -8,7 +8,7 @@ const options = {
             description: 'API 설명'
         },
         host: 'localhost:3000',
-        basepath: '/'
+        basepath: '../'
     },
     apis: ['./src/**/*.js', './swagger/*']
 };
