@@ -4,10 +4,10 @@ import { status } from '../config/response.status.js'
 
 export const createPost = async (req, res, next) => {
     try {
-        const { user_idx, context } = req.body;
+        const { user_idx, content } = req.body;
         const pictureUrls = req.files.map(file => file.location); // S3 URL 추출
 
-        const post = await homeService.createPost({ user_idx, context, picture: JSON.stringify(pictureUrls) });
+        const post = await homeService.createPost({ user_idx, content, picture: JSON.stringify(pictureUrls) });
         res.send(response(status.SUCCESS, post));
     } catch (error) {
         next(error);
