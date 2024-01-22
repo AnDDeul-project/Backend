@@ -1,6 +1,4 @@
 import jwt from "jsonwebtoken";
-import { BaseError } from "../config/error.js";
-import { status } from "../config/response.status.js";
 
 export const verify = async(req, res, next) =>{
     try {
@@ -9,8 +7,8 @@ export const verify = async(req, res, next) =>{
         return req.decoded.kakao_id;
       } catch (error) {
         if (error.name === "TokenExpiredError") {
-          throw new BaseError(status.TOKEN_IS_EXPIRED, error);
+          return res.status(419).json({ code: 419, message: "토큰 만료" });
         }
-        throw new BaseError(status.TOKEN_IS_INVALID, error);
+        return res.status(401).json({ code: 401, message: "유효하지 않은 토큰" });
       }
 }
