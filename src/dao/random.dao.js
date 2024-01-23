@@ -34,7 +34,8 @@ export const has_family = async(data) => {
     try{
         const conn = pool.getConnection();
         const result = await pool.query("SELECT family_code FROM user WHERE snsId = ?", data);
-        if(result[0] === null){
+        console.log(result[0]);
+        if(result[0][0].family_code === null){
             return -1;
         } else {
             return result[0];
@@ -49,6 +50,7 @@ export const match_user = async (user_id, token) => {
         const conn = await pool.getConnection();
         console.log(token[0], user_id);
         const result = await pool.query("UPDATE user SET family_code = ? , auth=1 , point = 0 WHERE snsId = ?", [token[0], user_id]);
+        await pool.query("INSERT INTO userfam(family_code, user_idx) VALUES (?, ?)", [token[0], user_id]);
         conn.release();
         console.log(result[0]);
         if (result[0].length > 0) {
