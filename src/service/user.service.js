@@ -3,6 +3,28 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import { BaseError } from '../config/error.js';
 import { status } from "../config/response.status.js";
+export const logOutKakao = async (kakaoToken) => {
+    console.log(kakaoToken);
+    
+    try {
+        const result = await axios.post(
+            "https://kapi.kakao.com/v1/user/unlink",
+            null, // 데이터는 null로 설정
+            {
+                headers: { 
+                    Authorization:  `Bearer ${kakaoToken}`,
+                },
+            }
+        );
+
+        console.log(result.data); // result[0] 대신 result.data를 사용
+
+        return result.data; // result[0] 대신 result.data를 반환
+    } catch (error) {
+        console.error("Error during logout:", error);
+        return -1;
+    }
+};
 
 export const signInKakao = async (kakaoToken) => {
     const result = await axios.get("https://kapi.kakao.com/v2/user/me", {
