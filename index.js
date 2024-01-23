@@ -12,6 +12,8 @@ import { randomRoute } from './src/routes/random.route.js';
 import { checkRoute } from './src/routes/check.route.js';
 import { homeRoute } from './src/routes/home.route.js';
 
+import {familyRoute} from './src/routes/family.route.js';
+
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
 
 
@@ -26,8 +28,6 @@ app.use(express.urlencoded({extended: false})); // 단순 객체 문자열 형�
 app.use('/auth', kakaoRouter);
 app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 app.use('/random', randomRoute);
-app.use('/check', checkRoute);
-app.use('/home', homeRoute);
 
 app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));
