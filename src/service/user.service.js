@@ -8,7 +8,7 @@ export const logOutKakao = async (kakaoToken) => {
     
     try {
         const result = await axios.post(
-            "https://kapi.kakao.com/v1/user/unlink",
+            "https://kapi.kakao.com/v1/user/logout",
             null, // 데이터는 null로 설정
             {
                 headers: { 
