@@ -18,6 +18,17 @@ export const findUser = async (data) => {
     }
 }
 
+export const deleteUser = async (data) => {
+    try{
+        const conn = await pool.getConnection();
+        await pool.query("DELETE FROM user WHERE snsId = ?", data);
+        conn.release();
+        return;
+    }catch(err){
+        throw new BaseError(status.PARAMETER_IS_WRONG, err);
+    }
+}
+
 export const createUser = async (data) => {
     try{
         const conn = await pool.getConnection();

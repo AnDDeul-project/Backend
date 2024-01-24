@@ -1,4 +1,4 @@
-import { findUser, createUser } from "../dao/user.dao.js";
+import { findUser, createUser, deleteUser } from "../dao/user.dao.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import { BaseError } from '../config/error.js';
@@ -9,7 +9,7 @@ export const logOutKakao = async (kakaoToken) => {
     try {
         const result = await axios.post(
             "https://kapi.kakao.com/v1/user/logout",
-            null, // 데이터는 null로 설정
+            null, 
             {
                 headers: { 
                     Authorization:  `Bearer ${kakaoToken}`,
@@ -17,11 +17,34 @@ export const logOutKakao = async (kakaoToken) => {
             }
         );
 
-        console.log(result.data); // result[0] 대신 result.data를 사용
+        console.log(result.data); 
 
-        return result.data; // result[0] 대신 result.data를 반환
+        return result.data; 
     } catch (error) {
         console.error("Error during logout:", error);
+        return -1;
+    }
+};
+
+export const unlinkKakao = async (kakaoToken) => {
+    console.log(kakaoToken);
+    
+    try {
+        const result = await axios.post(
+            "https://kapi.kakao.com/v1/user/unlink",
+            null, 
+            {
+                headers: { 
+                    Authorization:  `Bearer ${kakaoToken}`,
+                },
+            }
+        );
+        const data = result.data;
+        console.log(data.id);
+        await deleteUser(data.id);
+        return data.id; 
+    } catch (error) {
+        console.error("Error during unlink:", error);
         return -1;
     }
 };
