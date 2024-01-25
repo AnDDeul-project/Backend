@@ -1,15 +1,17 @@
 import SwaggerJsdoc from "swagger-jsdoc";
 
 const options = {
-    definition: {
+    swaggerDefinition: {
+        openapi: "3.0.0",
         info: {
-            title: '안뜰',
-            version: '1.0.0',
-            description: 'API 설명'
+            version: "0.0.1",
+            title: 'swagger-test',
+            description: "swagger test",
         },
-        url: "http://umc-garden.store/",
-        host: 'http://umc-garden.store/',
-        basepath: '../'
+        servers: [{
+            description:"안뜰 api",
+            url: "http://umc-garden.store"
+        }]
     },
     apis: ['./src/**/*.js', './swagger/*']
 };
