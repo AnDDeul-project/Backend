@@ -13,7 +13,7 @@ const options = {
             url: "http://umc-garden.store"
         }]
     },
-    apis: ['./src/**/*.js', './swagger/*']
+    apis: ['../src/**/*.js', '../swagger/*']
 };
 
 export const specs = SwaggerJsdoc(options);
