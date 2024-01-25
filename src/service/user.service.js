@@ -6,7 +6,6 @@ import { status } from "../config/response.status.js";
 export const logOutKakao = async (kakaoToken) => {
     console.log(kakaoToken);
     
-    
     try {
         const result = await axios.post(
             "https://kapi.kakao.com/v1/user/logout",
