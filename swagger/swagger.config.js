@@ -10,6 +10,9 @@ const options = {
         host: 'http://umc-garden.store/',
         basepath: '../'
     },
+    servers: [{
+        url: "http://umc-garden.store/"
+    }],
     apis: ['./src/**/*.js', './swagger/*']
 };
 
