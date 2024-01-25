@@ -23,15 +23,16 @@ app.use(express.urlencoded({extended: false})); // 단순 객체 문자열 형�
 app.use('/auth', kakaoRouter);
 app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 app.use('/random', randomRoute);
-/*
- @swagger
- /api/example:
-    get:
-      description: Example endpoint
-      responses:
-        200:
-          description: Successful response
+/**
+ * @swagger
+ * /api/example:
+ *   get:
+ *     description: Example endpoint
+ *     responses:
+ *       200:
+ *         description: Successful response
  */
+
 app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));
 })
