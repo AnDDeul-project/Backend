@@ -62,7 +62,7 @@ jobs:
           cp package.json dist/package.json
           cp package-lock.json dist/package-lock.json
           cp Procfile dist/Procfile
-          cp /swagger/user.swagger/yml dist
+          cp /swagger/user.swagger.yml dist
           cd dist
           zip -r deploy.zip .
           
