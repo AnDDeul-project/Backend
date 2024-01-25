@@ -8,13 +8,13 @@ const options = {
             title: 'swagger-test',
             description: "swagger test",
         },
-        basepath: '/',
+        basepath: '../',
         servers: [{
             description:"안뜰 api",
             url: "http://umc-garden.store"
         }]
     },
-    apis: ['../src/**/*.js', '../swagger/*']
+    apis: ['./src/routes/*.js', './swagger/*']
 };
 
 export const specs = SwaggerJsdoc(options);
