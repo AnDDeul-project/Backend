@@ -7,12 +7,10 @@ const options = {
             version: '1.0.0',
             description: 'API 설명'
         },
+        url: "http://umc-garden.store/",
         host: 'http://umc-garden.store/',
         basepath: '../'
     },
-    servers: [{
-        url: "http://umc-garden.store/"
-    }],
     apis: ['./src/**/*.js', './swagger/*']
 };
 
