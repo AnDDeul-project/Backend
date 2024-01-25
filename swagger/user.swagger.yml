@@ -1,0 +1,68 @@
+paths:
+  /auth/kakao/signin:
+    post:
+      tags:
+        - User
+      summary: 회원가입
+      parameters:
+      - name: signIn
+        in: body
+        description: 헤더에 다음과 같이 추가해서 보내주시면 됩니다! Authorization은 카카오 어세스 토큰으로 넣어주세요!(각 계정별 상이함)
+        required: true
+        schema:
+          properties: 
+            Content-Type:
+              type: string
+              example: application/json
+            Authorization:
+              type: string
+              example: Bearer cJ1UcbxNxgucOGmipqDbJ6lLHvj3jXpJWJcKKiUNAAABjSWPQ8XOkqTnJF629A /KakaoAK ${APP_ADMIN_KEY}
+
+      responses:
+        '200':
+          description: 회원 가입 성공!
+          schema:
+            type: object
+            properties:
+              status:
+              accesstoken:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrYWthb19pZCI6WyIzMjkzNjU1Njg2Il0sImlhdCI6MTcwNTY5ODI5OX0.9IWWuq_wRaZI_g-f8rpq4iiMrf12JhAUP2tLbsEvFCo"
+            
+                
+        '400':
+          description: 잘못된 요청
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON001
+              message:
+                type: string
+                example: 잘못된 요청입니다
+
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON000
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+ 
