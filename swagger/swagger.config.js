@@ -8,6 +8,7 @@ const options = {
             title: 'swagger-test',
             description: "swagger test",
         },
+        basepath: '/',
         servers: [{
             description:"안뜰 api",
             url: "http://umc-garden.store"
