@@ -14,7 +14,7 @@ const options = {
             url: "http://umc-garden.store"
         }]
     },
-    apis: ["/var/app/current/*", "./swagger/*"],
+    apis: ["./swagger/*"],
 
 };
 
