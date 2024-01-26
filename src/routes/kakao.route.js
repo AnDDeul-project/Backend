@@ -4,4 +4,4 @@ import { signInkakao, signOutKakao, unLinkKakao} from "../controllers/user.contr
 export const kakaoRouter = express.Router();
 kakaoRouter.post('/kakao/signin', signInkakao);
 kakaoRouter.post('/kakao/logout', signOutKakao);
-kakaoRouter.post('/kakao/unlink', unLinkKakao);
+kakaoRouter.delete('/kakao/unlink', unLinkKakao);

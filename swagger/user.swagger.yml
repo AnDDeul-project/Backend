@@ -111,7 +111,7 @@ paths:
                 example: 서버 에러, 관리자에게 문의 바랍니다.
 
   /auth/kakao/unlink:
-    post:
+    delete:
       tags:
         - User
       produces:
@@ -166,7 +166,7 @@ paths:
                 example: 서버 에러, 관리자에게 문의 바랍니다.
 
   /random/new:
-    post:
+    put:
       tags: 
       - Family
       summary: 가족 생성 관련 파트 맡은 빈온입니다! 이 태그의 api에 질문이 있으신 분들은 저에게 연락주시면 됩니당:)
