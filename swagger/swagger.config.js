@@ -14,8 +14,7 @@ const options = {
             url: "http://umc-garden.store"
         }]
     },
-    apis: ["./swagger/*"],
-
+    apis: ['./src/**/*.js', './swagger/*']
 };
 
 export const specs = SwaggerJsdoc(options);
