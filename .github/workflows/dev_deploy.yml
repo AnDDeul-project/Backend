@@ -94,4 +94,4 @@ jobs:
           deployment_package: dist/deploy.zip
           use_existing_version_if_available: true
           version_label: "v1.0.${{ github.run_number }}-${{ github.SHA }}"
-          wait_for_deployment: fal
+          wait_for_deployment: false
