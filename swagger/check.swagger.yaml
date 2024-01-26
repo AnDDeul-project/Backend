@@ -1,0 +1,497 @@
+paths:
+  /check/add:
+    post:
+      tags:
+        - Check
+      summary : 체크리스트 추가
+      parameters:
+      - name: add
+        in: body
+        required: true
+        schema:
+          properties:
+            sender_idx:
+              type: string
+              description: 체크리스트를 추가한 사람
+              example: exampletokenforsender
+            receiver_idx:
+              type: string
+              description: 체크리스트 주인
+              example: exampletokenforreveiver
+            due_year:
+              type: integer
+              description: 생일 년도
+              example: 2000
+            due_month:
+              type: integer
+              description: 생일 월(한자리 숫자면 05 안되고 5로 적어주세요!)
+              example: 12
+            due_day:
+              type: integer
+              description: 생일 일(한자리 숫자면 05 안되고 5로 적어주세요!)
+              example: 5
+            content:
+              type: string
+              description: 체크리스트 내용
+              example: 화이팅 힘내서 열심히 할 일 하기
+      responses:
+        '200':
+          description: 체크리스트 추가 성공!
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "success!"
+              result:
+                type: object
+                example: {
+                  "sender": "exampletokenforsender",
+                  "receiver": "exampletokenforreceiver",
+                  "content": "화이팅 성공했어요"
+                }
+
+        '400':
+          description: 잘못된 요청
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON001
+              message:
+                type: string
+                example: 잘못된 요청입니다
+
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON000
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+  /check/{userid}/{date}:
+    get:
+      tags:
+        - Check
+      summary : 체크리스트 날짜별로 불러오기
+      parameters:
+      - name: userid
+        in: path
+        required: true
+        description: 불러올 체크리스트 주인
+        type: string
+        example: exampletokenforuser
+      - name: date
+        in: path
+        required: true
+        description: 불러올 체크리스트의 날짜(YYYY-MM-DD)
+        type: string
+        example: 2022-01-01
+      responses:
+        '200':
+          description: 체크리스트 가져오기 성공!
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "success!"
+              result:
+                type: object
+                example: [
+                  {
+                  "checkid": 1,
+                  "sender": "exampletokenforsender",
+                  "complete": 0,
+                  "picture": "examplepicture",
+                  "content": "화이팅 성공했어요"
+                  },
+                  {
+                  "checkid": 2,
+                  "sender": "exampletokenforsender2",
+                  "complete": 0,
+                  "picture": "examplepicture",
+                  "content": "여러개면 배열에 담깁니다"
+                  },
+                ]
+        '400':
+          description: 잘못된 요청
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON001
+              message:
+                type: string
+                example: 잘못된 요청입니다
+
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON000
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+  
+  /check/{checkid}/content:
+    put:
+      tags:
+        - Check
+      summary: 체크리스트 내용 수정
+      parameters:
+      - name: checkid
+        in: path
+        required: true
+        description: 수정할 체크리스트 고유번호
+        type: integer
+        example: 12345
+      - name: content
+        in: body
+        required: true
+        schema:
+          properties:
+            content:
+              type: string
+              description: 수정할 내용
+              example: "이렇게 바뀔거에요"
+      responses:
+        '200':
+          description: 체크리스트 내용 수정 성공
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "success!"
+              result:
+                type: object
+                example: {
+                  "checkid": 1,
+                  "sender": "보낸이",
+                  "receiver": "받는이",
+                  "content": "이렇게 바뀔거에요"
+                }
+
+        '400':
+          description: 잘못된 요청
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON001
+              message:
+                type: string
+                example: 잘못된 요청입니다
+
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON000
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+  /check/{checkid}/date/{date}:
+    put:
+      tags:
+        - Check
+      summary: 체크리스트 기한 변경
+      parameters:
+      - name: checkid
+        in: path
+        required: true
+        description: 수정할 체크리스트 고유번호
+        type: integer
+        example: 12345
+      - name: date
+        in: path
+        required: true
+        description: 체크리스트가 변경될 날짜(YYYY-MM-DD)
+        type: string
+        example: 2022-01-01
+      responses:
+        '200':
+          description: 체크리스트 기한 수정 성공
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "success!"
+              result:
+                type: object
+                example: {
+                  "checkid": 1,
+                  "sender": "123",
+                  "receiver": "456",
+                  "due_date": "2000-12-03T15:00:00.000Z"
+                }
+
+        '400':
+          description: 잘못된 요청
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON001
+              message:
+                type: string
+                example: 잘못된 요청입니다
+
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON000
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+  /check/{checkid}/complete:
+    put:
+      tags:
+        - Check
+      summary: 체크리스트 완료 여부 변경
+      parameters:
+      - name: checkid
+        in: path
+        required: true
+        description: 수정할 체크리스트 고유번호
+        type: integer
+        example: 12345
+      responses:
+        '200':
+          description: 체크리스트 완료 여부 변경 성공!
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "success!"
+              result:
+                type: object
+                example: {
+                  "checkid": 1,
+                  "sender": "123",
+                  "receiver": "456",
+                  "complete": 1
+                }
+        '400':
+          description: 잘못된 요청
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON001
+              message:
+                type: string
+                example: 잘못된 요청입니다
+
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON000
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+  /check/{checkid}:
+    delete:
+      tags:
+        - Check
+      summary: 체크리스트 삭제
+      parameters:
+      - name: checkid
+        in: path
+        required: true
+        description: 삭제할 체크리스트 고유번호
+        type: integer
+        example: 12345
+      responses:
+        '200':
+          description: 체크리스트 완료 여부 변경 성공!
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "success!"
+              result:
+                type: object
+                example: {
+                  "result": "1개의 체크리스트가 삭제되었습니다"
+                }
+        '400':
+          description: 잘못된 요청
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON001
+              message:
+                type: string
+                example: 잘못된 요청입니다
+
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: COMMON000
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
