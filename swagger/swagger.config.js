@@ -7,10 +7,11 @@ const options = {
             version: '1.0.0',
             description: 'API 설명'
         },
-        host: 'http://umc-garden.store/',
-        basepath: '../'
+        host: 'localhost:3000/',
+        basepath: '/'
     },
     apis: ['./src/**/*.js', './swagger/*']
+    //apis: ["./swagger/*"],
 };
 
 export const specs = SwaggerJsdoc(options);
