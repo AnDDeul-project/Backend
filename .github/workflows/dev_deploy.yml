@@ -62,6 +62,7 @@ jobs:
           cp package.json dist/package.json
           cp package-lock.json dist/package-lock.json
           cp Procfile dist/Procfile
+          cp -r swagger dist
           cd dist
           zip -r deploy.zip .
           
@@ -93,4 +94,4 @@ jobs:
           deployment_package: dist/deploy.zip
           use_existing_version_if_available: true
           version_label: "v1.0.${{ github.run_number }}-${{ github.SHA }}"
-          wait_for_deployment: false
+          wait_for_deployment: fal
