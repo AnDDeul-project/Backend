@@ -4,8 +4,14 @@ import { imageUploader } from "../middleware/image.uploader.js";
 
 export const homeRoute = express.Router();
 
+// directory 값을 board로 고정하는 미들웨어
+const setBoardDirectory = (req, res, next) => {
+    req.body.directory = 'board'; // req 객체에 directory 값을 고정
+    next(); // 다음 미들웨어로 이동
+};
+
 // 게시글 작성(Post)
-homeRoute.post('/board', imageUploader.array('image', 10), createPost);
+homeRoute.post('/board', setBoardDirectory, imageUploader.array('image', 10), createPost);
 
 // 게시글 목록 조회 (GET)
 homeRoute.get('/posts', getPosts);

@@ -3,9 +3,11 @@ import { StatusCodes } from "http-status-codes";
 export const status = {
     // success
     SUCCESS: {status: StatusCodes.OK, "isSuccess": true, "code": 2000, "message": "success!"},
-    //
+    // token error
     TOKEN_IS_EXPIRED: {status: StatusCodes.TOKEN_IS_EXPIRED, "isSuccess":false, "code":419, "message": "토큰이 만료되었습니다."},
     TOKEN_IS_INVALID: {status: StatusCodes.TOKEN_IS_INVALID, "isSuccess":false, "code":401, "message": "토큰이 유효하지 않습니다."},
+    // home error
+    
     // error
     WRONG_EXTENSION: {status: StatusCodes.WRONG_EXTENSION, "isSuccess": false, "code": "COMMON1000", "message":"잘못된 확장입니다."},
     DB_ERROR: {status: StatusCodes.DB_ERROR, "isSuccess": false, "code": "COMMON1001", "message": "DB오류입니다."},

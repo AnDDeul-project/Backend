@@ -3,15 +3,13 @@ import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 // 가정: 데이터베이스 연결 및 쿼리 실행을 위한 준비가 되어있음
 
+// 게시글 작성
 export const createPostInDb = async ({user_idx, content, picture}) => {
-    console.log(process.env.DB_TABLE);
     const query = "INSERT INTO post (user_idx, content, picture, create_at, modify_at) VALUES (?, ?, ?, NOW(), NOW())";
-    try {;
+    try {
         // const conn = await pool.getConnection();
         const pictureJson = JSON.stringify(picture);
-        console.log("useridx :",user_idx, "content:", content, "picture:",picture);
         const [result] = await pool.query(query, [user_idx, content, pictureJson]);
-        console.log("result:", result);
         return result;
     } catch (error) {
         console.error("DB Error:", error);
@@ -19,6 +17,7 @@ export const createPostInDb = async ({user_idx, content, picture}) => {
     }
 };
 
+// 게시글 조회
 export const getPostsFromDb = async () => {
     const query = "SELECT user_idx, content, picture FROM post";
     try {
