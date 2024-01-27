@@ -135,6 +135,20 @@ paths:
               error:
                 type: string
                 example: 이미 가족이 존재합니다. 탈퇴를 먼저 진행해주세요!
+        '410':
+          description: 가족코드 오입력
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 410
+              isSuccess:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 가족코드입니다! 코드를 다시 한 번 확인해주세요!
         '401':
           description: 토큰 오류
           schema:
