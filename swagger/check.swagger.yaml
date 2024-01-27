@@ -46,12 +46,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: {
@@ -73,12 +67,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
 
         '500':
           description: 서버 에러
@@ -91,12 +79,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
 
   /check/{userid}/{date}:
     get:
@@ -128,12 +110,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: [
@@ -152,6 +128,7 @@ paths:
                   "content": "여러개면 배열에 담깁니다"
                   },
                 ]
+        
         '400':
           description: 잘못된 요청
           schema:
@@ -163,13 +140,7 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
-
+        
         '500':
           description: 서버 에러
           schema:
@@ -181,12 +152,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
   
   /check/{checkid}/content:
     put:
@@ -221,12 +186,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: {
@@ -248,12 +207,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
 
         '500':
           description: 서버 에러
@@ -266,12 +219,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
 
   /check/{checkid}/date/{date}:
     put:
@@ -303,12 +250,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: {
@@ -330,12 +271,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
 
         '500':
           description: 서버 에러
@@ -348,12 +283,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
 
   /check/{checkid}/complete:
     put:
@@ -379,12 +308,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: {
@@ -394,6 +317,7 @@ paths:
                   "complete": 1,
                   "modify_at" : "2000-12-03T15:00:00.000Z"
                 }
+
         '400':
           description: 잘못된 요청
           schema:
@@ -405,12 +329,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
 
         '500':
           description: 서버 에러
@@ -423,12 +341,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
 
   /check/{checkid}:
     delete:
@@ -454,17 +366,12 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: {
                   "result": "1개의 체크리스트가 삭제되었습니다"
                 }
+                
         '400':
           description: 잘못된 요청
           schema:
@@ -476,12 +383,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
 
         '500':
           description: 서버 에러
@@ -494,9 +395,3 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
