@@ -356,7 +356,7 @@ paths:
         example: 12345
       responses:
         '200':
-          description: 체크리스트 완료 여부 변경 성공!
+          description: 체크리스트 삭제 성공!
           schema:
             type: object
             properties:
