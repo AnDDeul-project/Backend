@@ -28,6 +28,9 @@ app.use(express.urlencoded({extended: false})); // 단순 객체 문자열 형�
 app.use('/auth', kakaoRouter);
 app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 app.use('/random', randomRoute);
+app.use('/check', checkRoute);
+app.use('/home', homeRoute);
+app.use('/family', familyRoute);
 
 app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));
