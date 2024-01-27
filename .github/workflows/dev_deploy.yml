@@ -50,6 +50,7 @@ jobs:
           npm install
           npm i passport passport-kakao -S
 
+
       # Build
       - run: npm run build
       # Unit test
@@ -61,6 +62,7 @@ jobs:
           cp package.json dist/package.json
           cp package-lock.json dist/package-lock.json
           cp Procfile dist/Procfile
+          cp -r swagger dist
           cd dist
           zip -r deploy.zip .
           

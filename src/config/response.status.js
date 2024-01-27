@@ -3,9 +3,12 @@ import { StatusCodes } from "http-status-codes";
 export const status = {
     // success
     SUCCESS: {status: StatusCodes.OK, "isSuccess": true, "code": 2000, "message": "success!"},
-
+    //
+    TOKEN_IS_EXPIRED: {status: StatusCodes.TOKEN_IS_EXPIRED, "isSuccess":false, "code":419, "message": "토큰이 만료되었습니다."},
+    TOKEN_IS_INVALID: {status: StatusCodes.TOKEN_IS_INVALID, "isSuccess":false, "code":401, "message": "토큰이 유효하지 않습니다."},
     // error
     WRONG_EXTENSION: {status: StatusCodes.WRONG_EXTENSION, "isSuccess": false, "code": "COMMON1000", "message":"잘못된 확장입니다."},
+    DB_ERROR: {status: StatusCodes.DB_ERROR, "isSuccess": false, "code": "COMMON1001", "message": "DB오류입니다."},
     // common err
     INTERNAL_SERVER_ERROR: {status: StatusCodes.INTERNAL_SERVER_ERROR, "isSuccess": false, "code": "COMMON000", "message": "서버 에러, 관리자에게 문의 바랍니다." },
     BAD_REQUEST: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "COMMON001", "message": "잘못된 요청입니다." },
@@ -20,7 +23,7 @@ export const status = {
     EMAIL_ALREADY_EXIST: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4003", "message": "이미 가입된 이메일이 존재합니다."},
 
     // db error
-    PARAMETER_IS_WRONG: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "DATABASE4001", "message": "쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요."},
+    PARAMETER_IS_WRONG: {status: 4001, "isSuccess": false, "message": "쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요."},
 
     // article err
     ARTICLE_NOT_FOUND: {status: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "ARTICLE4001", "message": "게시글이 없습니다."},

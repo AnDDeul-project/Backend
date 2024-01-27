@@ -1,16 +1,14 @@
+import dotenv from 'dotenv';
+dotenv.config();    // .env 파일 사용
 import AWS from 'aws-sdk'
 import multer from 'multer';
 import multerS3 from 'multer-s3';
-
 import { createUUID } from './uuid.js';
-
 import path from 'path';
-import dotenv from 'dotenv';
-
 import { BaseError } from '../config/error.js';
 import { status } from '../config/response.status.js';
 
-dotenv.config();    // .env 파일 사용
+
 
 const s3 = new AWS.S3({
     region: process.env.AWS_S3_REGION,
