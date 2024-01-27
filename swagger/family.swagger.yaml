@@ -1,0 +1,166 @@
+paths:
+  /random/new:
+    put:
+      tags: 
+      - Family
+      summary: 가족 생성 관련 파트 맡은 빈온입니다! 이 태그의 api에 질문이 있으신 분들은 저에게 연락주시면 됩니당:)
+      produces:
+      - application/json
+      security:
+        - Authorization: []
+      responses:
+        '200':
+          escription: 가족 생성 성공(해당 유저는 가족장으로 자동 배정됩니다!)
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              randomToken:
+                type: string
+                example: 1ee0cbce41a4c539
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+        '409':
+          description: 이미 가족이 있을 경우
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 409
+              isSuccess:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 이미 가족이 존재합니다. 탈퇴를 먼저 진행해주세요!
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+             
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
+  /family/add:
+    put:
+      tags: 
+      - Family
+      produces:
+      - application/json
+      security:
+        - Authorization: []
+      schema:
+          properties:
+            family_code:
+              type: string
+              example: f21b259e1c9dff6c
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              family_code:
+                type: string
+                example: f21b259e1c9dff6c
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+        '409':
+          description: 이미 가족이 있을 경우
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 409
+              isSuccess:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 이미 가족이 존재합니다. 탈퇴를 먼저 진행해주세요!
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+             
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
