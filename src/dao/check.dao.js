@@ -10,7 +10,7 @@ export const addCheckList = async (data) => {
     try{
         const conn = await pool.getConnection();
 
-        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content]);
+        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content, now(), now()]);
         conn.release();
         return result[0].insertId;
     }catch (err){
@@ -66,7 +66,7 @@ export const callCheckList = async (userid, date) => {
 export const contentCheckList = async (checkid, content) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(contentCheckSQL, [content, checkid]);
+        const [result] = await pool.query(contentCheckSQL, [content, now(), checkid]);
         conn.release();
     } catch(err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
@@ -77,7 +77,7 @@ export const contentCheckList = async (checkid, content) => {
 export const dateCheckList = async (checkid, date) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(dateCheckSQL, [date, checkid]);
+        const [result] = await pool.query(dateCheckSQL, [date, now(), checkid]);
         conn.release();
     } catch(err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
@@ -88,7 +88,7 @@ export const dateCheckList = async (checkid, date) => {
 export const finishCheckList = async (checkid) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(finishCheckSQL, checkid);
+        const [result] = await pool.query(finishCheckSQL, now(), checkid);
         conn.release();
     } catch(err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);

@@ -55,9 +55,11 @@ paths:
               result:
                 type: object
                 example: {
+                  "checkid": 777
                   "sender": "exampletokenforsender",
                   "receiver": "exampletokenforreceiver",
-                  "content": "화이팅 성공했어요"
+                  "content": "화이팅 성공했어요",
+                  "create_at" : "2000-12-03T15:00:00.000Z"
                 }
 
         '400':
@@ -231,7 +233,8 @@ paths:
                   "checkid": 1,
                   "sender": "보낸이",
                   "receiver": "받는이",
-                  "content": "이렇게 바뀔거에요"
+                  "content": "이렇게 바뀔거에요",
+                  "modify_at" : "2000-12-03T15:00:00.000Z"
                 }
 
         '400':
@@ -312,7 +315,8 @@ paths:
                   "checkid": 1,
                   "sender": "123",
                   "receiver": "456",
-                  "due_date": "2000-12-03T15:00:00.000Z"
+                  "due_date": "2000-12-03T15:00:00.000Z",
+                  "modify_at" : "2000-12-03T15:00:00.000Z"
                 }
 
         '400':
@@ -387,7 +391,8 @@ paths:
                   "checkid": 1,
                   "sender": "123",
                   "receiver": "456",
-                  "complete": 1
+                  "complete": 1,
+                  "modify_at" : "2000-12-03T15:00:00.000Z"
                 }
         '400':
           description: 잘못된 요청

@@ -3,7 +3,7 @@
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 
-import { contentCheckResponseDTO, callCheckResponseDTO, dateCheckResponseDTO, completeCheckResponseDTO, deleteCheckResponseDTO } from "../dto/check.dto.js"
+import { addCheckResponseDTO, callCheckResponseDTO, contentCheckResponseDTO, dateCheckResponseDTO, completeCheckResponseDTO, deleteCheckResponseDTO } from "../dto/check.dto.js"
 import { addCheckList, getCheck, callCheckList, contentCheckList, dateCheckList, finishCheckList, deleteCheckList } from "../dao/check.dao.js";
 
 // 체크리스트 추가
@@ -24,7 +24,7 @@ export const joinCheck = async (body) => {
         'content' : body.content
     });
 
-    return contentCheckResponseDTO(await getCheck(joinListData));
+    return addCheckResponseDTO(await getCheck(joinListData));
 }
 
 // 체크리스트 불러오기
