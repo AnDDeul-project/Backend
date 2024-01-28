@@ -7,7 +7,7 @@ export const homeService = {
         return await createPostInDb(postData);
     },
     // 게시글 조회
-    getPosts: async () => {
-        return await getPostsFromDb();
+    getPosts: async (user_idx) => {
+        return await getPostsFromDb(user_idx);
     }
 };
