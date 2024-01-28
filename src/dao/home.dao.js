@@ -7,7 +7,7 @@ import { status } from "../config/response.status.js";
 export const createPostInDb = async ({user_idx, content, picture}) => {
     const query = "INSERT INTO post (user_idx, content, picture, create_at, modify_at) VALUES (?, ?, ?, NOW(), NOW())";
     try {
-        // const conn = await pool.getConnection();
+        // const conn = await pool.getConnection();)
         const pictureJson = JSON.stringify(picture);
         const [result] = await pool.query(query, [user_idx, content, pictureJson]);
         return result;
