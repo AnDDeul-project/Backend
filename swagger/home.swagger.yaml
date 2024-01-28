@@ -5,14 +5,13 @@ paths:
         - Home
       summary: 게시글 작성
       description: 사용자가 게시글을 작성합니다.
-      consumes:
-        - multipart/form-data
+      produces:
+        - application/json
+      security:
+        - Authorization: []
+      # consumes:
+      #   - multipart/form-data
       parameters:
-        - in: formData
-          name: user_idx
-          type: string
-          required: true
-          description: 사용자의 고유 식별자입니다.
         - in: formData
           name: content
           type: string
