@@ -20,10 +20,11 @@ export const createPost = async (req, res, next) => {
     }
 };
 
-// 게시글 조회
+// 게시글 조회 (수정됨)
 export const getPosts = async (req, res, next) => {
     try {
-        const posts = await homeService.getPosts();
+        const snsId = await verify(req, res); // 또는 req.user.snsId (미들웨어를 통해 설정된 경우)
+        const posts = await homeService.getPosts(snsId);
         res.send(response(status.SUCCESS, posts));
     } catch (error) {
         next(error);

@@ -40,3 +40,49 @@ paths:
           description: 잘못된 요청입니다. 입력값을 확인해주세요.
         500:
           description: 서버 에러가 발생했습니다.
+
+  /home/posts:
+    get:
+      tags:
+        - Home
+      summary: 게시글 조회
+      description: 같은 가족 구성원들의 게시글을 조회합니다.
+      produces:
+        - application/json
+      security:
+        - Authorization: []
+      responses:
+        200:
+          description: 게시글 조회에 성공했습니다.
+          schema:
+            type: object
+            properties:
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: success!
+              result:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user_idx:
+                      type: string
+                      example: "3304133093"
+                    content:
+                      type: string
+                      example: "안녕하세요 postman 테스트요"
+                    picture:
+                      type: string
+                      example: "[]"
+        400:
+          description: 잘못된 요청입니다. 입력값을 확인해주세요.
+        401:
+          description: 인증 실패. 유효한 토큰을 제공해야 합니다.
+        500:
+          description: 서버 에러가 발생했습니다.
