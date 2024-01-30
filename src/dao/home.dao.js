@@ -47,3 +47,25 @@ export const getPostsFromDb = async (user_idx) => {
         throw error;
     }
 };
+
+export const getFamilyMembers = async (user_snsId) => {
+    const familyCodeQuery = "SELECT family_code FROM userfam WHERE user_idx = ?";
+    const [familyCodeRows] = await pool.query(familyCodeQuery, [user_snsId]);
+    const familyCode = familyCodeRows[0].family_code;
+
+    const familyMembersQuery = `
+        SELECT u.snsId, u.nickname
+        FROM user u
+        JOIN userfam uf ON u.snsId = uf.user_idx
+        WHERE uf.family_code = ?`;
+
+    try {
+        const [rows] = await pool.query(familyMembersQuery, [familyCode]);
+        // 로그인한 사용자 구별
+        return rows.map(member => ({
+            nickname: member.snsId === user_snsId ? `${member.nickname} (나)` : member.nickname
+        }));
+    } catch (error) {
+        throw error;
+    }
+};

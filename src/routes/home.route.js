@@ -1,5 +1,5 @@
 import express from "express";
-import { createPost, getPosts } from '../controllers/home.controller.js';
+import { createPost, getPosts, getFamilyMembers } from '../controllers/home.controller.js';
 import { imageUploader } from "../middleware/image.uploader.js";
 
 export const homeRoute = express.Router();
@@ -15,3 +15,6 @@ homeRoute.post('/board', setBoardDirectory, imageUploader.array('image', 10), cr
 
 // 게시글 목록 조회 (GET)
 homeRoute.get('/posts', getPosts);
+
+// 가족 구성원 조회
+homeRoute.get('/family/members', getFamilyMembers);
