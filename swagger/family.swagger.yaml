@@ -218,9 +218,25 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              family_code:
+              family_name:
                 type: string
-                example: f21b259e1c9dff6c
+                example: 세현이의 뽀짝뽀짝 가족모임
+              family_image:
+                type: json
+                example: [
+                            {
+                                "image": "http://k.kakaocdn.net/dn/1G9kp/btsAot8liOn/8CWudi3uy07rvFNUkk3ER0/img_640x640.jpg"
+                            },
+                            {
+                                "image": "http://k.kakaocdn.net/dn/xxGa9/btsB5AD9Zx0/GezVLYpUOwIdOpSlU7dYo1/img_640x640.jpg"
+                            },
+                            {
+                                "image": "http://k.kakaocdn.net/dn/nOrKL/btsDfoWMBNG/SZxW9Rf9BL5gq0vUGZiI80/img_640x640.jpg"
+                            }
+                          ]
+              family_count:
+                type: integer
+                example: 3
         '500':
           description: 서버 에러
           schema:
