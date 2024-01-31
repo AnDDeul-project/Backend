@@ -1,4 +1,4 @@
-import { findUser, createUser, deleteUser } from "../dao/user.dao.js";
+import { findUser, createUser, deleteUser, has } from "../dao/user.dao.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import { BaseError } from '../config/error.js';
@@ -76,6 +76,10 @@ export const signInKakao = async (kakaoToken) => {
         });
     }
 
-    return jwt.sign({ kakao_id: user }, process.env.KAKAO_ID);
+    return [jwt.sign({ kakao_id: user }, process.env.KAKAO_ID), snsId];
     
 };
+export const has_family = async(userid) => {
+    const result = await has(userid);
+    return result;
+}
