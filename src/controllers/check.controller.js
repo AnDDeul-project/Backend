@@ -3,6 +3,7 @@
 import { ConfigurationServicePlaceholders } from 'aws-sdk/lib/config_service_placeholders.js';
 import { response } from '../config/response.js';
 import { status } from '../config/response.status.js';
+import { verify } from '../services/auth.js';
 
 import { joinCheck, callCheck, updateContent, updateDate, updateComplete, deleteCheck, imgCheck } from "../service/check.service.js";
 
@@ -15,9 +16,12 @@ export const checkadd = async (req, res) => {
 
 // 리스트 불러오기
 export const checkget = async (req, res) => {
-    console.log(`${req.body}의 ${req.params.date} 체크리스트 목록을 불러옵니다`);
+    const snsId = await verify(req, res);
+    snsId = req.body.mode==0 ? snsId : req.body.userid;//0이면 내거 1이면 다른사람거
 
-    res.send(response(status.SUCCESS, await callCheck(req.body, req.params.date)));
+    console.log(`${snsId}의 ${req.params.date} 체크리스트 목록을 불러옵니다`);
+
+    res.send(response(status.SUCCESS, await callCheck(snsId, req.params.date)));
 }
 
 // 할 일 수정

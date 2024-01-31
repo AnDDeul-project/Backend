@@ -85,13 +85,19 @@ paths:
       tags:
         - Check
       summary : 체크리스트 날짜별로 불러오기
+      security:
+        - Authorization: []
       parameters:
       - name: userid
         in: body
         required: true
         schema:
           properties:
-            content:
+            mode:
+              type: boolean
+              description: 본인 체크리스트 조회는 0, 다른 사람 체크리스트 조회는 1
+              example: 0
+            userid:
               type: string
               description: 불러올 체크리스트의 주인
               example: 33333333333333

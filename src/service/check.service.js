@@ -15,12 +15,9 @@ export const joinCheck = async (body) => {
     const formattedDate = `${year}-${month}-${day}`; // "YYYY-MM-DD" 형식으로 날짜 문자열 생성
 
     const joinListData = await addCheckList({
-        //'check_idx',
         'sender_idx' : body.sender_idx,
         'receiver_idx' : body.receiver_idx,
         'due_date' : formattedDate,
-        //'complete' : body.complete,
-        //'picture' : null,
         'content' : body.content
     });
 
