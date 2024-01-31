@@ -5,6 +5,7 @@ import { status } from "../config/response.status.js";
 
 import { addCheckResponseDTO, callCheckResponseDTO, contentCheckResponseDTO, dateCheckResponseDTO, completeCheckResponseDTO, deleteCheckResponseDTO } from "../dto/check.dto.js"
 import { addCheckList, getCheck, callCheckList, contentCheckList, dateCheckList, finishCheckList, deleteCheckList, imageCheckList } from "../dao/check.dao.js";
+import { find_member } from "../dao/family.dao.js";
 
 // 체크리스트 추가
 export const joinCheck = async (snsId, body) => {
@@ -26,8 +27,12 @@ export const joinCheck = async (snsId, body) => {
 
 // 체크리스트 불러오기
 export const callCheck = async (userid, date) => {
-    
-    return callCheckResponseDTO(await callCheckList(userid, date));
+    const check = await callCheckList(userid, date);
+    sender = [];
+    for(let i = 0; i < check.length; i++) {
+        sender.push(find_member(check[i].sender_idx));
+    }
+    return callCheckResponseDTO(callCheckList, sender);
 }
 
 // 할 일 수정
