@@ -9,7 +9,7 @@ export const add_user = async(token, family_code) => {
     if(check_family===-1)
         return -1;
     const member = await find_member(token[0]);
-    add_family(member, family_code, check_family);
+    add_family(member, family_code, check_family, token[0]);
     return family_code;
 }
 
