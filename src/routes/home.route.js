@@ -6,7 +6,7 @@ export const homeRoute = express.Router();
 
 // directory 값을 board로 고정하는 미들웨어
 const setBoardDirectory = (req, res, next) => {
-    req.body.directory = 'board'; // req 객체에 directory 값을 고정
+    req.query.directory = 'board'; // req 객체에 directory 값을 고정
     next(); // 다음 미들웨어로 이동
 };
 
