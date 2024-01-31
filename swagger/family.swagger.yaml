@@ -8,6 +8,15 @@ paths:
       - application/json
       security:
         - Authorization: []
+      parameters:
+        - name: new
+          in: body
+          required: true
+          schema:
+              properties:
+                family_name:
+                  type: string
+                  example: 세현이의 뽀짝뽀짝 가족모임
       responses:
         '200':
           escription: 가족 생성 성공(해당 유저는 가족장으로 자동 배정됩니다!)

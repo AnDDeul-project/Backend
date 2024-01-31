@@ -19,7 +19,7 @@ export const verify_random = async (data) => {
 }
 
 export const make_token = async() => {
-    const random = crypto.randomBytes(8).toString('hex');
+    const random = crypto.randomBytes(3).toString('hex');
     return random;
 }
 
@@ -45,12 +45,12 @@ export const has_family = async(data) => {
     }
 }
 
-export const match_user = async (user_id, token) => {
+export const match_user = async (user_id, token, family_name) => {
     try{
         const conn = await pool.getConnection();
         console.log(token[0], user_id);
         const result = await pool.query("UPDATE user SET family_code = ? , auth=1 , point = 0 WHERE snsId = ?", [token[0], user_id]);
-        await pool.query("INSERT INTO userfam(family_code, user_idx) VALUES (?, ?)", [token[0], user_id]);
+        await pool.query("INSERT INTO userfam(family_code, user_idx, fam_name) VALUES (?, ?, ?)", [token[0], user_id, family_name]);
         conn.release();
         console.log(result[0]);
         if (result[0].length > 0) {

@@ -12,7 +12,7 @@ try{
         // verify 함수가 성공적으로 토큰을 확인했을 때 실행될 코드
         res.send("Verification successful");
     })
-    const random = await make_random(user);
+    const random = await make_random(user, req.body.family_name);
     if(random===-1){
         return res.status(409).json({status: 409, isSuccess: false, error: "이미 가족이 존재합니다. 탈퇴를 먼저 진행해주세요!"});
     }
