@@ -13,3 +13,5 @@ export const dateCheckSQL = "UPDATE checklist SET due_date = ? AND modify_at = ?
 export const finishCheckSQL = "UPDATE checklist SET complete = !complete AND modity_at = ? WHERE check_idx = ?"
 
 export const deleteCheckSQL = "DELETE FROM checklist WHERE check_idx = ?";
+
+export const imgCheckSQL = "UPDATE checklist SET picture = ? AND modify_at = ? WHERE check_idx = ?";

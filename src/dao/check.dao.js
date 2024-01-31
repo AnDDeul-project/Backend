@@ -3,7 +3,7 @@
 import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
-import { insertCheckSQL, getCheckIDSQL, callCheckSQL, contentCheckSQL, dateCheckSQL, finishCheckSQL, deleteCheckSQL } from "./check.sql.js";
+import { insertCheckSQL, getCheckIDSQL, callCheckSQL, contentCheckSQL, dateCheckSQL, finishCheckSQL, deleteCheckSQL, imgCheckSQL } from "./check.sql.js";
 
 // 체크리스트 데이터 삽입
 export const addCheckList = async (data) => {
@@ -18,7 +18,7 @@ export const addCheckList = async (data) => {
     }
 }
 
-//체크리스트 정보 얻기
+//체크리스트 하나 조회
 export const getCheck = async (checkid) => {
     try{
         const conn = await pool.getConnection();
@@ -37,7 +37,7 @@ export const getCheck = async (checkid) => {
     }
 }
 
-//체크리스트 불러오기
+//체크리스트 목록 불러오기
 export const callCheckList = async (userid, date) => {
     try{
         const conn = await pool.getConnection();
@@ -102,6 +102,16 @@ export const deleteCheckList = async (checkid) => {
         const [result] = await pool.query(deleteCheckSQL, checkid);
         conn.release();
         return result.affectedRows;
+    } catch(err) {
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+export const imageCheckList = async(checkid, location) => {
+    try{
+        const conn = await pool.getConnection();
+        const [result] = await pool.query(imgCheckSQL, [location, now(), checkid]);
+        conn.release();
     } catch(err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }

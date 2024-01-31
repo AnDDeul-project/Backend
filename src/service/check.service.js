@@ -4,7 +4,7 @@ import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 
 import { addCheckResponseDTO, callCheckResponseDTO, contentCheckResponseDTO, dateCheckResponseDTO, completeCheckResponseDTO, deleteCheckResponseDTO } from "../dto/check.dto.js"
-import { addCheckList, getCheck, callCheckList, contentCheckList, dateCheckList, finishCheckList, deleteCheckList } from "../dao/check.dao.js";
+import { addCheckList, getCheck, callCheckList, contentCheckList, dateCheckList, finishCheckList, deleteCheckList, imageCheckList } from "../dao/check.dao.js";
 
 // 체크리스트 추가
 export const joinCheck = async (body) => {
@@ -55,4 +55,10 @@ export const updateComplete = async (checkid) => {
 export const deleteCheck = async (checkid) => {
     const check = await deleteCheckList(checkid);
     if(check==1) return deleteCheckResponseDTO(check);
+}
+
+// 사진 업로드
+export const imgCheck = async (checkid, location) => {
+    await imageCheckList(checkid, location);
+    return imgCheckResponseDTO(await getCheck(checkid));
 }

@@ -80,18 +80,21 @@ paths:
                 type: boolean
                 example: false
 
-  /check/{userid}/{date}:
+  /check/userid/{date}:
     get:
       tags:
         - Check
       summary : 체크리스트 날짜별로 불러오기
       parameters:
       - name: userid
-        in: path
+        in: body
         required: true
-        description: 불러올 체크리스트 주인
-        type: string
-        example: exampletokenforuser
+        schema:
+          properties:
+            content:
+              type: string
+              description: 불러올 체크리스트의 주인
+              example: 33333333333333
       - name: date
         in: path
         required: true

@@ -1,9 +1,10 @@
 // check.controller.js
 
+import { ConfigurationServicePlaceholders } from 'aws-sdk/lib/config_service_placeholders.js';
 import { response } from '../config/response.js';
 import { status } from '../config/response.status.js';
 
-import { joinCheck, callCheck, updateContent, updateDate, updateComplete, deleteCheck } from "../service/check.service.js";
+import { joinCheck, callCheck, updateContent, updateDate, updateComplete, deleteCheck, imgCheck } from "../service/check.service.js";
 
 // 리스트 추가
 export const checkadd = async (req, res) => {
@@ -14,9 +15,9 @@ export const checkadd = async (req, res) => {
 
 // 리스트 불러오기
 export const checkget = async (req, res) => {
-    console.log(`${req.params.userid}의 ${req.params.date} 체크리스트 목록을 불러옵니다`);
+    console.log(`${req.body}의 ${req.params.date} 체크리스트 목록을 불러옵니다`);
 
-    res.send(response(status.SUCCESS, await callCheck(req.params.userid, req.params.date)));
+    res.send(response(status.SUCCESS, await callCheck(req.body, req.params.date)));
 }
 
 // 할 일 수정
@@ -45,4 +46,11 @@ export const checkdelete = async (req, res, next) => {
     console.log(`${req.params.checkid} 체크리스트를 삭제합니다`);
 
     res.send(response(status.SUCCESS, await deleteCheck(req.params.checkid)));
+}
+
+// 사진 업로드
+export const checkimg = async (req, res) => {
+    console.log(`${req.params.checkid} 사진 업로드`);
+
+    res.send(response(status.SUCCESS, await imgCheck(req.params.checkid, req.files.location)));
 }
