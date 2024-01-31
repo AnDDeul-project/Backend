@@ -4,20 +4,18 @@ paths:
       tags:
         - Check
       summary : 체크리스트 추가
+      security:
+        - Authorization: []
       parameters:
       - name: add
         in: body
         required: true
         schema:
           properties:
-            sender_idx:
-              type: string
-              description: 체크리스트를 추가한 사람
-              example: exampletokenforsender
             receiver_idx:
               type: string
               description: 체크리스트 주인
-              example: exampletokenforreveiver
+              example: "3333333333333"
             due_year:
               type: integer
               description: 생일 년도
@@ -167,6 +165,8 @@ paths:
       tags:
         - Check
       summary: 체크리스트 내용 수정
+      security:
+        - Authorization: []
       parameters:
       - name: checkid
         in: path
@@ -234,6 +234,8 @@ paths:
       tags:
         - Check
       summary: 체크리스트 기한 변경
+      security:
+        - Authorization: []
       parameters:
       - name: checkid
         in: path
@@ -298,6 +300,8 @@ paths:
       tags:
         - Check
       summary: 체크리스트 완료 여부 변경
+      security:
+        - Authorization: []
       parameters:
       - name: checkid
         in: path
@@ -356,6 +360,8 @@ paths:
       tags:
         - Check
       summary: 체크리스트 삭제
+      security:
+        - Authorization: []
       parameters:
       - name: checkid
         in: path
