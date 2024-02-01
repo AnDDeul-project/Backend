@@ -48,7 +48,7 @@ export const getPostsFromDb = async (user_idx) => {
     }
 };
 
-// 가족 구성원 조회 함수
+// 가족 구성원 및 가족 코드 조회 함수
 export const getFamilyMembers = async (user_snsId) => {
     // 로그인한 사용자의 가족 코드 조회
     const userFamilyCodeQuery = "SELECT family_code FROM user WHERE snsId = ?";
@@ -64,7 +64,6 @@ export const getFamilyMembers = async (user_snsId) => {
         SELECT snsId, nickname, image
         FROM user
         WHERE family_code = ?`;
-
     const [rows] = await pool.query(familyMembersQuery, [userFamilyCode]);
 
     // 로그인한 사용자를 결과 배열의 첫 번째 요소로 배치
@@ -74,10 +73,13 @@ export const getFamilyMembers = async (user_snsId) => {
         rows.unshift(loginUser); // 로그인한 사용자를 배열의 첫 번째 요소로 추가
     }
 
+    // 결과 배열의 두 번째 인덱스에 가족 코드 정보 삽입
+    rows.splice(1, 0, { family_code: userFamilyCode });
+
     // 최종 결과 반환
-    return rows.map(member => ({
+    return rows.map(member => member.family_code ? member : {
         snsId: member.snsId,
         nickname: member.nickname,
         image: member.image
-    }));
+    });
 };
