@@ -15,7 +15,7 @@ const setCheckDirectory = (req, res, next) => {
 checkRoute.post('/add', checkadd);
 
 // 리스트 불러오기
-checkRoute.get('/:date', checkget);
+checkRoute.get('/:userid/:mode/:date', checkget);
 
 // 할 일 수정
 checkRoute.put('/:checkid/content', checkcontent);
