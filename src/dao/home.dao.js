@@ -34,19 +34,25 @@ export const getPostsFromDb = async (user_idx) => {
         throw new Error("Family code not found for user");
     }
 
-    // 같은 family_code를 가진 사용자의 게시글만 조회
+    // 같은 family_code를 가진 사용자의 게시글 및 글 작성자의 프로필 사진 조회
     const query = `
-        SELECT p.user_idx, p.content, p.picture 
+        SELECT p.user_idx, p.content, p.picture, u.image AS userImage
         FROM post p
         INNER JOIN user u ON p.user_idx = u.snsId  
-        WHERE u.family_code = ?`;  // family_code 조건을 userfam에서 user로 변경
+        WHERE u.family_code = ?`;  // family_code 조건을 userfam에서 user로 변경 및 작성자의 프로필 사진 정보 추가
     try {
         const [rows] = await pool.query(query, [family_code]);
-        return rows;
+        return rows.map(row => ({
+          user_idx: row.user_idx,
+          content: row.content,
+          picture: JSON.parse(row.picture), // JSON 문자열을 객체로 변환
+          userImage: row.userImage // 작성자의 프로필 사진 정보 추가
+        }));
     } catch (error) {
         throw error;
     }
 };
+
 
 // 가족 구성원 및 가족 코드 조회 함수
 export const getFamilyMembers = async (user_snsId) => {
