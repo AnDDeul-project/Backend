@@ -2,6 +2,20 @@ import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 
+export const has = async (userId) => {
+    try{
+        const conn = await pool.getConnection();
+        const result = await pool.query("SELECT family_code FROM user WHERE snsId = ?", userId);
+        conn.release();
+        console.log(result[0]);
+        if(result[0][0].family_code != null) 
+            return true;
+        return false;
+    }catch(e) {
+        throw new BaseError(status,PARAMETER_IS_WRONG, e);
+    }
+}
+
 export const findUser = async (data) => {
     try{
         const conn = await pool.getConnection();

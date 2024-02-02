@@ -1,4 +1,4 @@
-import { signInKakao, logOutKakao, unlinkKakao} from "../service/user.service.js";
+import { signInKakao, logOutKakao, unlinkKakao, has_family} from "../service/user.service.js";
 
 export const signInkakao = async (req, res) => {
     try{
@@ -6,8 +6,9 @@ export const signInkakao = async (req, res) => {
     const headers = req.headers["authorization"];
     const kakaoToken = headers.split(" ")[1];
     const accessToken = await signInKakao(kakaoToken);
-    
-    return res.status(200).json({status: 200, isSuccess: true, accessToken: accessToken });
+    const has = await has_family(accessToken[1]);
+    console.log(accessToken);
+    return res.status(200).json({status: 200, isSuccess: true, accessToken: accessToken[0], has : has });
     }catch(err){
         return res.status(500).json({status: 500, isSuccess: false, message: "서버 에러, 관리자에게 문의 바랍니다."});
     }

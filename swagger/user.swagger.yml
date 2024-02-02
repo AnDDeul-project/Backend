@@ -25,7 +25,9 @@ paths:
               accesstoken:
                 type: string
                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrYWthb19pZCI6WyIzMjkzNjU1Njg2Il0sImlhdCI6MTcwNTY5ODI5OX0.9IWWuq_wRaZI_g-f8rpq4iiMrf12JhAUP2tLbsEvFCo"
-            
+              has:
+                type: boolean
+                examples: true
         '4001':
           description: 파라미터 오류
           schema:
