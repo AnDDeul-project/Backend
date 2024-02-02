@@ -52,7 +52,7 @@ export const getPostsFromDb = async (user_idx) => {
 export const getFamilyMembers = async (user_snsId) => {
     // 로그인한 사용자의 가족 코드 조회
     const userFamilyCodeQuery = "SELECT family_code FROM user WHERE snsId = ?";
-    const [userFamilyCodeRows] = await pool.query(userFamilyCodeQuery, [user_snsId[0]]);
+    const [userFamilyCodeRows] = await pool.query(userFamilyCodeQuery, [user_snsId]);
     const userFamilyCode = userFamilyCodeRows.length > 0 ? userFamilyCodeRows[0].family_code : null;
 
     if (!userFamilyCode) {
@@ -63,23 +63,30 @@ export const getFamilyMembers = async (user_snsId) => {
     const familyMembersQuery = `
         SELECT snsId, nickname, image
         FROM user
-        WHERE family_code = ?`;
-    const [rows] = await pool.query(familyMembersQuery, [userFamilyCode]);
+        WHERE family_code = ? AND auth = 1`;
+    const [familyMembersRows] = await pool.query(familyMembersQuery, [userFamilyCode]);
+
+    // 가족으로 들어오고 싶은 유저 조회 (auth 값이 0인 유저)
+    const waitlistQuery = `
+        SELECT snsId, nickname, image
+        FROM user
+        WHERE family_code = ? AND auth = 0`;
+    const [waitlistRows] = await pool.query(waitlistQuery, [userFamilyCode]);
 
     // 로그인한 사용자를 결과 배열의 첫 번째 요소로 배치
-    const loginUserIndex = rows.findIndex(member => member.snsId === user_snsId[0]);
+    const loginUserIndex = familyMembersRows.findIndex(member => member.snsId === user_snsId);
     if (loginUserIndex > -1) {
-        const loginUser = rows.splice(loginUserIndex, 1)[0];
-        rows.unshift(loginUser); // 로그인한 사용자를 배열의 첫 번째 요소로 추가
+        const loginUser = familyMembersRows.splice(loginUserIndex, 1)[0];
+        familyMembersRows.unshift(loginUser); // 로그인한 사용자를 배열의 첫 번째 요소로 추가
     }
 
-    // 결과 배열의 두 번째 인덱스에 가족 코드 정보 삽입
-    rows.splice(1, 0, { family_code: userFamilyCode });
+    // 결과 객체 생성
+    const result = {
+        me: familyMembersRows[0], // 로그인한 사용자 정보
+        family_code: userFamilyCode, // 가족 코드
+        family: familyMembersRows.slice(1), // 가족 구성원 정보 (로그인한 사용자 제외)
+        waitlist: waitlistRows // 대기 중인 가족 구성원 정보
+    };
 
-    // 최종 결과 반환
-    return rows.map(member => member.family_code ? member : {
-        snsId: member.snsId,
-        nickname: member.nickname,
-        image: member.image
-    });
+    return result;
 };

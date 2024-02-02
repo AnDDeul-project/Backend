@@ -92,8 +92,10 @@ paths:
       tags:
         - Home
       summary: 가족 구성원 조회
-      description: 로그인한 사용자와 같은 가족 코드를 가진 가족 구성원의 정보를 조회합니다. 이때 첫 번째로 출력되는 유저가 본인입니다.
-      produces:
+      description: >
+        로그인한 사용자와 같은 가족 코드를 가진 가족 구성원의 정보를 조회합니다. 
+        응답에는 로그인한 사용자('me'), 가족 코드('family_code'), 가족 구성원 목록('family'), 
+        그리고 가족에 들어오고 싶어 하는 대기 중인 유저 목록('waitlist')을 출력합니다.
         - application/json
       security:
         - Authorization: []
@@ -101,7 +103,6 @@ paths:
         "200":
           description: 가족 구성원 조회 성공
           schema:
-            schema:
             type: object
             properties:
               isSuccess:
@@ -114,22 +115,61 @@ paths:
                 type: string
                 example: "success!"
               result:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    snsId:
-                      type: string
-                      example: "3304133093"
-                      description: 사용자 고유 식별자
-                    nickname:
-                      type: string
-                      example: "김정훈"
-                      description: 사용자 닉네임
-                    image:
-                      type: string
-                      example: "http://k.kakaocdn.net/dn/xxGa9/btsB5AD9Zx0/GezVLYpUOwIdOpSlU7dYo1/img_640x640.jpg"
-                      description: 사용자 프로필 이미지 URL
+                type: object
+                properties:
+                  me:
+                    type: object
+                    properties:
+                      snsId:
+                        type: string
+                        example: "3304133093"
+                        description: 로그인한 사용자의 고유 식별자
+                      nickname:
+                        type: string
+                        example: "김정훈"
+                        description: 로그인한 사용자의 닉네임
+                      image:
+                        type: string
+                        example: "http://k.kakaocdn.net/dn/xxGa9/btsB5AD9Zx0/GezVLYpUOwIdOpSlU7dYo1/img_640x640.jpg"
+                        description: 로그인한 사용자의 프로필 이미지 URL
+                  family_code:
+                    type: string
+                    example: "4ae180"
+                    description: 가족 구성원이 공유하는 고유 가족 코드
+                  family:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        snsId:
+                          type: string
+                          example: "3293655686"
+                          description: 가족 구성원의 고유 식별자
+                        nickname:
+                          type: string
+                          example: "한승민"
+                          description: 가족 구성원의 닉네임
+                        image:
+                          type: string
+                          example: "http://k.kakaocdn.net/dn/nOrKL/btsDfoWMBNG/SZxW9Rf9BL5gq0vUGZiI80/img_640x640.jpg"
+                          description: 가족 구성원의 프로필 이미지 URL
+                  waitlist:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        snsId:
+                          type: string
+                          example: "3303580750"
+                          description: 대기 중인 유저의 고유 식별자
+                        nickname:
+                          type: string
+                          example: "임세현"
+                          description: 대기 중인 유저의 닉네임
+                        image:
+                          type: string
+                          example: "http://k.kakaocdn.net/dn/1G9kp/btsAot8liOn/8CWudi3uy07rvFNUkk3ER0/img_640x640.jpg"
+                          description: 대기 중인 유저의 프로필 이미지 URL
         "401":
           description: 인증 실패
         "500":
