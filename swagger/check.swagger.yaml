@@ -4,20 +4,18 @@ paths:
       tags:
         - Check
       summary : 체크리스트 추가
+      security:
+        - Authorization: []
       parameters:
       - name: add
         in: body
         required: true
         schema:
           properties:
-            sender_idx:
-              type: string
-              description: 체크리스트를 추가한 사람
-              example: exampletokenforsender
             receiver_idx:
               type: string
               description: 체크리스트 주인
-              example: exampletokenforreveiver
+              example: "3333333333333"
             due_year:
               type: integer
               description: 생일 년도
@@ -46,18 +44,14 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: {
+                  "checkid": 777
                   "sender": "exampletokenforsender",
                   "receiver": "exampletokenforreceiver",
-                  "content": "화이팅 성공했어요"
+                  "content": "화이팅 성공했어요",
+                  "create_at" : "2000-12-03T15:00:00.000Z"
                 }
 
         '400':
@@ -71,12 +65,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
 
         '500':
           description: 서버 에러
@@ -89,25 +77,27 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
 
-  /check/{userid}/{date}:
+  /check/{userid}/{mode}/{date}:
     get:
       tags:
         - Check
       summary : 체크리스트 날짜별로 불러오기
+      security:
+        - Authorization: []
       parameters:
       - name: userid
         in: path
         required: true
-        description: 불러올 체크리스트 주인
+        description: 불러올 체크리스트의 주인
         type: string
-        example: exampletokenforuser
+        example: 2222232423424
+      - name: mode
+        in: path
+        required: true
+        description: 본인 체크리스트 조회는 0, 다른 사람 체크리스트 조회는 1
+        type: boolean
+        example: 1
       - name: date
         in: path
         required: true
@@ -126,12 +116,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: [
@@ -150,6 +134,7 @@ paths:
                   "content": "여러개면 배열에 담깁니다"
                   },
                 ]
+        
         '400':
           description: 잘못된 요청
           schema:
@@ -161,13 +146,7 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
-
+        
         '500':
           description: 서버 에러
           schema:
@@ -179,18 +158,14 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
   
   /check/{checkid}/content:
     put:
       tags:
         - Check
       summary: 체크리스트 내용 수정
+      security:
+        - Authorization: []
       parameters:
       - name: checkid
         in: path
@@ -219,19 +194,14 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: {
                   "checkid": 1,
                   "sender": "보낸이",
                   "receiver": "받는이",
-                  "content": "이렇게 바뀔거에요"
+                  "content": "이렇게 바뀔거에요",
+                  "modify_at" : "2000-12-03T15:00:00.000Z"
                 }
 
         '400':
@@ -245,12 +215,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
 
         '500':
           description: 서버 에러
@@ -263,18 +227,14 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
 
   /check/{checkid}/date/{date}:
     put:
       tags:
         - Check
       summary: 체크리스트 기한 변경
+      security:
+        - Authorization: []
       parameters:
       - name: checkid
         in: path
@@ -300,19 +260,14 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: {
                   "checkid": 1,
                   "sender": "123",
                   "receiver": "456",
-                  "due_date": "2000-12-03T15:00:00.000Z"
+                  "due_date": "2000-12-03T15:00:00.000Z",
+                  "modify_at" : "2000-12-03T15:00:00.000Z"
                 }
 
         '400':
@@ -326,12 +281,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
 
         '500':
           description: 서버 에러
@@ -344,18 +293,14 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
 
   /check/{checkid}/complete:
     put:
       tags:
         - Check
       summary: 체크리스트 완료 여부 변경
+      security:
+        - Authorization: []
       parameters:
       - name: checkid
         in: path
@@ -375,20 +320,16 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: {
                   "checkid": 1,
                   "sender": "123",
                   "receiver": "456",
-                  "complete": 1
+                  "complete": 1,
+                  "modify_at" : "2000-12-03T15:00:00.000Z"
                 }
+
         '400':
           description: 잘못된 요청
           schema:
@@ -400,12 +341,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
 
         '500':
           description: 서버 에러
@@ -418,18 +353,14 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
 
   /check/{checkid}:
     delete:
       tags:
         - Check
       summary: 체크리스트 삭제
+      security:
+        - Authorization: []
       parameters:
       - name: checkid
         in: path
@@ -439,7 +370,7 @@ paths:
         example: 12345
       responses:
         '200':
-          description: 체크리스트 완료 여부 변경 성공!
+          description: 체크리스트 삭제 성공!
           schema:
             type: object
             properties:
@@ -449,17 +380,12 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              code:
-                type: integer
-                example: 2000
-              message:
-                type: string
-                example: "success!"
               result:
                 type: object
                 example: {
                   "result": "1개의 체크리스트가 삭제되었습니다"
                 }
+                
         '400':
           description: 잘못된 요청
           schema:
@@ -471,12 +397,6 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON001
-              message:
-                type: string
-                example: 잘못된 요청입니다
 
         '500':
           description: 서버 에러
@@ -489,9 +409,4 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
-              code:
-                type: integer
-                example: COMMON000
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
+

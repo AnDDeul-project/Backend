@@ -3,14 +3,14 @@
 import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
-import { insertCheckSQL, getCheckIDSQL, callCheckSQL, contentCheckSQL, dateCheckSQL, finishCheckSQL, deleteCheckSQL } from "./check.sql.js";
+import { insertCheckSQL, getCheckIDSQL, callCheckSQL, contentCheckSQL, dateCheckSQL, finishCheckSQL, deleteCheckSQL, imgCheckSQL } from "./check.sql.js";
 
 // 체크리스트 데이터 삽입
 export const addCheckList = async (data) => {
     try{
         const conn = await pool.getConnection();
 
-        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content]);
+        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content, now(), now()]);
         conn.release();
         return result[0].insertId;
     }catch (err){
@@ -18,7 +18,7 @@ export const addCheckList = async (data) => {
     }
 }
 
-//체크리스트 정보 얻기
+//체크리스트 하나 조회
 export const getCheck = async (checkid) => {
     try{
         const conn = await pool.getConnection();
@@ -37,7 +37,7 @@ export const getCheck = async (checkid) => {
     }
 }
 
-//체크리스트 불러오기
+//체크리스트 목록 불러오기
 export const callCheckList = async (userid, date) => {
     try{
         const conn = await pool.getConnection();
@@ -66,7 +66,7 @@ export const callCheckList = async (userid, date) => {
 export const contentCheckList = async (checkid, content) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(contentCheckSQL, [content, checkid]);
+        const [result] = await pool.query(contentCheckSQL, [content, now(), checkid]);
         conn.release();
     } catch(err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
@@ -77,7 +77,7 @@ export const contentCheckList = async (checkid, content) => {
 export const dateCheckList = async (checkid, date) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(dateCheckSQL, [date, checkid]);
+        const [result] = await pool.query(dateCheckSQL, [date, now(), checkid]);
         conn.release();
     } catch(err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
@@ -88,7 +88,7 @@ export const dateCheckList = async (checkid, date) => {
 export const finishCheckList = async (checkid) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(finishCheckSQL, checkid);
+        const [result] = await pool.query(finishCheckSQL, now(), checkid);
         conn.release();
     } catch(err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
@@ -102,6 +102,16 @@ export const deleteCheckList = async (checkid) => {
         const [result] = await pool.query(deleteCheckSQL, checkid);
         conn.release();
         return result.affectedRows;
+    } catch(err) {
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+export const imageCheckList = async(checkid, location) => {
+    try{
+        const conn = await pool.getConnection();
+        const [result] = await pool.query(imgCheckSQL, [location, now(), checkid]);
+        conn.release();
     } catch(err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
