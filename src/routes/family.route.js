@@ -1,5 +1,7 @@
 import express from "express";
-import { familyController } from "../controllers/family.controller.js";
+import { familyController, deleteController, getinfoController } from "../controllers/family.controller.js";
 
 export const familyRoute = express.Router();
-familyRoute.post('/add', familyController)
+familyRoute.put('/add', familyController);
+familyRoute.get('/info/:family_code', getinfoController);
+familyRoute.delete('/delete', deleteController);

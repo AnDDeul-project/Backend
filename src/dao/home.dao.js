@@ -19,7 +19,7 @@ export const createPostInDb = async ({user_idx, content, picture}) => {
 
 // 사용자의 family_code 조회
 const getUserFamilyCode = async (user_idx) => {
-    const query = "SELECT family_code FROM userfam WHERE user_idx = ?";
+    const query = "SELECT family_code FROM user WHERE snsId = ?"; 
     console.log("user_idx: ", user_idx);
     const [rows] = await pool.query(query, [user_idx]);
     console.log("rows: ", rows);
@@ -34,16 +34,65 @@ export const getPostsFromDb = async (user_idx) => {
         throw new Error("Family code not found for user");
     }
 
-    // 같은 family_code를 가진 사용자의 게시글만 조회
+    // 같은 family_code를 가진 사용자의 게시글 및 글 작성자의 프로필 사진 조회
     const query = `
-        SELECT p.user_idx, p.content, p.picture 
+        SELECT p.user_idx, p.content, p.picture, u.image AS userImage
         FROM post p
-        JOIN userfam u ON p.user_idx = u.user_idx
-        WHERE u.family_code = ?`;
+        INNER JOIN user u ON p.user_idx = u.snsId  
+        WHERE u.family_code = ?`;  // family_code 조건을 userfam에서 user로 변경 및 작성자의 프로필 사진 정보 추가
     try {
         const [rows] = await pool.query(query, [family_code]);
-        return rows;
+        return rows.map(row => ({
+          user_idx: row.user_idx,
+          content: row.content,
+          picture: JSON.parse(row.picture), // JSON 문자열을 객체로 변환
+          userImage: row.userImage // 작성자의 프로필 사진 정보 추가
+        }));
     } catch (error) {
         throw error;
     }
+};
+
+
+// 가족 구성원 및 가족 코드 조회 함수
+export const getFamilyMembers = async (user_snsId) => {
+    // 로그인한 사용자의 가족 코드 조회
+    const userFamilyCodeQuery = "SELECT family_code FROM user WHERE snsId = ?";
+    const [userFamilyCodeRows] = await pool.query(userFamilyCodeQuery, [user_snsId]);
+    const userFamilyCode = userFamilyCodeRows.length > 0 ? userFamilyCodeRows[0].family_code : null;
+
+    if (!userFamilyCode) {
+        throw new Error('Family code not found for the user');
+    }
+
+    // 같은 가족 코드를 가진 모든 가족 구성원 조회
+    const familyMembersQuery = `
+        SELECT snsId, nickname, image
+        FROM user
+        WHERE family_code = ? AND auth = 1`;
+    const [familyMembersRows] = await pool.query(familyMembersQuery, [userFamilyCode]);
+
+    // 가족으로 들어오고 싶은 유저 조회 (auth 값이 0인 유저)
+    const waitlistQuery = `
+        SELECT snsId, nickname, image
+        FROM user
+        WHERE family_code = ? AND auth = 0`;
+    const [waitlistRows] = await pool.query(waitlistQuery, [userFamilyCode]);
+
+    // 로그인한 사용자를 결과 배열의 첫 번째 요소로 배치
+    const loginUserIndex = familyMembersRows.findIndex(member => member.snsId === user_snsId);
+    if (loginUserIndex > -1) {
+        const loginUser = familyMembersRows.splice(loginUserIndex, 1)[0];
+        familyMembersRows.unshift(loginUser); // 로그인한 사용자를 배열의 첫 번째 요소로 추가
+    }
+
+    // 결과 객체 생성
+    const result = {
+        me: familyMembersRows[0], // 로그인한 사용자 정보
+        family_code: userFamilyCode, // 가족 코드
+        family: familyMembersRows.slice(1), // 가족 구성원 정보 (로그인한 사용자 제외)
+        waitlist: waitlistRows // 대기 중인 가족 구성원 정보
+    };
+
+    return result;
 };

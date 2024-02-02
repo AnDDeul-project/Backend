@@ -30,3 +30,14 @@ export const getPosts = async (req, res, next) => {
         next(error);
     }
 };
+
+// 가족 구성원 조회
+export const getFamilyMembers = async (req, res, next) => {
+    try {
+        const snsId = await verify(req, res); // 또는 req.user.snsId (미들웨어를 통해 설정된 경우)
+        const members = await homeService.getFamilyMembers(snsId);
+        res.send(response(status.SUCCESS, members));
+    } catch (error) {
+        next(error);
+    }
+};
