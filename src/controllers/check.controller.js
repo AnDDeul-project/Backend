@@ -3,7 +3,7 @@
 import { ConfigurationServicePlaceholders } from 'aws-sdk/lib/config_service_placeholders.js';
 import { response } from '../config/response.js';
 import { status } from '../config/response.status.js';
-import { verify } from '../services/auth.js';
+import { verify } from '../service/auth.js';
 
 import { joinCheck, callCheck, updateContent, updateDate, updateComplete, deleteCheck, imgCheck } from "../service/check.service.js";
 
