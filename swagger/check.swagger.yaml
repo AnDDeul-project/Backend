@@ -95,7 +95,7 @@ paths:
       - name: mode
         in: path
         required: true
-        description: 본인 체크리스트 조회는 0, 다른 사람 체크리스트 조회는 1
+        description: 본인 체크리스트 조회는 false, 다른 사람 체크리스트 조회는 true
         type: boolean
         example: 1
       - name: date

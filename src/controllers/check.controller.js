@@ -17,7 +17,7 @@ export const checkadd = async (req, res) => {
 // 리스트 불러오기
 export const checkget = async (req, res) => {
     const snsId = await verify(req, res);
-    snsId = req.body.mode==0 ? snsId : req.body.userid;//0이면 내거 1이면 다른사람거
+    snsId = req.body.mode==false ? snsId : req.body.userid;//0이면 내거 1이면 다른사람거
 
     console.log(`${snsId}의 ${req.params.date} 체크리스트 목록을 불러옵니다`);
 
