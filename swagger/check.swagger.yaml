@@ -82,7 +82,7 @@ paths:
     get:
       tags:
         - Check
-      summary : 체크리스트 날짜별로 불러오기
+      summary : 가족 구성원 1인 체크리스트 날짜별로 불러오기
       security:
         - Authorization: []
       parameters:
