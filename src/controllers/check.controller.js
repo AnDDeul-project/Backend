@@ -1,6 +1,5 @@
 // check.controller.js
 
-import { ConfigurationServicePlaceholders } from 'aws-sdk/lib/config_service_placeholders.js';
 import { response } from '../config/response.js';
 import { status } from '../config/response.status.js';
 import { verify } from '../service/auth.js';
