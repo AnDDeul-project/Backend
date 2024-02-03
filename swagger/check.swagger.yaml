@@ -47,7 +47,7 @@ paths:
               result:
                 type: object
                 example: {
-                  "checkid": 777
+                  "checkid": 777,
                   "sender": "exampletokenforsender",
                   "receiver": "exampletokenforreceiver",
                   "content": "화이팅 성공했어요",
