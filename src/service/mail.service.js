@@ -1,4 +1,7 @@
-// mail.service.js
+import {sendMail, updatepoint} from "../dao/mail.dao.js"
 
-//export const voiceMail = async (snsId, body) => {
-//    const 
+export const voiceMail = async (snsId, req) => {
+    await sendMail(snsId, req);
+    await updatepoint(snsId);
+    return;
+}

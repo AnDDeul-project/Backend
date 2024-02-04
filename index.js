@@ -12,7 +12,6 @@ import { randomRoute } from './src/routes/random.route.js';
 import { checkRoute } from './src/routes/check.route.js';
 import { homeRoute } from './src/routes/home.route.js';
 import { mailRoute } from './src/routes/mail.route.js';
-
 import {familyRoute } from './src/routes/family.route.js';
 
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)

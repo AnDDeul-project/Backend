@@ -15,17 +15,17 @@ const s3 = new AWS.S3({
 });
 
 // 확장자 검사 목록
-const allowedExtensions =  ['.mp3', '.wav', '.dct'];
+const allowedExtensions =  ['.mp3', '.wav', '.dct', '.mpeg', '.m4a'];
 
 export const voiceUploader = multer({
     storage: multerS3({
         s3: s3,   // S3 객체
         bucket: process.env.AWS_S3_BUCKET_NAME,   // Bucket 이름
         contentType: multerS3.AUTO_CONTENT_TYPE,  // Content-type, 자동으로 찾도록 설정
-        key: (req, file, callback) => {           // 파일명
+        key: (req, file, callback) => {    // 파일명
             const uploadDirectory = req.query.directory ?? '';  // 디렉토리 path 설정을 위해서
             const extension = path.extname(file.originalname);  // 파일 이름 얻어오기
-            const uuid = createUUID();                          // UUID 생성
+            const uuid = createUUID();              // UUID 생성
             // extension 확인을 위한 코드 (확장자 검사용)
             if(!allowedExtensions.includes(extension)){
                 return callback(new BaseError(status.WRONG_EXTENSION));
