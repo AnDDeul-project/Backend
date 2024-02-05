@@ -7,26 +7,26 @@ import { verify } from '../service/auth.js';
 import { joinCheck, callCheck, updateContent, updateDate, updateComplete, deleteCheck, imgCheck } from "../service/check.service.js";
 
 // 리스트 추가
-export const checkadd = async (req, res) => {
+export const checkadd = async (req, res, next) => {
     try {
         const snsId = await verify(req, res);
         console.log("체크리스트를 추가합니다");
         res.send(response(status.SUCCESS, await joinCheck(snsId, req.body)));
     } catch (err) {
-        return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
+        next(err);
     }
 }
 
 // 리스트 불러오기
-export const checkget = async (req, res) => {
+export const checkget = async (req, res, next) => {
     let snsId;
     try {
         snsId = await verify(req, res);
-        snsId = req.body.mode==false ? snsId[0] : req.body.userid;//0이면 내거 1이면 다른사람거
+        snsId = req.params.mode==false ? snsId[0] : req.params.userid;//0이면 내거 1이면 다른사람거
         console.log(`${snsId}의 ${req.params.date} 체크리스트 목록을 불러옵니다`);
         res.send(response(status.SUCCESS, await callCheck(snsId, req.params.date)));
     } catch (err) {
-        return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
+        next(err);
     }
 }
 

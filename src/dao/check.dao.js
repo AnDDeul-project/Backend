@@ -10,7 +10,7 @@ export const addCheckList = async (data) => {
     try{
         const conn = await pool.getConnection();
 
-        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content, now(), now()]);
+        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content]);
         conn.release();
         return result[0].insertId;
     }catch (err){

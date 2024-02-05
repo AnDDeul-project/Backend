@@ -22,17 +22,17 @@ export const joinCheck = async (snsId, body) => {
         'content' : body.content
     });
 
-    return addCheckResponseDTO(await getCheck(joinListData));
+    return await getCheck(joinListData);
 }
 
 // 체크리스트 불러오기
 export const callCheck = async (userid, date) => {
     const check = await callCheckList(userid, date);
-    sender = [];
+    let sender = [];
     for(let i = 0; i < check.length; i++) {
-        sender.push(find_member(check[i].sender_idx));
+        sender.push(await find_member(check[i].sender_idx));
     }
-    return callCheckResponseDTO(callCheckList, sender);
+    return callCheckResponseDTO(check, sender);
 }
 
 // 할 일 수정
