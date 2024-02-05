@@ -31,6 +31,37 @@ export const getPosts = async (req, res, next) => {
     }
 };
 
+// 게시글 수정
+export const updatePost = async (req, res, next) => {
+    try {
+        const snsId = await verify(req, res); // 로그인한 사용자의 snsId
+        const postIdx = req.params.postIdx; // URL에서 게시글 번호 추출
+        const { content } = req.body; // 수정할 게시글 내용
+        console.log(`Extracted content from request body:`, content);
+
+        await homeService.updatePost(snsId, postIdx, content);
+        res.send(response(status.SUCCESS, "게시글이 수정되었습니다."));
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// 게시글 삭제
+export const deletePost = async (req, res, next) => {
+    try {
+        const snsId = await verify(req, res); // 로그인한 사용자의 snsId
+        const postIdx = req.params.postIdx; // URL에서 게시글 번호(postIdx) 추출
+        console.log("postIdx from controller:", postIdx); // 게시글 번호(postIdx) 로깅
+
+        await homeService.deletePost(snsId, postIdx);
+        res.send(response(status.SUCCESS, "게시글이 삭제되었습니다."));
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 // 가족 구성원 조회
 export const getFamilyMembers = async (req, res, next) => {
     try {

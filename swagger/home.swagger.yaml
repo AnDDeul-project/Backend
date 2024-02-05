@@ -186,3 +186,90 @@ paths:
           description: 인증 실패
         "500":
           description: 서버 에러
+
+  /home/posts/{postIdx}:
+    patch:
+      tags:
+        - Home
+      summary: 게시글 수정
+      description: 사용자가 게시글 내용을 수정합니다. 게시글의 이미지는 수정할 수 없습니다.
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: postIdx
+          required: true
+          type: integer
+          description: 수정할 게시글의 고유 번호
+        - in: body
+          name: body
+          description: 수정할 게시글 내용
+          required: true
+          schema:
+            type: object
+            properties:
+              content:
+                type: string
+                example: 수정한 게시글입니다.
+      responses:
+        200:
+          description: 게시글 수정 성공
+          schema:
+            type: object
+            properties:
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "게시글이 수정되었습니다."
+        400:
+          description: 잘못된 요청입니다. 입력값을 확인해주세요.
+        401:
+          description: 인증 실패. 유효한 토큰을 제공해야 합니다.
+        403:
+          description: 수정 권한 없음. 게시글의 소유자만 수정할 수 있습니다.
+        404:
+          description: 게시글을 찾을 수 없습니다.
+        500:
+          description: 서버 에러가 발생했습니다.
+
+    delete:
+      tags:
+        - Home
+      summary: 게시글 삭제
+      description: 사용자가 게시글을 삭제합니다. 게시글의 소유자만 삭제할 수 있습니다.
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: postIdx
+          required: true
+          type: integer
+          description: 삭제할 게시글의 고유 번호
+      responses:
+        200:
+          description: 게시글 삭제 성공
+          schema:
+            type: object
+            properties:
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "게시글이 삭제되었습니다."
+        401:
+          description: 인증 실패. 유효한 토큰을 제공해야 합니다.
+        403:
+          description: 삭제 권한 없음. 게시글의 소유자만 삭제할 수 있습니다.
+        404:
+          description: 게시글을 찾을 수 없습니다.
+        500:
+          description: 서버 에러가 발생했습니다.

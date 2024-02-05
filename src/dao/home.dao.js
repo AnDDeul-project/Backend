@@ -53,6 +53,29 @@ export const getPostsFromDb = async (user_idx) => {
     }
 };
 
+// 게시글 정보 불러오기
+export const getPostById = async (post_idx) => {
+    const query = "SELECT * FROM post WHERE post_idx = ?";
+    console.log("post_idx:",post_idx);
+    const [rows] = await pool.query(query, [post_idx]);
+    console.log("rows:",rows);
+    return rows[0];
+};
+
+// 게시글 수정
+export const updatePostById = async (post_idx, content) => {
+    const query = "UPDATE post SET content = ? WHERE post_idx = ?";
+    const [result] = await pool.query(query, [content, post_idx]);
+    return result;
+};
+
+
+// 게시글 삭제
+export const deletePostById = async (post_idx) => {
+    const query = "DELETE FROM post WHERE post_idx = ?";
+    const [result] = await pool.query(query, [post_idx]);
+    return result;
+};
 
 // 가족 구성원 및 가족 코드 조회 함수
 export const getFamilyMembers = async (user_snsId) => {
