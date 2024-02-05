@@ -57,7 +57,7 @@ export const familyController = async(req, res) => {
         }
         if(auth===1)
             return res.status(409).json({error: "이미 가족이 존재합니다. 탈퇴를 먼저 진행해주세요!"});
-        return res.status(200).json({status: 200, isSuccess: 200, family_code : auth});
+        return res.status(200).json({status: 200, isSuccess: true, family_code : auth});
     } catch(err) {
         return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
     }
