@@ -17,7 +17,7 @@ homeRoute.post('/board', setBoardDirectory, imageUploader.array('image', 10), cr
 homeRoute.get('/posts', getPosts);
 
 // 게시글 수정
-homeRoute.put('/posts/:postIdx', updatePost);
+homeRoute.patch('/posts/:postIdx', updatePost);
 
 // 게시글 삭제
 homeRoute.delete('/posts/:postIdx', deletePost);

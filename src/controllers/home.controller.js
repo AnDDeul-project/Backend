@@ -37,6 +37,7 @@ export const updatePost = async (req, res, next) => {
         const snsId = await verify(req, res); // 로그인한 사용자의 snsId
         const postIdx = req.params.postIdx; // URL에서 게시글 번호 추출
         const { content } = req.body; // 수정할 게시글 내용
+        console.log(`Extracted content from request body:`, content);
 
         await homeService.updatePost(snsId, postIdx, content);
         res.send(response(status.SUCCESS, "게시글이 수정되었습니다."));
