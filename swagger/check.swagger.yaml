@@ -4,6 +4,8 @@ paths:
       tags:
         - Check
       summary : 체크리스트 추가
+      produces:
+        - application/json
       security:
         - Authorization: []
       parameters:

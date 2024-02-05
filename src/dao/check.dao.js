@@ -14,7 +14,8 @@ export const addCheckList = async (data) => {
         conn.release();
         return result[0].insertId;
     }catch (err){
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
@@ -33,7 +34,8 @@ export const getCheck = async (checkid) => {
         conn.release();
         return check;
     } catch (err) {
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
