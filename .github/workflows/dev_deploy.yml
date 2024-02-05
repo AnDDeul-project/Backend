@@ -49,6 +49,7 @@ jobs:
       - run: |
           npm install
           npm i passport passport-kakao -S
+          npm install moment-timezone
 
 
       # Build

@@ -1,4 +1,169 @@
 paths:
+  /mail/all/{today}:
+    get:
+      tags:
+        - postbox
+      summary: 전체 게시물 받아오기
+      security:
+        - Authorization: []
+      parameters:
+      - name: today
+        in: path
+        required: true
+        description: 선택된 날짜
+        type: string
+        example: 2024-02-06
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              post:
+                type: json
+                example: [
+                    {
+                      "postbox_idx": 1,
+                      "sender_idx": "한승민",
+                      "voice": 0,
+                      "is_read": 0
+                    },
+                    {
+                      "postbox_idx": 2,
+                      "sender_idx": "한승민",
+                      "voice": 0,
+                      "is_read": 0
+                    }
+                  ]
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+             
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
+  /mail/one/{idx}:
+    get:
+      tags:
+        - postbox
+      summary: 전체 게시물 받아오기
+      security:
+        - Authorization: []
+      parameters:
+      - name: idx
+        in: path
+        required: true
+        type: integer
+        example: 1
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              post:
+                type: json
+                example: [
+                    {
+                      "postbox_idx": 1,
+                      "sender_idx": "한승민",
+                      "receiver_idx": "한승민",
+                      "content": "fdsfd",
+                      "voice": 0,
+                      "send_date": "2024-02-05T15:00:00.000Z",
+                      "is_read": 0
+                    }
+                  ]
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+             
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
+      
   /mail/voice:
     post:
       tags:
@@ -32,7 +197,7 @@ paths:
                 example: true
               message:
                 type: string
-                example: 1ee0cbce41a4c539
+                example: 성공하셨습니다:)
         '500':
           description: 서버 에러
           schema:
@@ -82,8 +247,6 @@ paths:
       tags:
         - postbox
       summary: 텍스트 편지 업로드
-      consumes:
-        - multipart/form-data
       security:
         - Authorization: []
       parameters:
@@ -93,10 +256,11 @@ paths:
           items:
             type: integer
           example: [3303580750, 3304133093]
-        - name: text
-          in: fromData
-          type: string
+        - name: content
+          in: formData
           required: true
+          type: string
+
       responses:
         '200':
           schema:
@@ -110,7 +274,7 @@ paths:
                 example: true
               message:
                 type: string
-                example: 1ee0cbce41a4c539
+                example: 성공하셨습니다:)
         '500':
           description: 서버 에러
           schema:
