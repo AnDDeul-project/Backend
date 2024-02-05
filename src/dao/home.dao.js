@@ -119,3 +119,57 @@ export const getFamilyMembers = async (user_snsId) => {
 
     return result;
 };
+
+export const addEmojiToPost = async (postIdx, user_idx, emojiType) => {
+    // 이모지 데이터를 가져옵니다.
+    const getEmojiQuery = `SELECT * FROM emoji WHERE post_idx = ?`;
+    const [[emojiData]] = await pool.query(getEmojiQuery, [postIdx]);
+
+    if (!emojiData) {
+        // 이모지 데이터가 없으면 새로운 레코드를 생성합니다.
+        const createEmojiQuery = `INSERT INTO emoji (post_idx, ${emojiType}) VALUES (?, JSON_ARRAY(?))`;
+        await pool.query(createEmojiQuery, [postIdx, user_idx]);
+    } else {
+        // 기존 이모지 데이터에서 사용자 ID를 삭제합니다.
+        const emojiTypes = ['happy_emj', 'laugh_emj', 'sad_emj'];
+        for (let type of emojiTypes) {
+            if (type !== emojiType && emojiData[type]) {
+                let emojiList = JSON.parse(emojiData[type] || '[]');
+                if (Array.isArray(emojiList) && emojiList.includes(user_idx)) {
+                    emojiList = emojiList.filter(id => id !== user_idx);
+                    const updateOldEmojiQuery = `UPDATE emoji SET ${type} = ? WHERE post_idx = ?`;
+                    await pool.query(updateOldEmojiQuery, [JSON.stringify(emojiList), postIdx]);
+                }
+            }
+        }
+
+        // 새로운 이모지 유형에 사용자 ID를 추가합니다.
+        let newEmojiList = JSON.parse(emojiData[emojiType] || '[]');
+        if (!newEmojiList.includes(user_idx)) {
+            newEmojiList.push(user_idx);
+            const updateNewEmojiQuery = `UPDATE emoji SET ${emojiType} = ? WHERE post_idx = ?`;
+            await pool.query(updateNewEmojiQuery, [JSON.stringify(newEmojiList), postIdx]);
+        }
+    }
+};
+
+// 유저 개인 프로필 화면 조회
+export const getUserProfileData = async (userId) => {
+    const userProfileQuery = `SELECT u.nickname, u.image, COUNT(p.post_idx) AS postCount,
+                              (SELECT picture FROM post WHERE user_idx = u.snsId ORDER BY create_at LIMIT 1) AS firstPostImage
+                              FROM user u
+                              LEFT JOIN post p ON u.snsId = p.user_idx
+                              WHERE u.snsId = ?
+                              GROUP BY u.snsId`;
+
+    const [rows] = await pool.query(userProfileQuery, [userId]);
+
+    if (rows.length > 0) {
+        const userProfile = rows[0];
+        // JSON.parse를 사용하여 picture 필드의 JSON 문자열을 객체로 변환
+        userProfile.firstPostImage = userProfile.firstPostImage ? JSON.parse(userProfile.firstPostImage)[0] : null;
+        return userProfile;
+    } else {
+        throw new Error('User not found');
+    }
+};

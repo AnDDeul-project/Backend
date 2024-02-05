@@ -1,5 +1,5 @@
 import express from "express";
-import { createPost, getPosts, updatePost, deletePost, getFamilyMembers } from '../controllers/home.controller.js';
+import { createPost, getPosts, updatePost, deletePost, getFamilyMembers, addEmojiToPost, getUserProfile } from '../controllers/home.controller.js';
 import { imageUploader } from "../middleware/image.uploader.js";
 
 export const homeRoute = express.Router();
@@ -24,3 +24,9 @@ homeRoute.delete('/posts/:postIdx', deletePost);
 
 // 가족 구성원 조회
 homeRoute.get('/family/members', getFamilyMembers);
+
+// 게시글에 감정 표현 추가
+homeRoute.post('/posts/:postIdx/emoji', addEmojiToPost);
+
+// 유저 프로필 페이지 조회
+homeRoute.get('/user/:userId/profile', getUserProfile);

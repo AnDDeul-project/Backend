@@ -72,3 +72,27 @@ export const getFamilyMembers = async (req, res, next) => {
         next(error);
     }
 };
+
+// 게시글 이모지 생성
+export const addEmojiToPost = async (req, res, next) => {
+    try {
+        const snsId = await verify(req, res);
+        const postIdx = req.params.postIdx;
+        const { emojiType } = req.body; // emojiType: 'happy_emj', 'laugh_emj', 'sad_emj'
+        await homeService.addEmoji(postIdx, snsId, emojiType);
+        res.send(response(status.SUCCESS, "이모지 생성이 완료되었습니다."));
+    } catch (error) {
+        next(error);
+    }
+};
+
+// 유저 프로필 조회
+export const getUserProfile = async (req, res, next) => {
+    try {
+        const snsId = await verify(req, res);
+        const userProfile = await homeService.getUserProfile(snsId);
+        res.send(response(status.SUCCESS, userProfile));
+    } catch (error) {
+        next(error);
+    }
+};
