@@ -31,42 +31,39 @@ export const checkget = async (req, res, next) => {
 }
 
 // 할 일 수정
-export const checkcontent = async (req, res) => {
+export const checkcontent = async (req, res, next) => {
     let snsId;
     try {
         snsId = await verify(req, res);
+        console.log(`${req.params.checkid} 체크리스트가 수정되었습니다.`);
+        res.send(response(status.SUCCESS, await updateContent(req.params.checkid, req.body)));
     } catch (err) {
-        return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
+        next(err);
     }
-    console.log(`${req.params.checkid} 체크리스트가 수정되었습니다.`);
-
-    res.send(response(status.SUCCESS, await updateContent(req.params.checkid, req.body)));
 }
 
 // 날짜 수정
-export const checkdate = async (req, res) => {
+export const checkdate = async (req, res, next) => {
     let snsId;
     try {
         snsId = await verify(req, res);
+        console.log(`${req.params.checkid} 체크리스트의 날짜가 변경되었습니다.`);
+        res.send(response(status.SUCCESS, await updateDate(req.params.checkid, req.params.date)));
     } catch (err) {
-        return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
+        next(err);
     }
-    console.log(`${req.params.checkid} 체크리스트의 날짜가 변경되었습니다.`);
-
-    res.send(response(status.SUCCESS, await updateDate(req.params.checkid, req.params.date)));
 }
 
 // 할 일 완료 혹은 완료 취소
-export const checkcomplete = async (req, res) => {
+export const checkcomplete = async (req, res, next) => {
     let snsId;
     try {
         snsId = await verify(req, res);
+        console.log(`${req.params.checkid} 체크리스트가 완료되었습니다.`);
+        res.send(response(status.SUCCESS, await updateComplete(req.params.checkid)));
     } catch (err) {
-        return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
+        next(err);
     }
-    console.log(`${req.params.checkid} 체크리스트가 완료되었습니다.`);
-
-    res.send(response(status.SUCCESS, await updateComplete(req.params.checkid)));
 }
 
 // 할 일 삭제
@@ -74,23 +71,21 @@ export const checkdelete = async (req, res, next) => {
     let snsId;
     try {
         snsId = await verify(req, res);
+        console.log(`${req.params.checkid} 체크리스트를 삭제합니다`);
+        res.send(response(status.SUCCESS, await deleteCheck(req.params.checkid)));
     } catch (err) {
-        return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
+        next(err);
     }
-    console.log(`${req.params.checkid} 체크리스트를 삭제합니다`);
-
-    res.send(response(status.SUCCESS, await deleteCheck(req.params.checkid)));
 }
 
 // 사진 업로드
-export const checkimg = async (req, res) => {
+export const checkimg = async (req, res, next) => {
     let snsId;
     try {
         snsId = await verify(req, res);
+        console.log(`${req.body.checkid} 사진 업로드`);
+        res.send(response(status.SUCCESS, await imgCheck(req.body.checkid, req.file.location)));
     } catch (err) {
-        return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
+        next(err);
     }
-    console.log(`${req.params.checkid} 사진 업로드`);
-
-    res.send(response(status.SUCCESS, await imgCheck(req.params.checkid, req.files.location)));
 }

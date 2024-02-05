@@ -36,6 +36,6 @@ export const imageUploader = multer({
         },
         acl: 'public-read-write'  // 파일 액세스 권한
     }),
-    // 이미지 용량 제한 (5MB)
+    // 이미지 용량 제한 (10MB)
     limits: { fileSize: 10 * 1024 * 1024},
 });
