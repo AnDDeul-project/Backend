@@ -16,7 +16,7 @@ export const joinCheck = async (snsId, body) => {
     const formattedDate = `${year}-${month}-${day}`; // "YYYY-MM-DD" 형식으로 날짜 문자열 생성
 
     const joinListData = await addCheckList({
-        'sender_idx' : snsId,
+        'sender_idx' : snsId[0],
         'receiver_idx' : body.receiver_idx,
         'due_date' : formattedDate,
         'content' : body.content
