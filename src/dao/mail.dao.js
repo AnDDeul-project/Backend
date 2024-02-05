@@ -11,6 +11,7 @@ export const getOne = async(idx) => {
         result[0][0].sender_idx = sender[0][0].nickname;
         const reciever = await pool.query("SELECT nickname FROM user WHERE snsId = ?", result[0][0].receiver_idx)
         result[0][0].receiver_idx = reciever[0][0].nickname;
+        await pool.query("UPDATE postbox SET is_read = 1 WHERE postbox_idx = ?", idx);
         return result[0];
     }catch(e){
         throw new BaseError(status.PARAMETER_IS_WRONG, e);
