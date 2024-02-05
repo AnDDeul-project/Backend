@@ -59,7 +59,7 @@ export const family_info = async(family_code) => {
     try{
         const conn = await pool.getConnection();
         const family_name = await pool.query("SELECT fam_name FROM userfam WHERE family_code = ?", family_code);
-        const imageResult = await pool.query("SELECT image FROM user WHERE family_code = ?", family_code);
+        const imageResult = await pool.query("SELECT image FROM user WHERE family_code = ? AND auth=1", family_code);
         const countResult = await pool.query("SELECT COUNT(*) FROM user WHERE family_code = ?", family_code);
 
         console.log(imageResult[0]);
