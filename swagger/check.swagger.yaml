@@ -412,3 +412,69 @@ paths:
                 type: boolean
                 example: false
 
+  /check/img:
+    patch:
+      tags:
+       - Check
+      summary: 체크리스트 인증샷 추가
+      consumes:
+        - multipart/form-data
+      security:
+        - Authorization: []
+      parameters:
+        - in: formData
+          name: image
+          type: file
+          required: true
+          description: 체크리스트 인증샷으로 첨부할 이미지입니다!
+        - in: formData
+          name: checkid
+          type: string
+          required: true
+          description: 인증샷 첨부할 체크리스트 인덱스 번호입니다!
+      responses:
+        '200':
+          description: 체크리스트 삭제 성공!
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              result:
+                type: object
+                example: {
+                  "checkid": 1,
+                  "sender": "123",
+                  "receiver": "456",
+                  "picture": "사진 url",
+                  "modify_at" : "2000-12-03T15:00:00.000Z"
+                }
+                
+        '400':
+          description: 잘못된 요청
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              isSuccess:
+                type: boolean
+                example: false
+
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+        

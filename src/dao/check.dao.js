@@ -10,7 +10,7 @@ export const addCheckList = async (data) => {
     try{
         const conn = await pool.getConnection();
 
-        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content, now(), now()]);
+        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content]);
         conn.release();
         return result[0].insertId;
     }catch (err){
@@ -59,8 +59,9 @@ export const callCheckList = async (userid, date) => {
         }));
 
         return checklist;
-    } catch(err) {
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
@@ -68,10 +69,11 @@ export const callCheckList = async (userid, date) => {
 export const contentCheckList = async (checkid, content) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(contentCheckSQL, [content, now(), checkid]);
+        const [result] = await pool.query(contentCheckSQL, [content, checkid]);
         conn.release();
-    } catch(err) {
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
@@ -79,10 +81,11 @@ export const contentCheckList = async (checkid, content) => {
 export const dateCheckList = async (checkid, date) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(dateCheckSQL, [date, now(), checkid]);
+        const [result] = await pool.query(dateCheckSQL, [date, checkid]);
         conn.release();
-    } catch(err) {
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
@@ -90,10 +93,11 @@ export const dateCheckList = async (checkid, date) => {
 export const finishCheckList = async (checkid) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(finishCheckSQL, now(), checkid);
+        const [result] = await pool.query(finishCheckSQL, checkid);
         conn.release();
-    } catch(err) {
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
@@ -104,17 +108,19 @@ export const deleteCheckList = async (checkid) => {
         const [result] = await pool.query(deleteCheckSQL, checkid);
         conn.release();
         return result.affectedRows;
-    } catch(err) {
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
 export const imageCheckList = async(checkid, location) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(imgCheckSQL, [location, now(), checkid]);
+        const [result] = await pool.query(imgCheckSQL, [location, checkid]);
         conn.release();
-    } catch(err) {
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }

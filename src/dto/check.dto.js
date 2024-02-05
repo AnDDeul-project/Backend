@@ -6,6 +6,15 @@ export const addCheckResponseDTO = (user) => {
 }
 
 export const callCheckResponseDTO = (checklist, sender) => {//빈 배열이면 에러 던질까
+    if (!Array.isArray(checklist)) {
+        return {
+            "checkid": checklist.check_idx,
+            "sender": sender,
+            "complete": checklist.complete,
+            "picture": checklist.picture===null ? null : checklist.picture,
+            "content": checklist.content
+        }
+    }
     const sender_id = [];
     for(let i = 0; i < sender.length; i++) {
         sender_id.push(sender[i]);
@@ -30,3 +39,7 @@ export const completeCheckResponseDTO = (user) => {
 }
 
 export const deleteCheckResponseDTO = (rowcount) => { return {"result": `${rowcount}개의 체크리스트가 삭제되었습니다`};}
+
+export const imgCheckResponseDTO = (user) => {
+    return {"checkid": user[0].check_idx, "sender": user[0].sender_idx, "receiver": user[0].receiver_idx, "picture": user[0].picture, "modify_at": user[0].modify_at};
+}
