@@ -28,9 +28,7 @@ export const checkget = async (req, res) => {
         return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
     }
     snsId = req.body.mode==false ? snsId : req.body.userid;//0이면 내거 1이면 다른사람거
-
     console.log(`${snsId}의 ${req.params.date} 체크리스트 목록을 불러옵니다`);
-
     res.send(response(status.SUCCESS, await callCheck(snsId, req.params.date)));
 }
 
