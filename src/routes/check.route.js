@@ -7,7 +7,7 @@ import { imageUploader } from '../middleware/image.uploader.js';
 export const checkRoute = express.Router();
 
 const setCheckDirectory = (req, res, next) => {
-    req.body.directory = 'check';
+    req.query.directory = 'check';
     next();
 };
 
