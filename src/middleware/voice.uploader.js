@@ -34,6 +34,6 @@ export const voiceUploader = multer({
         },
         acl: 'public-read-write'  // 파일 액세스 권한
     }),
-    // 음성 용량 제한 (50MB)
-    limits: { fileSize: 50 * 1024 * 1024},
+    // 음성 용량 제한 (100MB)
+    limits: { fileSize: 100 * 1024 * 1024},
 });

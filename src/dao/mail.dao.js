@@ -4,14 +4,21 @@ import { status } from "../config/response.status.js";
 
 export const sendMail = async(snsId, req) => {
     try{
-        const pictureUrls = req.file.location;
         const conn = await pool.getConnection();
         const memberArray = req.body.member.split(',').map(Number);
         for (const memberId of memberArray) {
             console.log(memberId);
-            const content = "편지가 도착했어요!! 바로 확인해볼까요??";
-            await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice) VALUES (?, ?, ?, ?)", [snsId[0], memberId, pictureUrls, '1']);
-            await pool.query("INSERT INTO alram(user_idx, checked, content) VALUES (?, ?, ?)", [memberId, 0, content]);
+            let content;
+            if(req.file && req.file.location) {
+                content = req.file.location;
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice) VALUES (?, ?, ?, ?)", [snsId[0], memberId, content, '1']);
+            } else {
+                content = req.body.text;
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice) VALUES (?, ?, ?, ?)", [snsId[0], memberId, content, '0']);
+            }
+            
+            const alarm_content = "편지가 도착했어요!! 바로 확인해볼까요??";
+            await pool.query("INSERT INTO alram(user_idx, checked, content) VALUES (?, ?, ?)", [memberId, 0, alarm_content]);
         }
         conn.release();
     }catch(e){
