@@ -88,7 +88,7 @@ paths:
         - Authorization: []
       parameters:
         - name: member
-          in: fromData
+          in: formData
           type: array
           items:
             type: integer

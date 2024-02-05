@@ -7,14 +7,14 @@ export const sendMail = async(snsId, req) => {
         const conn = await pool.getConnection();
         const memberArray = req.body.member.split(',').map(Number);
         for (const memberId of memberArray) {
-            console.log(memberId);
+            console.log("memberId: " + memberId);
             let content;
             if(req.file && req.file.location) {
                 content = req.file.location;
-                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice) VALUES (?, ?, ?, ?)", [snsId[0], memberId, content, '1']);
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date) VALUES (?, ?, ?, ?, ?)", [snsId[0], memberId, content, '1', now()]);
             } else {
                 content = req.body.text;
-                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice) VALUES (?, ?, ?, ?)", [snsId[0], memberId, content, '0']);
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date) VALUES (?, ?, ?, ?, ?)", [snsId[0], memberId, content, '0', now()]);
             }
             
             const alarm_content = "편지가 도착했어요!! 바로 확인해볼까요??";
