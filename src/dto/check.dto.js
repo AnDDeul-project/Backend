@@ -39,3 +39,7 @@ export const completeCheckResponseDTO = (user) => {
 }
 
 export const deleteCheckResponseDTO = (rowcount) => { return {"result": `${rowcount}개의 체크리스트가 삭제되었습니다`};}
+
+export const imgCheckResponseDTO = (user) => {
+    return {"checkid": user[0].check_idx, "sender": user[0].sender_idx, "receiver": user[0].receiver_idx, "picture": user[0].picture, "modify_at": user[0].modify_at};
+}

@@ -3,7 +3,7 @@
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 
-import { addCheckResponseDTO, callCheckResponseDTO, contentCheckResponseDTO, dateCheckResponseDTO, completeCheckResponseDTO, deleteCheckResponseDTO } from "../dto/check.dto.js"
+import { addCheckResponseDTO, callCheckResponseDTO, contentCheckResponseDTO, dateCheckResponseDTO, completeCheckResponseDTO, deleteCheckResponseDTO, imgCheckResponseDTO } from "../dto/check.dto.js"
 import { addCheckList, getCheck, callCheckList, contentCheckList, dateCheckList, finishCheckList, deleteCheckList, imageCheckList } from "../dao/check.dao.js";
 import { find_member } from "../dao/family.dao.js";
 
