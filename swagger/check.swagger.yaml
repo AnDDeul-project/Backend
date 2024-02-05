@@ -447,7 +447,11 @@ paths:
               result:
                 type: object
                 example: {
-                  "result": "1개의 체크리스트가 삭제되었습니다"
+                  "checkid": 1,
+                  "sender": "123",
+                  "receiver": "456",
+                  "picture": "사진 url",
+                  "modify_at" : "2000-12-03T15:00:00.000Z"
                 }
                 
         '400':
