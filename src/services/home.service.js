@@ -1,4 +1,4 @@
-import { createPostInDb, getPostsFromDb, getFamilyMembers, getPostById, updatePostById, deletePostById } from '../dao/home.dao.js';
+import { createPostInDb, getPostsFromDb, getFamilyMembers, getPostById, updatePostById, deletePostById, addEmojiToPost, getUserProfileData } from '../dao/home.dao.js';
 
 export const homeService = {
     // 게시글 작성
@@ -23,7 +23,7 @@ export const homeService = {
         }
 
         // 요청한 사용자와 게시글의 소유자가 같은지 확인
-        if (post.user_idx !== snsId[0]) {
+        if (post.user_idx !== snsId) {
             console.log(`Logged in user: ${snsId}, Post owner: ${post.user_idx}`);
             throw new Error('You do not have permission to edit this post');
         }
@@ -60,5 +60,15 @@ export const homeService = {
     // 가족 구성원 조회
     getFamilyMembers: async (user_idx) => { 
         return await getFamilyMembers(user_idx);
+    },
+
+    // 게시글 이모지 추가
+    addEmoji: async (postIdx, snsId, emojiType) => {
+        return await addEmojiToPost(postIdx, snsId, emojiType);
+    },
+
+    // 유저 프로필 조회
+    getUserProfile: async (userId) => {
+        return await getUserProfileData(userId);
     }
 };
