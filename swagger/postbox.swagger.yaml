@@ -87,7 +87,7 @@ paths:
     get:
       tags:
         - postbox
-      summary: 전체 게시물 받아오기
+      summary: 편지 하나 받아오기
       security:
         - Authorization: []
       parameters:
