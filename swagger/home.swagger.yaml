@@ -325,10 +325,17 @@ paths:
                   type: integer
                   example: 4
                   description: 사용자가 작성한 총 게시글 개수
-                firstPostImage:
-                  type: string
-                  example: "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/4217b4febe753a5dbc877a837b51bfd0_%EB%8B%A4%EC%9D%B4%EB%85%B8%ED%83%B1.png"
-                  description: 사용자가 작성한 모든 게시글 중 첫 번째 게시글의 이미지 URL
+                firstPostImages:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    [
+                      "https://example.com/image1.jpg",
+                      "https://example.com/image2.jpg",
+                    ]
+                  description: 사용자가 작성한 모든 게시글 중 각 게시글의 첫 번째 이미지 URL들
+
       "401":
         description: 인증 실패. 유효한 토큰을 제공해야 합니다.
       "404":
