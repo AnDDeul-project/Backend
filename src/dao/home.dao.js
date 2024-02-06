@@ -152,24 +152,33 @@ export const addEmojiToPost = async (postIdx, user_idx, emojiType) => {
         }
     }
 };
-
-// 유저 개인 프로필 화면 조회
-export const getUserProfileData = async (userId) => {
-    const userProfileQuery = `SELECT u.nickname, u.image, COUNT(p.post_idx) AS postCount,
-                              (SELECT picture FROM post WHERE user_idx = u.snsId ORDER BY create_at LIMIT 1) AS firstPostImage
-                              FROM user u
-                              LEFT JOIN post p ON u.snsId = p.user_idx
-                              WHERE u.snsId = ?
-                              GROUP BY u.snsId`;
-
-    const [rows] = await pool.query(userProfileQuery, [userId]);
-
-    if (rows.length > 0) {
-        const userProfile = rows[0];
-        // JSON.parse를 사용하여 picture 필드의 JSON 문자열을 객체로 변환
-        userProfile.firstPostImage = userProfile.firstPostImage ? JSON.parse(userProfile.firstPostImage)[0] : null;
-        return userProfile;
-    } else {
-        throw new Error('User not found');
+// 유저 프로필 데이터 조회 함수
+export const getUserProfileData = async (snsId) => {
+    const query = `
+        SELECT 
+            u.nickname, 
+            u.image, 
+            COUNT(p.post_idx) AS postCount,
+            JSON_ARRAYAGG(
+                IF(p.picture != '[]', JSON_UNQUOTE(JSON_EXTRACT(p.picture, '$[0]')), NULL)
+            ) AS firstPostImages
+        FROM 
+            user u
+            LEFT JOIN post p ON u.snsId = p.user_idx
+        WHERE 
+            u.snsId = ?
+        GROUP BY 
+            u.snsId
+        ORDER BY 
+            p.create_at DESC
+    `;
+    const [rows] = await pool.query(query, [snsId]);
+    if (rows.length) {
+        // 반환된 결과에서 firstPostImages 배열을 직접 사용
+        return {
+            ...rows[0],
+            firstPostImages: rows[0].firstPostImages
+        };
     }
+    return null;
 };

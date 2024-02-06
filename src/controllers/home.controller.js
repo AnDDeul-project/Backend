@@ -89,7 +89,7 @@ export const addEmojiToPost = async (req, res, next) => {
 // 유저 프로필 조회
 export const getUserProfile = async (req, res, next) => {
     try {
-        const snsId = await verify(req, res);
+        const snsId = req.params.userId;
         const userProfile = await homeService.getUserProfile(snsId);
         res.send(response(status.SUCCESS, userProfile));
     } catch (error) {
