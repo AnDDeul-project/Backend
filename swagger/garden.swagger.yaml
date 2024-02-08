@@ -1,0 +1,297 @@
+paths:
+  /garden/flower:
+    get:
+      tags:
+        - flower
+      summary: 현재 키우고 있는 꽃 받아오기
+      security:
+        - Authorization: []
+
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              flower:
+                type: json
+                example: {
+                  "idx": 1,
+                  "point": 13,
+                  "name": "튤립",
+                  "img": "사진 url"
+                }
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
+
+
+  /garden/flower/givelove:
+    put:
+      tags:
+        - flower
+      summary: 포인트 차감해서 꽃에 사랑 주기
+      security:
+        - Authorization: []
+
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              img:
+                type: json
+                example: {
+                  "changed_img": "사진 url"
+                }
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
+
+
+  /garden/flower/mypoint:
+    get:
+      tags:
+        - flower
+      summary: 내 포인트 불러오기
+      security:
+        - Authorization: []
+
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              point:
+                type: json
+                example: {
+                  "point": 13
+                }
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
+
+
+  /garden/flower/{flowerId}:
+    get:
+      tags:
+        - flower
+      summary: 정원에 있는 꽃 목록 불러오기
+      security:
+        - Authorization: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: 현재 키우고 있는 꽃 번호입니다
+        type: integer
+        example: 1
+
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+              result:
+                type: object
+                properties:
+                  family_name:
+                    type: string
+                    example: "행복한 우리 가족"
+                  flowers:
+                    type: array
+                    example: [
+                      {
+                        idx: '1',
+                        img_5: '사진 url'
+                      },
+                      {
+                        idx: '2',
+                        img_5: '사진 url'
+                      },
+                    ]
+
+              
+        '500':
+          description: 서버 에러
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+             
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
