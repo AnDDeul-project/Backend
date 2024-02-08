@@ -94,6 +94,20 @@ paths:
                 example: {
                   "changed_img": "사진 url"
                 }
+        '402':
+          description: 포인트 부족
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 402
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 포인트가 부족합니다.
         '500':
           description: 서버 에러
           schema:

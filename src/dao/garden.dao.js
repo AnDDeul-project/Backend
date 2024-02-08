@@ -42,14 +42,18 @@ export const getOne = async(snsid) => {
 export const cal_point = async(snsid) => {
     try {
         const conn = await pool.getConnection();
-        await pool.query("UPDATE user SET point = point - 1 WHERE snsId = ?", snsid);
+        const point = await pool.query("SELECT point FROM user WHERE snsId = ?", snsid);
+        console.log(point);
+        if(point[0][0].point < 2)
+            return -1;
+        await pool.query("UPDATE user SET point = point - 2 WHERE snsId = ?", snsid);
         const result = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsid);
-        await pool.query("UPDATE userfam SET f_point = f_point + 1 WHERE family_code = ?", result[0][0].family_code);
+        await pool.query("UPDATE userfam SET f_point = f_point + 2 WHERE family_code = ?", result[0][0].family_code);
         //포인트 다 채우면 꽃 바꾸고 포인트 0으로
         const result2 = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", result[0][0].family_code);
         const result3 = await pool.query("SELECT required FROM flower WHERE idx = ?", result2[0][0].f_num);
         if(result2[0].f_point >= result3[0].required) {
-            await pool.query("UPDATE userfam SET f_num = f_num + 1, f_point = 0 WHERE family_code = ?", result[0][0].family_code);
+            await pool.query("UPDATE userfam SET f_num = f_num + 2, f_point = 0 WHERE family_code = ?", result[0][0].family_code);
         }
         //이미지 불러와 이거 반환할거야
         let img;

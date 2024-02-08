@@ -7,6 +7,8 @@ export const flower = async(snsid) => {
 
 export const usePoint = async(snsid) => {
     const result = await cal_point(snsid);
+    if(result == -1)
+        return -1;
     return result;
 }
 
