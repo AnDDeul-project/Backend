@@ -41,14 +41,15 @@ export const sendMail = async(snsId, req) => {
         for (const memberId of memberArray) {
             console.log("memberId: " + memberId);
             let content;
+            const question = req.body.question;
             const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD');
             if(req.file && req.file.location) {
                 content = req.file.location;
-                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read) VALUES (?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '1', currentDate, '0']);
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question) VALUES (?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '1', currentDate, '0', question]);
             } else {
                 content = req.body.content;
                 console.log(content);
-                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read) VALUES (?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '0', currentDate, '0']);
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question) VALUES (?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '0', currentDate, '0', question]);
             }
             const now = await pool.query("SELECT point FROM user WHERE snsId = ?", snsId[0]);
             await pool.query("UPDATE user SET point = ? WHERE snsId = ?", [now[0][0].point+1, snsId[0]]);
