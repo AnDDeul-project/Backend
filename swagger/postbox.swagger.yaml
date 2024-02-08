@@ -31,13 +31,15 @@ paths:
                       "postbox_idx": 1,
                       "sender_idx": "한승민",
                       "voice": 0,
-                      "is_read": 0
+                      "is_read": 0,
+                      "question": "오늘의 기분은 어떠신가요?"
                     },
                     {
                       "postbox_idx": 2,
                       "sender_idx": "한승민",
                       "voice": 0,
-                      "is_read": 0
+                      "is_read": 0,
+                      "question": "오늘의 기분은 어떠신가요?"
                     }
                   ]
         '500':
@@ -117,7 +119,8 @@ paths:
                       "content": "fdsfd",
                       "voice": 0,
                       "send_date": "2024-02-05T15:00:00.000Z",
-                      "is_read": 0
+                      "is_read": 0,
+                      "question": "오늘의 기분은 어떠신가요?"
                     }
                   ]
         '500':
@@ -180,6 +183,10 @@ paths:
           items:
             type: integer
           example: [3303580750, 3304133093]
+        - name: question
+          in: formData
+          type: string
+          required: true
         - name: record
           in: formData
           type: file
@@ -256,6 +263,10 @@ paths:
           items:
             type: integer
           example: [3303580750, 3304133093]
+        - name: question
+          in: formData
+          type: string
+          required: true
         - name: content
           in: formData
           required: true
