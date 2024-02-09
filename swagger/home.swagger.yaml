@@ -377,7 +377,7 @@ paths:
         - Home
       summary: 사용자 프로필 조회
       description: >
-        해당 사용자의 이름, 프로필 사진, 작성한 총 게시글 개수, 작성한 모든 게시글의 첫 번째 이미지를 조회합니다.
+        해당 사용자의 이름, 프로필 사진, 작성한 총 게시글 개수, 작성한 모든 게시글의 첫 번째 이미지, 게시글 번호를 조회합니다.
       parameters:
         - in: path
           name: userId
@@ -390,7 +390,7 @@ paths:
         - Authorization: []
       responses:
         200:
-          description: 사용자 프로필 조회 성공
+          description: 유저 프로필 조회에 성공했습니다.
           schema:
             type: object
             properties:
@@ -409,22 +409,34 @@ paths:
                   nickname:
                     type: string
                     example: "김정훈"
+                    description: 유저의 닉네임
                   image:
                     type: string
                     example: "http://k.kakaocdn.net/dn/xxGa9/btsB5AD9Zx0/GezVLYpUOwIdOpSlU7dYo1/img_640x640.jpg"
+                    description: 유저의 프로필 이미지 URL
                   postCount:
                     type: integer
-                    example: 14
+                    example: 5
+                    description: 유저가 작성한 게시글의 총 개수
                   firstPostImages:
                     type: array
                     items:
                       type: string
                     example:
                       [
-                        null,
-                        "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/43aee332dcd9703e9350d370597d88d1_IMG_20240206_041706.jpg",
-                        "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/4b3399b0061a86d3bb8d09c101640e6a_IMG_20240206_041706.jpg",
+                        "https://example.com/photo1.jpg",
+                        "https://example.com/photo2.jpg",
+                        "https://example.com/photo3.jpg",
+                        "https://example.com/photo4.jpg",
+                        "https://example.com/photo5.jpg",
                       ]
+                    description: 유저가 작성한 게시글 중 첫 번째 이미지의 URL 목록
+                  postIdx:
+                    type: array
+                    items:
+                      type: integer
+                    example: [55, 42, 41, 35, 26]
+                    description: 유저가 작성한 게시글의 고유 번호 목록
         400:
           description: 잘못된 요청입니다. 입력값을 확인해주세요.
         401:
