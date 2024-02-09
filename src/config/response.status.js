@@ -7,7 +7,8 @@ export const status = {
     TOKEN_IS_EXPIRED: {status: StatusCodes.TOKEN_IS_EXPIRED, "isSuccess":false, "code":419, "message": "토큰이 만료되었습니다."},
     TOKEN_IS_INVALID: {status: StatusCodes.TOKEN_IS_INVALID, "isSuccess":false, "code":401, "message": "토큰이 유효하지 않습니다."},
     // home error
-    
+    IMAGE_NOT_EXIST: {status: StatusCodes.BAD_REQUEST, "isSuccess":false, "code":"HOME4001", "message": "사진이 첨부되지 않았습니다. 사진을 첨부해 주세요."},
+    CONTENT_NOT_EXIST: {status: StatusCodes.BAD_REQUEST, "isSuccess":false, "code":"HOME4002", "message": "게시글 내용이 없습니다. 내용을 입력해 주세요."},
     // error
     WRONG_EXTENSION: {status: StatusCodes.WRONG_EXTENSION, "isSuccess": false, "code": "COMMON1000", "message":"잘못된 확장입니다."},
     DB_ERROR: {status: StatusCodes.DB_ERROR, "isSuccess": false, "code": "COMMON1001", "message": "DB오류입니다."},

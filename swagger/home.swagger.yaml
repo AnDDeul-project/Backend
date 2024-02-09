@@ -9,8 +9,6 @@ paths:
         - application/json
       security:
         - Authorization: []
-      # consumes:
-      #   - multipart/form-data
       parameters:
         - in: formData
           name: content
@@ -30,16 +28,48 @@ paths:
             properties:
               isSuccess:
                 type: boolean
+                example: true
               code:
                 type: integer
                 example: 2000
               message:
                 type: string
-                example: success!
+                example: "success!"
         400:
-          description: 잘못된 요청입니다. 입력값을 확인해주세요.
+          description: |
+            잘못된 요청입니다. 입력값을 확인해주세요. 다음과 같은 오류가 발생할 수 있습니다:
+            - HOME4001: "사진이 첨부되지 않았습니다. 사진을 첨부해 주세요."
+            - HOME4002: "게시글 내용이 없습니다. 내용을 입력해 주세요."
+          schema:
+            type: object
+            properties:
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: string
+                example: "HOME4001"
+              message:
+                type: string
+                example: "사진이 첨부되지 않았습니다. 사진을 첨부해 주세요."
+
+          # description: 사진이 첨부되지 않았습니다. 사진을 첨부해 주세요.
+          # schema:
+          #   type: object
+          #   properties:
+          #     isSuccess:
+          #       type: boolean
+          #       example: false
+          #     code:
+          #       type: integer
+          #       example: HOME4001
+          #     message:
+          #       type: string
+          #       example: "사진이 첨부되지 않았습니다. 사진을 첨부해 주세요."
+
         500:
           description: 서버 에러가 발생했습니다.
+
   /home/posts:
     get:
       tags:
