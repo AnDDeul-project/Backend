@@ -54,6 +54,20 @@ paths:
               error:
                 type: string
                 example: 유효하지 않은 토큰입니다.
+        '405':
+          description: 가족장 승인 미완료
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 405
+              isSuccess:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "아직 가족이 없습니다! 가족장의 승인을 받아주세요"
         '4001':
           description: 파라미터 오류
           schema:
@@ -114,6 +128,20 @@ paths:
               error:
                 type: string
                 example: 포인트가 부족합니다.
+        '405':
+          description: 가족장 승인 미완료
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 405
+              isSuccess:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "아직 가족이 없습니다! 가족장의 승인을 받아주세요"
         '500':
           description: 서버 에러
           schema:
@@ -271,7 +299,20 @@ paths:
                       },
                     ]
 
-              
+        '405':
+          description: 가족장 승인 미완료
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 405
+              isSuccess:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "아직 가족이 없습니다! 가족장의 승인을 받아주세요"
         '500':
           description: 서버 에러
           schema:

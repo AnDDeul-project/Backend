@@ -11,7 +11,11 @@ export const getOne = async(snsid) => {
     try{
         const conn = await pool.getConnection();
         //꽃 이름, 포인트 가져와
-        const result = await pool.query("SELECT f_num, f_point FROM user JOIN userfam ON user.family_code = userfam.family_code WHERE snsId = ?", snsid);
+        const result0 = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsid);
+        if(result0[0][0].family_code==null) {
+            return -1;
+        }
+        const result = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", result0[0][0].family_code);
        
         //사진 가져와야 하니까 포인트 얼마나 필요한지 가져와
         const num = result[0][0].f_num;
@@ -51,6 +55,9 @@ export const cal_point = async(snsid) => {
         await pool.query("UPDATE user SET point = point - 2 WHERE snsId = ?", snsid);
         //가족 꽃번호, 포인트, required 불러와서 f_point+2랑 비교한 뒤에 userfam 업데이트
         const result = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsid);
+        if(result[0][0].family_code==null) {
+            return -2;
+        }
         const result2 = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", result[0][0].family_code);
         const result3 = await pool.query("SELECT required FROM flower WHERE idx = ?", result2[0][0].f_num);
         
@@ -93,7 +100,11 @@ export const getPoint = async(snsid) => {
 export const getAll = async(snsId, flowerId) => {
     try {
         const conn = await pool.getConnection();
-        const fam_name = await conn.query("SELECT fam_name FROM userfam JOIN user ON user.family_code = userfam.family_code WHERE snsId = ?", snsId);
+        const result0 = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsid);
+        if(result0[0][0].family_code==null) {
+            return -1;
+        }
+        const fam_name = await conn.query("SELECT fam_name FROM userfam family_code = ?", result0[0][0].family_code);
         let result = await conn.query("SELECT idx, img_5 FROM flower WHERE idx < ?", flowerId);
         result = result.length > 0 ? result[0]:[];
         conn.release();
