@@ -7,13 +7,25 @@ import { verify } from '../service/auth.js'
 export const createPost = async (req, res, next) => {
     try {
         const snsId = await verify(req, res);
-        const { content } = req.body; // user_idx 파라미터 제거
-        let pictureUrls = [];
-        if (req.files) {
-            pictureUrls = req.files.map(file => file.location); // S3 URL 추출
+        const { content } = req.body;
+
+        console.log("content:", content); // 내용 확인을 위한 로그
+
+        // 게시글 내용 유효성 검사
+        if (!content || content.trim() === '') {
+            return res.status(status.CONTENT_NOT_EXIST.status).send(response(status.CONTENT_NOT_EXIST));
         }
+
+        let pictureUrls = [];
+        if (req.files && req.files.length > 0) {
+            pictureUrls = req.files.map(file => file.location); // S3 URL 추출
+        } else {
+            // 사진이 첨부되지 않았을 경우의 처리
+            return res.status(status.IMAGE_NOT_EXIST.status).send(response(status.IMAGE_NOT_EXIST));
+        }
+
         // snsId를 user_idx로 사용하여 게시글 생성
-        const post = await homeService.createPost({ user_idx: snsId, content, picture: JSON.stringify(pictureUrls) });
+        await homeService.createPost({ user_idx: snsId, content, picture: JSON.stringify(pictureUrls) });
         res.send(response(status.SUCCESS));
     } catch (error) {
         next(error);

@@ -163,7 +163,7 @@ export const getUserProfileData = async (snsId) => {
             u.image, 
             COUNT(p.post_idx) AS postCount,
             JSON_ARRAYAGG(
-                IF(p.picture != '[]', JSON_UNQUOTE(JSON_EXTRACT(p.picture, '$[0]')), NULL)
+                JSON_EXTRACT(p.picture, '$[0]')
             ) AS firstPostImages
         FROM 
             user u
@@ -176,12 +176,15 @@ export const getUserProfileData = async (snsId) => {
             p.create_at DESC
     `;
     const [rows] = await pool.query(query, [snsId]);
-    console.log("rows:",rows);
     if (rows.length) {
-        // 반환된 결과에서 firstPostImages 배열을 직접 사용
+        // JSON.parse를 사용하여 각 요소를 파싱하고, 첫 번째 요소만 선택하여 새 배열에 저장
+        let firstPostImages = rows[0].firstPostImages.map(img => {
+            let parsedImg = JSON.parse(img);
+            return parsedImg ? parsedImg[0] : null; // 첫 번째 이미지가 있으면 추가, 없으면 null
+        });
         return {
             ...rows[0],
-            firstPostImages: rows[0].firstPostImages
+            firstPostImages: firstPostImages
         };
     }
     return null;
