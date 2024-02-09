@@ -1,4 +1,4 @@
-import {sendMail, getAll, getOne} from "../dao/mail.dao.js"
+import {sendMail, getAll, getOne, getQuestion} from "../dao/mail.dao.js"
 
 export const getOnePost = async (idx) => {
     const result = await getOne(idx);
@@ -16,4 +16,10 @@ export const voiceMail = async (snsId, req) => {
 export const textMail = async (snsId, req) => {
     await sendMail(snsId, req);
     return;
+}
+
+export const checkQuestion = async (snsId) => {
+    const result = await getQuestion(snsId);
+    if(result == -1) return -1;
+    return result;
 }
