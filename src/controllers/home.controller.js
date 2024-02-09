@@ -96,7 +96,7 @@ export const addEmojiToPost = async (req, res, next) => {
     }
 };
 
-// 유저 프로필 조회
+// 특정 유저 프로필 조회
 export const getUserProfile = async (req, res, next) => {
     try {
         await verify(req, res);
@@ -115,6 +115,35 @@ export const getSinglePost = async (req, res, next) => {
         const { postIdx } = req.params;
         const postDetails = await homeService.getSinglePost(postIdx);
         res.send(response(status.SUCCESS, postDetails));
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updateUserProfile = async (req, res, next) => {
+    try {
+        const snsId = await verify(req, res);
+        const { nickname } = req.body; // 프론트엔드에서 닉네임 값을 보낼 경우 받아옴
+        let imageUpdate = {}; // 이미지 업데이트 정보를 담을 객체
+
+        // 이미지가 첨부된 경우만 처리
+        if (req.file) {
+            imageUpdate.image = req.file.location; // 이미지 URL을 업데이트 객체에 추가
+        }
+
+        // 닉네임이 제공된 경우만 처리
+        if (nickname) {
+            imageUpdate.nickname = nickname; // 닉네임을 업데이트 객체에 추가
+        }
+
+        // 업데이트할 내용이 없는 경우 에러 처리
+        if (Object.keys(imageUpdate).length === 0) {
+            return res.status(status.NO_UPDATE_PROVIDED.status).send(response(status.NO_UPDATE_PROVIDED));
+        }
+
+        // 업데이트 로직 실행 (서비스 레이어에 구현)
+        await homeService.updateUserProfile(snsId, imageUpdate);
+        res.send(response({...status.SUCCESS, message: "유저 프로필 정보가 성공적으로 업데이트되었습니다."}));
     } catch (error) {
         next(error);
     }
