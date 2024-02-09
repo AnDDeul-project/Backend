@@ -31,19 +31,21 @@ export const getPostsFromDb = async (user_idx) => {
     // 사용자의 family_code 얻기
     const family_code = await getUserFamilyCode(user_idx);
     if (!family_code) {
-        throw new Error("Family code not found for user");
+        throw new Error("유저의 가족코드가 조회되지 않습니다.");
     }
 
-    // 같은 family_code를 가진 사용자의 게시글 및 글 작성자의 프로필 사진 조회
+    // 같은 family_code를 가진 사용자의 게시글, 글 작성자의 프로필 사진, 닉네임 및 게시글 고유번호 조회
     const query = `
-        SELECT p.user_idx, p.content, p.picture, u.image AS userImage
+        SELECT p.post_idx, p.user_idx, p.content, p.picture, u.image AS userImage, u.nickname
         FROM post p
         INNER JOIN user u ON p.user_idx = u.snsId  
-        WHERE u.family_code = ?`;  // family_code 조건을 userfam에서 user로 변경 및 작성자의 프로필 사진 정보 추가
+        WHERE u.family_code = ?`;  // family_code 조건을 userfam에서 user로 변경 및 작성자의 프로필 사진 정보, 닉네임 및 게시글 고유번호 추가
     try {
         const [rows] = await pool.query(query, [family_code]);
         return rows.map(row => ({
+          post_idx: row.post_idx,  // 게시글 고유번호 추가
           user_idx: row.user_idx,
+          nickname: row.nickname,  // 사용자 닉네임 추가
           content: row.content,
           picture: JSON.parse(row.picture), // JSON 문자열을 객체로 변환
           userImage: row.userImage // 작성자의 프로필 사진 정보 추가
@@ -52,6 +54,7 @@ export const getPostsFromDb = async (user_idx) => {
         throw error;
     }
 };
+
 
 // 게시글 정보 불러오기
 export const getPostById = async (post_idx) => {
@@ -173,6 +176,7 @@ export const getUserProfileData = async (snsId) => {
             p.create_at DESC
     `;
     const [rows] = await pool.query(query, [snsId]);
+    console.log("rows:",rows);
     if (rows.length) {
         // 반환된 결과에서 firstPostImages 배열을 직접 사용
         return {

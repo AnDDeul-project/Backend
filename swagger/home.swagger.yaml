@@ -45,7 +45,7 @@ paths:
       tags:
         - Home
       summary: 게시글 조회
-      description: 같은 가족 구성원들의 게시글을 조회합니다. 각 게시글에는 작성자의 프로필 사진 정보가 포함됩니다.
+      description: 같은 가족 구성원들의 게시글을 조회합니다. 각 게시글에는 작성자의 닉네임과 프로필 사진 정보, 그리고 게시글에 첨부된 모든 사진 URL이 포함됩니다.
       produces:
         - application/json
       security:
@@ -70,10 +70,18 @@ paths:
                 items:
                   type: object
                   properties:
+                    post_idx:
+                      type: integer
+                      example: 1
+                      description: 게시글 고유 번호
                     user_idx:
                       type: string
                       example: "3304133093"
                       description: 글 작성자의 고유 식별자
+                    nickname:
+                      type: string
+                      example: "김정훈"
+                      description: 글 작성자의 닉네임
                     content:
                       type: string
                       example: "안녕하세요 postman 테스트요"
@@ -87,17 +95,17 @@ paths:
                           "https://example.com/photo1.jpg",
                           "https://example.com/photo2.jpg",
                         ]
-                      description: 게시글에 첨부된 사진 URL 목록
+                      description: 게시글에 첨부된 모든 사진 URL 목록
                     userImage:
                       type: string
                       example: "http://k.kakaocdn.net/dn/xxGa9/btsB5AD9Zx0/GezVLYpUOwIdOpSlU7dYo1/img_640x640.jpg"
                       description: 글 작성자의 프로필 사진 URL
-        400:
-          description: 잘못된 요청입니다. 입력값을 확인해주세요.
-        401:
-          description: 인증 실패. 유효한 토큰을 제공해야 합니다.
-        500:
-          description: 서버 에러가 발생했습니다.
+    400:
+      description: 잘못된 요청입니다. 입력값을 확인해주세요.
+    401:
+      description: 인증 실패. 유효한 토큰을 제공해야 합니다.
+    500:
+      description: 서버 에러가 발생했습니다.
 
   /home/family/members:
     get:
