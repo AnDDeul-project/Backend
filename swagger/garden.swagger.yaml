@@ -2,7 +2,7 @@ paths:
   /garden/flower:
     get:
       tags:
-        - flower
+        - Flower
       summary: 현재 키우고 있는 꽃 받아오기
       security:
         - Authorization: []
@@ -73,7 +73,7 @@ paths:
   /garden/flower/givelove:
     put:
       tags:
-        - flower
+        - Flower
       summary: 포인트 차감해서 꽃에 사랑 주기
       security:
         - Authorization: []
@@ -89,11 +89,17 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              img:
-                type: json
-                example: {
-                  "changed_img": "사진 url"
-                }
+              result:
+                type: object
+                properties:
+                  point:
+                    type: integer
+                    example: 12
+                  img:
+                    type: json
+                    example: {
+                      "changed_img": "사진 url"
+                    }
         '402':
           description: 포인트 부족
           schema:
@@ -155,7 +161,7 @@ paths:
   /garden/flower/mypoint:
     get:
       tags:
-        - flower
+        - Flower
       summary: 내 포인트 불러오기
       security:
         - Authorization: []
@@ -223,7 +229,7 @@ paths:
   /garden/flower/{flowerId}:
     get:
       tags:
-        - flower
+        - Flower
       summary: 정원에 있는 꽃 목록 불러오기
       security:
         - Authorization: []

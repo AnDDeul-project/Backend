@@ -27,7 +27,7 @@ export const givelove = async (req, res) => {
     const result = await usePoint(snsId);
     if(result==-1)
         return res.status(402).json({status: 402, isSuccess: false, error: "포인트가 부족합니다"});
-    return res.status(200).json({status: 200, isSuccess: true, img: result});
+    return res.status(200).json({status: 200, isSuccess: true, result: result});
 }
 
 
