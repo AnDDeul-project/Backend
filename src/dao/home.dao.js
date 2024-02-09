@@ -214,42 +214,6 @@ export const getUserProfileData = async (snsId) => {
     return null;
 };
 
-
-// // 유저 프로필 데이터 조회 함수
-// export const getUserProfileData = async (snsId) => {
-//     const query = `
-//         SELECT 
-//             u.nickname, 
-//             u.image, 
-//             COUNT(p.post_idx) AS postCount,
-//             JSON_ARRAYAGG(
-//                 JSON_EXTRACT(p.picture, '$[0]')
-//             ) AS firstPostImages
-//         FROM 
-//             user u
-//             LEFT JOIN post p ON u.snsId = p.user_idx
-//         WHERE 
-//             u.snsId = ?
-//         GROUP BY 
-//             u.snsId
-//         ORDER BY 
-//             p.create_at DESC
-//     `;
-//     const [rows] = await pool.query(query, [snsId]);
-//     if (rows.length) {
-//         // JSON.parse를 사용하여 각 요소를 파싱하고, 첫 번째 요소만 선택하여 새 배열에 저장
-//         let firstPostImages = rows[0].firstPostImages.map(img => {
-//             let parsedImg = JSON.parse(img);
-//             return parsedImg ? parsedImg[0] : null; // 첫 번째 이미지가 있으면 추가, 없으면 null
-//         });
-//         return {
-//             ...rows[0],
-//             firstPostImages: firstPostImages
-//         };
-//     }
-//     return null;
-// };
-
 // 특정 게시글 1개 조회
 export const getSinglePostFromDb = async (postIdx) => {
     const query = `
