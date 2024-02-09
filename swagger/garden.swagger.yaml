@@ -2,7 +2,7 @@ paths:
   /garden/flower:
     get:
       tags:
-        - flower
+        - Flower
       summary: 현재 키우고 있는 꽃 받아오기
       security:
         - Authorization: []
@@ -54,6 +54,20 @@ paths:
               error:
                 type: string
                 example: 유효하지 않은 토큰입니다.
+        '405':
+          description: 가족장 승인 미완료
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 405
+              isSuccess:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "아직 가족이 없습니다! 가족장의 승인을 받아주세요"
         '4001':
           description: 파라미터 오류
           schema:
@@ -73,7 +87,7 @@ paths:
   /garden/flower/givelove:
     put:
       tags:
-        - flower
+        - Flower
       summary: 포인트 차감해서 꽃에 사랑 주기
       security:
         - Authorization: []
@@ -89,11 +103,17 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              img:
-                type: json
-                example: {
-                  "changed_img": "사진 url"
-                }
+              result:
+                type: object
+                properties:
+                  point:
+                    type: integer
+                    example: 12
+                  img:
+                    type: json
+                    example: {
+                      "changed_img": "사진 url"
+                    }
         '402':
           description: 포인트 부족
           schema:
@@ -108,6 +128,20 @@ paths:
               error:
                 type: string
                 example: 포인트가 부족합니다.
+        '405':
+          description: 가족장 승인 미완료
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 405
+              isSuccess:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "아직 가족이 없습니다! 가족장의 승인을 받아주세요"
         '500':
           description: 서버 에러
           schema:
@@ -155,7 +189,7 @@ paths:
   /garden/flower/mypoint:
     get:
       tags:
-        - flower
+        - Flower
       summary: 내 포인트 불러오기
       security:
         - Authorization: []
@@ -223,7 +257,7 @@ paths:
   /garden/flower/{flowerId}:
     get:
       tags:
-        - flower
+        - Flower
       summary: 정원에 있는 꽃 목록 불러오기
       security:
         - Authorization: []
@@ -265,7 +299,20 @@ paths:
                       },
                     ]
 
-              
+        '405':
+          description: 가족장 승인 미완료
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 405
+              isSuccess:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "아직 가족이 없습니다! 가족장의 승인을 받아주세요"
         '500':
           description: 서버 에러
           schema:

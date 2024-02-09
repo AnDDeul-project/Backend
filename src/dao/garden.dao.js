@@ -11,7 +11,11 @@ export const getOne = async(snsid) => {
     try{
         const conn = await pool.getConnection();
         //꽃 이름, 포인트 가져와
-        const result = await pool.query("SELECT f_num, f_point FROM user JOIN userfam ON user.family_code = userfam.family_code WHERE snsId = ?", snsid);
+        const result0 = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsid);
+        if(result0[0][0].family_code==null) {
+            return -1;
+        }
+        const result = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", result0[0][0].family_code);
        
         //사진 가져와야 하니까 포인트 얼마나 필요한지 가져와
         const num = result[0][0].f_num;
@@ -46,26 +50,34 @@ export const cal_point = async(snsid) => {
         console.log(point);
         if(point[0][0].point < 2)
             return -1;
+        const currentPoint = point[0][0].point;
+        console.log(currentPoint);
         await pool.query("UPDATE user SET point = point - 2 WHERE snsId = ?", snsid);
+        //가족 꽃번호, 포인트, required 불러와서 f_point+2랑 비교한 뒤에 userfam 업데이트
         const result = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsid);
-        await pool.query("UPDATE userfam SET f_point = f_point + 2 WHERE family_code = ?", result[0][0].family_code);
-        //포인트 다 채우면 꽃 바꾸고 포인트 0으로
+        if(result[0][0].family_code==null) {
+            return -2;
+        }
         const result2 = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", result[0][0].family_code);
         const result3 = await pool.query("SELECT required FROM flower WHERE idx = ?", result2[0][0].f_num);
-        if(result2[0].f_point >= result3[0].required) {
-            await pool.query("UPDATE userfam SET f_num = f_num + 2, f_point = 0 WHERE family_code = ?", result[0][0].family_code);
+        
+        //포인트 다 채우면 꽃 바꾸고 포인트 0으로, 다 안 채웠으면 그냥 +2   
+        if(result2[0].f_point +2 >= result3[0].required) {
+            await pool.query("UPDATE userfam SET f_num = f_num + 1, f_point = 0 WHERE family_code = ?", result[0][0].family_code);
+        } else {
+            await pool.query("UPDATE userfam SET f_point = f_point + 2 WHERE family_code = ?", result[0][0].family_code);
         }
         //이미지 불러와 이거 반환할거야
         let img;
         for(let i = 0; i < ranges.length; i++) {
-            if(result2[0][0].f_point < ranges[i]*result3[0][0].required || point===standard) {
+            if(result2[0][0].f_point < ranges[i]*result3[0][0].required || point[0][0].point===result3[0][0].standard) {
                 img = images[i];
                 break;
             }
         }
         const result4 = await pool.query(`SELECT ${img} FROM flower WHERE idx = ?`, result2[0][0].f_num);
         conn.release();
-        return {changed_img: result4[0][0][img]};
+        return {point: currentPoint-2, changed_img: result4[0][0][img]};
     } catch(err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
@@ -88,7 +100,11 @@ export const getPoint = async(snsid) => {
 export const getAll = async(snsId, flowerId) => {
     try {
         const conn = await pool.getConnection();
-        const fam_name = await conn.query("SELECT fam_name FROM userfam JOIN user ON user.family_code = userfam.family_code WHERE snsId = ?", snsId);
+        const result0 = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsId);
+        if(result0[0][0].family_code==null) {
+            return -1;
+        }
+        const fam_name = await conn.query("SELECT fam_name FROM userfam WHERE family_code = ?", result0[0][0].family_code);
         let result = await conn.query("SELECT idx, img_5 FROM flower WHERE idx < ?", flowerId);
         result = result.length > 0 ? result[0]:[];
         conn.release();
