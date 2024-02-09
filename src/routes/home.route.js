@@ -13,7 +13,7 @@ const setBoardDirectory = (req, res, next) => {
 // 게시글 작성(Post)
 homeRoute.post('/board', setBoardDirectory, imageUploader.array('image', 10), createPost);
 
-// 게시글 목록 조회 (GET)
+// 가족 게시글 전체 조회
 homeRoute.get('/posts', getPosts);
 
 // 게시글 수정
@@ -28,7 +28,7 @@ homeRoute.get('/family/members', getFamilyMembers);
 // 게시글에 감정 표현 추가
 homeRoute.post('/posts/:postIdx/emoji', addEmojiToPost);
 
-// 유저 프로필 페이지 조회
+// 특정 유저 프로필 페이지 조회
 homeRoute.get('/user/:userId/profile', getUserProfile);
 
 // 특정 게시글 1개 조회

@@ -96,7 +96,7 @@ export const addEmojiToPost = async (req, res, next) => {
     }
 };
 
-// 유저 프로필 조회
+// 특정 유저 프로필 조회
 export const getUserProfile = async (req, res, next) => {
     try {
         await verify(req, res);

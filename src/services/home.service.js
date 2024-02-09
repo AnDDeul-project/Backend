@@ -68,7 +68,7 @@ export const homeService = {
         return await addEmojiToPost(postIdx, snsId, emojiType);
     },
 
-    // 유저 프로필 조회
+    // 특정 유저 프로필 조회
     getUserProfile: async (userId) => {
         return await getUserProfileData(userId);
     },

@@ -159,9 +159,10 @@ export const addEmojiToPost = async (postIdx, user_idx, emojiType) => {
         }
     }
 };
-// 유저 프로필 데이터 조회 함수
+
+// 특정 유저 프로필 조회
 export const getUserProfileData = async (snsId) => {
-    const query = `
+    const profileQuery = `
         SELECT 
             u.nickname, 
             u.image, 
@@ -176,25 +177,80 @@ export const getUserProfileData = async (snsId) => {
             u.snsId = ?
         GROUP BY 
             u.snsId
+    `;
+
+    const postIdsQuery = `
+        SELECT 
+            p.post_idx
+        FROM 
+            post p
+            JOIN user u ON p.user_idx = u.snsId
+        WHERE 
+            u.snsId = ?
         ORDER BY 
             p.create_at DESC
     `;
-    const [rows] = await pool.query(query, [snsId]);
-    if (rows.length) {
-        // JSON.parse를 사용하여 각 요소를 파싱하고, 첫 번째 요소만 선택하여 새 배열에 저장
-        let firstPostImages = rows[0].firstPostImages.map(img => {
-            let parsedImg = JSON.parse(img);
-            return parsedImg ? parsedImg[0] : null; // 첫 번째 이미지가 있으면 추가, 없으면 null
-        });
-        return {
-            ...rows[0],
-            firstPostImages: firstPostImages
-        };
+
+    try {
+        const [profileRows] = await pool.query(profileQuery, [snsId]);
+        const [postIdsRows] = await pool.query(postIdsQuery, [snsId]);
+
+        if (profileRows.length) {
+            let firstPostImages = profileRows[0].firstPostImages.map(img => JSON.parse(img)[0]);
+            let postIdx = postIdsRows.map(row => row.post_idx);
+
+            return {
+                nickname: profileRows[0].nickname,
+                image: profileRows[0].image,
+                postCount: profileRows[0].postCount,
+                firstPostImages: firstPostImages,
+                postIdx: postIdx  // 별도로 postIdx 값을 포함한 배열
+            };
+        }
+    } catch (error) {
+        throw error;
     }
+
     return null;
 };
 
-// // 특정 게시글 1개 조회
+
+// // 유저 프로필 데이터 조회 함수
+// export const getUserProfileData = async (snsId) => {
+//     const query = `
+//         SELECT 
+//             u.nickname, 
+//             u.image, 
+//             COUNT(p.post_idx) AS postCount,
+//             JSON_ARRAYAGG(
+//                 JSON_EXTRACT(p.picture, '$[0]')
+//             ) AS firstPostImages
+//         FROM 
+//             user u
+//             LEFT JOIN post p ON u.snsId = p.user_idx
+//         WHERE 
+//             u.snsId = ?
+//         GROUP BY 
+//             u.snsId
+//         ORDER BY 
+//             p.create_at DESC
+//     `;
+//     const [rows] = await pool.query(query, [snsId]);
+//     if (rows.length) {
+//         // JSON.parse를 사용하여 각 요소를 파싱하고, 첫 번째 요소만 선택하여 새 배열에 저장
+//         let firstPostImages = rows[0].firstPostImages.map(img => {
+//             let parsedImg = JSON.parse(img);
+//             return parsedImg ? parsedImg[0] : null; // 첫 번째 이미지가 있으면 추가, 없으면 null
+//         });
+//         return {
+//             ...rows[0],
+//             firstPostImages: firstPostImages
+//         };
+//     }
+//     return null;
+// };
+
+// 특정 게시글 1개 조회
 export const getSinglePostFromDb = async (postIdx) => {
     const query = `
         SELECT 
