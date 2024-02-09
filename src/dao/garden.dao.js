@@ -100,11 +100,11 @@ export const getPoint = async(snsid) => {
 export const getAll = async(snsId, flowerId) => {
     try {
         const conn = await pool.getConnection();
-        const result0 = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsid);
+        const result0 = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsId);
         if(result0[0][0].family_code==null) {
             return -1;
         }
-        const fam_name = await conn.query("SELECT fam_name FROM userfam family_code = ?", result0[0][0].family_code);
+        const fam_name = await conn.query("SELECT fam_name FROM userfam WHERE family_code = ?", result0[0][0].family_code);
         let result = await conn.query("SELECT idx, img_5 FROM flower WHERE idx < ?", flowerId);
         result = result.length > 0 ? result[0]:[];
         conn.release();
