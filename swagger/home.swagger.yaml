@@ -445,3 +445,48 @@ paths:
           description: 사용자를 찾을 수 없습니다.
         500:
           description: 서버 에러가 발생했습니다.
+
+  /home/user/profile:
+    patch:
+      tags:
+        - Home
+      summary: 유저 프로필 정보 수정
+      description: 유저의 닉네임과 프로필 사진을 업데이트합니다. 닉네임 또는 프로필 사진 중 하나만 업데이트할 수도 있습니다.
+      produces:
+        - application/json
+      security:
+        - Authorization: []
+      parameters:
+        - in: formData
+          name: nickname
+          type: string
+          required: false
+          description: 업데이트할 유저의 닉네임입니다.
+        - in: formData
+          name: image
+          type: file
+          required: false
+          description: 업데이트할 유저의 프로필 사진입니다. 'profile' 폴더에 저장됩니다.
+      responses:
+        200:
+          description: 유저 프로필 정보가 성공적으로 업데이트되었습니다.
+          schema:
+            type: object
+            properties:
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "유저 프로필 정보가 성공적으로 업데이트되었습니다."
+        400:
+          description: 잘못된 요청입니다. 입력값을 확인해주세요.
+        401:
+          description: 인증 실패. 유효한 토큰을 제공해야 합니다.
+        404:
+          description: 유저를 찾을 수 없습니다.
+        500:
+          description: 서버 에러가 발생했습니다.

@@ -239,3 +239,21 @@ export const getSinglePostFromDb = async (postIdx) => {
         throw error;
     }
 };
+
+// 유저 프로필 정보 수정
+export const updateUserProfileInDb = async (snsId, updateData) => {
+    const fields = Object.keys(updateData).map(key => `${key} = ?`).join(', ');
+    const values = Object.values(updateData);
+
+    values.push(snsId); // WHERE 조건을 위한 snsId 추가
+
+    const query = `UPDATE user SET ${fields} WHERE snsId = ?`;
+
+    try {
+        const [result] = await pool.query(query, values);
+        return result;
+    } catch (error) {
+        console.error('DB Error in updating user profile:', error);
+        throw error;
+    }
+};
