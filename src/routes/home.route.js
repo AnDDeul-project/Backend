@@ -1,5 +1,5 @@
 import express from "express";
-import { createPost, getPosts, updatePost, deletePost, getFamilyMembers, addEmojiToPost, getUserProfile } from '../controllers/home.controller.js';
+import { createPost, getPosts, updatePost, deletePost, getFamilyMembers, addEmojiToPost, getUserProfile, getSinglePost } from '../controllers/home.controller.js';
 import { imageUploader } from "../middleware/image.uploader.js";
 
 export const homeRoute = express.Router();
@@ -30,3 +30,6 @@ homeRoute.post('/posts/:postIdx/emoji', addEmojiToPost);
 
 // 유저 프로필 페이지 조회
 homeRoute.get('/user/:userId/profile', getUserProfile);
+
+// 특정 게시글 1개 조회
+homeRoute.get('/posts/:postIdx', getSinglePost);

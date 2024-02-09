@@ -58,7 +58,6 @@ export const updatePost = async (req, res, next) => {
     }
 };
 
-
 // 게시글 삭제
 export const deletePost = async (req, res, next) => {
     try {
@@ -72,7 +71,6 @@ export const deletePost = async (req, res, next) => {
         next(error);
     }
 };
-
 
 // 가족 구성원 조회
 export const getFamilyMembers = async (req, res, next) => {
@@ -101,9 +99,22 @@ export const addEmojiToPost = async (req, res, next) => {
 // 유저 프로필 조회
 export const getUserProfile = async (req, res, next) => {
     try {
+        await verify(req, res);
         const snsId = req.params.userId;
         const userProfile = await homeService.getUserProfile(snsId);
         res.send(response(status.SUCCESS, userProfile));
+    } catch (error) {
+        next(error);
+    }
+};
+
+// 특정 게시글 1개 조회
+export const getSinglePost = async (req, res, next) => {
+    try {
+        await verify(req, res);
+        const { postIdx } = req.params;
+        const postDetails = await homeService.getSinglePost(postIdx);
+        res.send(response(status.SUCCESS, postDetails));
     } catch (error) {
         next(error);
     }

@@ -52,21 +52,6 @@ paths:
               message:
                 type: string
                 example: "사진이 첨부되지 않았습니다. 사진을 첨부해 주세요."
-
-          # description: 사진이 첨부되지 않았습니다. 사진을 첨부해 주세요.
-          # schema:
-          #   type: object
-          #   properties:
-          #     isSuccess:
-          #       type: boolean
-          #       example: false
-          #     code:
-          #       type: integer
-          #       example: HOME4001
-          #     message:
-          #       type: string
-          #       example: "사진이 첨부되지 않았습니다. 사진을 첨부해 주세요."
-
         500:
           description: 서버 에러가 발생했습니다.
 
@@ -74,8 +59,8 @@ paths:
     get:
       tags:
         - Home
-      summary: 게시글 조회
-      description: 같은 가족 구성원들의 게시글을 조회합니다. 각 게시글에는 작성자의 닉네임과 프로필 사진 정보, 그리고 게시글에 첨부된 모든 사진 URL이 포함됩니다.
+      summary: 가족 게시글 전체 조회
+      description: 같은 가족 구성원들의 게시글을 최신 순으로 조회합니다. 각 게시글에는 작성자의 닉네임과 프로필 사진 정보, 게시글 작성 날짜, 그리고 게시글에 첨부된 모든 사진 URL이 포함됩니다.
       produces:
         - application/json
       security:
@@ -102,7 +87,7 @@ paths:
                   properties:
                     post_idx:
                       type: integer
-                      example: 1
+                      example: 56
                       description: 게시글 고유 번호
                     user_idx:
                       type: string
@@ -114,28 +99,30 @@ paths:
                       description: 글 작성자의 닉네임
                     content:
                       type: string
-                      example: "안녕하세요 postman 테스트요"
+                      example: "새로운 게시글"
                       description: 게시글 내용
                     picture:
                       type: array
                       items:
                         type: string
                       example:
-                        [
-                          "https://example.com/photo1.jpg",
-                          "https://example.com/photo2.jpg",
-                        ]
+                        - "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/4217b4febe753a5dbc877a837b51bfd0_%EB%8B%A4%EC%9D%B4%EB%85%B8%ED%83%B1.png"
+                        - "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/4d646ecf6393a7e7b0ba81363a499a88_%EB%8B%A4%EC%9D%B4%EB%85%B8%ED%83%B12.jpg"
                       description: 게시글에 첨부된 모든 사진 URL 목록
+                    create_at:
+                      type: string
+                      example: "2024-02-09T06:18:30.000Z"
+                      description: 게시글 작성 날짜
                     userImage:
                       type: string
                       example: "http://k.kakaocdn.net/dn/xxGa9/btsB5AD9Zx0/GezVLYpUOwIdOpSlU7dYo1/img_640x640.jpg"
                       description: 글 작성자의 프로필 사진 URL
-    400:
-      description: 잘못된 요청입니다. 입력값을 확인해주세요.
-    401:
-      description: 인증 실패. 유효한 토큰을 제공해야 합니다.
-    500:
-      description: 서버 에러가 발생했습니다.
+        400:
+          description: 잘못된 요청입니다. 입력값을 확인해주세요.
+        401:
+          description: 인증 실패. 유효한 토큰을 제공해야 합니다.
+        500:
+          description: 서버 에러가 발생했습니다.
 
   /home/family/members:
     get:
@@ -226,6 +213,74 @@ paths:
           description: 서버 에러
 
   /home/posts/{postIdx}:
+    get:
+      tags:
+        - Home
+      summary: 특정 게시글 조회
+      description: 특정 게시글의 작성자 이름, 프로필 사진, 사진, 게시글 내용, 작성 시간을 반환합니다.
+      produces:
+        - application/json
+      security:
+        - Authorization: []
+      parameters:
+        - in: path
+          name: postIdx
+          required: true
+          type: integer
+          description: 조회할 게시글의 고유 번호
+      responses:
+        200:
+          description: 게시글 조회에 성공했습니다.
+          schema:
+            type: object
+            properties:
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "success!"
+              result:
+                type: object
+                properties:
+                  post_idx:
+                    type: integer
+                    example: 26
+                    description: 게시글의 고유 번호
+                  content:
+                    type: string
+                    example: "안녕하세요 저는 김정훈이고 특수문자 테스트 입니다😊"
+                    description: 게시글 내용
+                  picture:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                      - "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/4217b4febe753a5dbc877a837b51bfd0_%EB%8B%A4%EC%9D%B4%EB%85%B8%ED%83%B1.png"
+                      - "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/4d646ecf6393a7e7b0ba81363a499a88_%EB%8B%A4%EC%9D%B4%EB%85%B8%ED%83%B12.jpg"
+                    description: 게시글에 첨부된 사진 URL 목록
+                  create_at:
+                    type: string
+                    example: "2024-01-30T22:16:59.000Z"
+                    description: 게시글 작성 시간
+                  nickname:
+                    type: string
+                    example: "김정훈"
+                    description: 게시글 작성자의 닉네임
+                  userImage:
+                    type: string
+                    example: "http://k.kakaocdn.net/dn/xxGa9/btsB5AD9Zx0/GezVLYpUOwIdOpSlU7dYo1/img_640x640.jpg"
+                    description: 게시글 작성자의 프로필 사진 URL
+        400:
+          description: 잘못된 요청입니다. 입력값을 확인해주세요.
+        404:
+          description: 게시글을 찾을 수 없습니다.
+        500:
+          description: 서버 에러가 발생했습니다.
+
     patch:
       tags:
         - Home
