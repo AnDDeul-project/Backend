@@ -26,7 +26,7 @@ const getUserFamilyCode = async (user_idx) => {
     return rows.length > 0 ? rows[0].family_code : null;
 };
 
-// 게시글 조회 (수정됨)
+// 가족 게시글 전체 조회
 export const getPostsFromDb = async (user_idx) => {
     // 사용자의 family_code 얻기
     const family_code = await getUserFamilyCode(user_idx);
@@ -34,12 +34,14 @@ export const getPostsFromDb = async (user_idx) => {
         throw new Error("유저의 가족코드가 조회되지 않습니다.");
     }
 
-    // 같은 family_code를 가진 사용자의 게시글, 글 작성자의 프로필 사진, 닉네임 및 게시글 고유번호 조회
+    // 같은 family_code를 가진 사용자의 게시글, 글 작성자의 프로필 사진, 닉네임, 게시글 고유번호 및 게시글 작성 날짜 조회
+    // 결과를 최신 순서로 정렬
     const query = `
-        SELECT p.post_idx, p.user_idx, p.content, p.picture, u.image AS userImage, u.nickname
+        SELECT p.post_idx, p.user_idx, p.content, p.picture, p.create_at, u.image AS userImage, u.nickname
         FROM post p
         INNER JOIN user u ON p.user_idx = u.snsId  
-        WHERE u.family_code = ?`;  // family_code 조건을 userfam에서 user로 변경 및 작성자의 프로필 사진 정보, 닉네임 및 게시글 고유번호 추가
+        WHERE u.family_code = ?
+        ORDER BY p.create_at DESC`;  // 게시글 작성 날짜 추가 및 최신 순서로 정렬
     try {
         const [rows] = await pool.query(query, [family_code]);
         return rows.map(row => ({
@@ -48,12 +50,14 @@ export const getPostsFromDb = async (user_idx) => {
           nickname: row.nickname,  // 사용자 닉네임 추가
           content: row.content,
           picture: JSON.parse(row.picture), // JSON 문자열을 객체로 변환
+          create_at: row.create_at,  // 게시글 작성 날짜 추가
           userImage: row.userImage // 작성자의 프로필 사진 정보 추가
         }));
     } catch (error) {
         throw error;
     }
 };
+
 
 
 // 게시글 정보 불러오기
@@ -188,4 +192,30 @@ export const getUserProfileData = async (snsId) => {
         };
     }
     return null;
+};
+
+// // 특정 게시글 1개 조회
+export const getSinglePostFromDb = async (postIdx) => {
+    const query = `
+        SELECT 
+            p.post_idx, p.content, p.picture, p.create_at,
+            u.nickname, u.image AS userImage
+        FROM 
+            post p
+            JOIN user u ON p.user_idx = u.snsId
+        WHERE 
+            p.post_idx = ?`;
+
+    try {
+        const [rows] = await pool.query(query, [postIdx]);
+        if (rows.length > 0) {
+            const post = rows[0];
+            post.picture = JSON.parse(post.picture); // 사진 정보 JSON 파싱
+            return post;
+        } else {
+            throw new Error("Post not found");
+        }
+    } catch (error) {
+        throw error;
+    }
 };

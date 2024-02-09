@@ -1,4 +1,4 @@
-import { createPostInDb, getPostsFromDb, getFamilyMembers, getPostById, updatePostById, deletePostById, addEmojiToPost, getUserProfileData } from '../dao/home.dao.js';
+import { createPostInDb, getPostsFromDb, getFamilyMembers, getPostById, updatePostById, deletePostById, addEmojiToPost, getUserProfileData, getSinglePostFromDb } from '../dao/home.dao.js';
 
 export const homeService = {
     // 게시글 작성
@@ -37,7 +37,7 @@ export const homeService = {
         await updatePostById(postIdx, content);
     },
 
-        // 게시글 삭제
+    // 게시글 삭제
     deletePost: async (user_idx, post_idx) => {
         // 게시글 정보 조회
         const post = await getPostById(post_idx);
@@ -57,6 +57,7 @@ export const homeService = {
         // 게시글 삭제
         return await deletePostById(post_idx);
     },
+
     // 가족 구성원 조회
     getFamilyMembers: async (user_idx) => { 
         return await getFamilyMembers(user_idx);
@@ -70,5 +71,9 @@ export const homeService = {
     // 유저 프로필 조회
     getUserProfile: async (userId) => {
         return await getUserProfileData(userId);
-    }
+    },
+
+    getSinglePost: async (postIdx) => {
+        return await getSinglePostFromDb(postIdx);
+    },
 };
