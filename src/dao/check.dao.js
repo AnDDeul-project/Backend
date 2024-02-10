@@ -70,7 +70,8 @@ export const callCheckList = async (userid, date) => {
 export const contentCheckList = async (checkid, content) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(contentCheckSQL, [content, checkid]);
+        const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+        const [result] = await pool.query(contentCheckSQL, [content, currentDate, checkid]);
         conn.release();
     } catch (err) {
         console.error(err);
@@ -82,7 +83,8 @@ export const contentCheckList = async (checkid, content) => {
 export const dateCheckList = async (checkid, date) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(dateCheckSQL, [date, checkid]);
+        const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+        const [result] = await pool.query(dateCheckSQL, [date, currentDate, checkid]);
         conn.release();
     } catch (err) {
         console.error(err);
@@ -94,7 +96,8 @@ export const dateCheckList = async (checkid, date) => {
 export const finishCheckList = async (checkid) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(finishCheckSQL, checkid);
+        const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+        const [result] = await pool.query(finishCheckSQL, [currentDate, checkid]);
         conn.release();
     } catch (err) {
         console.error(err);
@@ -118,7 +121,8 @@ export const deleteCheckList = async (checkid) => {
 export const imageCheckList = async(checkid, location) => {
     try{
         const conn = await pool.getConnection();
-        const [result] = await pool.query(imgCheckSQL, [location, checkid]);
+        const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+        const [result] = await pool.query(imgCheckSQL, [location, currentDate, checkid]);
         conn.release();
     } catch (err) {
         console.error(err);
