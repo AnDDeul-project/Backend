@@ -22,7 +22,14 @@ export const joinCheck = async (snsId, body) => {
         'content' : body.content
     });
 
-    return await getCheck(joinListData);
+    let result = await getCheck(joinListData);
+    const sender = await find_member(result[0].sender);
+    const receiver = await find_member(result[0].receiver);
+    result[0].sender = sender;
+    result[0].receiver = receiver;
+    console.log(result);
+
+    return result;
 }
 
 // 체크리스트 불러오기

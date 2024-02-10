@@ -26,12 +26,14 @@ export const getCheck = async (checkid) => {
         const conn = await pool.getConnection();
         const [check] = await pool.query(getCheckIDSQL, checkid);
 
-        console.log(check);
-
         if(check.length==0){
             return -1;
         }
-
+        check[0].sender = check[0].sender_idx;
+        check[0].receiver = check[0].receiver_idx;
+        delete check[0].sender_idx;
+        delete check[0].receiver_idx;
+        //console.log(check);
         conn.release();
         return check;
     } catch (err) {
