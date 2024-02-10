@@ -29,17 +29,17 @@ export const callCheckResponseDTO = (checklist, sender) => {//빈 배열이면 �
 };
 
 export const contentCheckResponseDTO = (user) => {
-    return {"checkid": user[0].check_idx, "sender": user[0].sender_idx, "receiver": user[0].receiver_idx, "content": user[0].content, "modify_at": user[0].modify_at};
+    return {"checkid": user[0].check_idx, "sender": user[0].sender, "receiver": user[0].receiver, "content": user[0].content, "modify_at": user[0].modify_at};
 }
 export const dateCheckResponseDTO = (user) => {
-    return {"checkid": user[0].check_idx, "sender": user[0].sender_idx, "receiver": user[0].receiver_idx, "due_date": user[0].due_date, "modify_at": user[0].modify_at};
+    return {"checkid": user[0].check_idx, "sender": user[0].sender, "receiver": user[0].receiver, "due_date": user[0].due_date, "modify_at": user[0].modify_at};
 }
 export const completeCheckResponseDTO = (user) => {
-    return {"checkid": user[0].check_idx, "sender": user[0].sender_idx, "receiver": user[0].receiver_idx, "complete": user[0].complete, "modify_at": user[0].modify_at};
+    return {"checkid": user[0].check_idx, "sender": user[0].sender, "receiver": user[0].receiver, "complete": user[0].complete, "modify_at": user[0].modify_at};
 }
 
 export const deleteCheckResponseDTO = (rowcount) => { return {"result": `${rowcount}개의 체크리스트가 삭제되었습니다`};}
 
 export const imgCheckResponseDTO = (user) => {
-    return {"checkid": user[0].check_idx, "sender": user[0].sender_idx, "receiver": user[0].receiver_idx, "picture": user[0].picture, "modify_at": user[0].modify_at};
+    return {"checkid": user[0].check_idx, "sender": user[0].sender, "receiver": user[0].receiver, "picture": user[0].picture, "modify_at": user[0].modify_at};
 }

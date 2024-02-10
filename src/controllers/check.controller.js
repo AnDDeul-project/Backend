@@ -4,6 +4,7 @@ import { response } from '../config/response.js';
 import { status } from '../config/response.status.js';
 import { verify } from '../service/auth.js';
 
+
 import { joinCheck, callCheck, updateContent, updateDate, updateComplete, deleteCheck, imgCheck } from "../service/check.service.js";
 
 // 리스트 추가
@@ -84,7 +85,11 @@ export const checkimg = async (req, res, next) => {
     try {
         snsId = await verify(req, res);
         console.log(`${req.body.checkid} 사진 업로드`);
-        res.send(response(status.SUCCESS, await imgCheck(req.body.checkid, req.file.location)));
+        const result = await imgCheck(req.body.checkid, req.file.location);
+        if(result==-1) {
+            return res.status(450).json({status:450, isSuccess: false, error: "체크리스트 달성 전에는 인증샷을 추가할 수 없습니다"});
+        }
+        else res.send(response(status.SUCCESS, result));
     } catch (err) {
         next(err);
     }
