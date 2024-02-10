@@ -120,6 +120,7 @@ export const getSinglePost = async (req, res, next) => {
     }
 };
 
+// 유저 프로필 수정
 export const updateUserProfile = async (req, res, next) => {
     try {
         const snsId = await verify(req, res);
@@ -144,6 +145,22 @@ export const updateUserProfile = async (req, res, next) => {
         // 업데이트 로직 실행 (서비스 레이어에 구현)
         await homeService.updateUserProfile(snsId, imageUpdate);
         res.send(response({...status.SUCCESS, message: "유저 프로필 정보가 성공적으로 업데이트되었습니다."}));
+    } catch (error) {
+        next(error);
+    }
+};
+
+// 가족 승인
+export const approveFamilyMember = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;  // URL에서 snsId 추출
+        const snsId = await verify(req, res);  // 현재 로그인한 사용자의 snsId를 검증 함수를 통해 얻음
+
+        // homeService의 가족 승인 로직 호출
+        const result = await homeService.approveFamilyMember(snsId, userId);
+
+        // 성공 응답 전송
+        res.send(response(status.SUCCESS, result));
     } catch (error) {
         next(error);
     }

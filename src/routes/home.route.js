@@ -1,5 +1,5 @@
 import express from "express";
-import { createPost, getPosts, updatePost, deletePost, getFamilyMembers, addEmojiToPost, getUserProfile, getSinglePost, updateUserProfile } from '../controllers/home.controller.js';
+import { createPost, getPosts, updatePost, deletePost, getFamilyMembers, addEmojiToPost, getUserProfile, getSinglePost, updateUserProfile, approveFamilyMember } from '../controllers/home.controller.js';
 import { imageUploader } from "../middleware/image.uploader.js";
 
 export const homeRoute = express.Router();
@@ -41,3 +41,6 @@ homeRoute.get('/posts/:postIdx', getSinglePost);
 
 // 유저 프로필 정보 수정(Put)
 homeRoute.patch('/user/profile', setProfileDirectory, imageUploader.single('image'), updateUserProfile);
+
+// 가족 승인
+homeRoute.put('/family/:userId', approveFamilyMember); 

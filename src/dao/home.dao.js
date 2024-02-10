@@ -18,7 +18,7 @@ export const createPostInDb = async ({user_idx, content, picture}) => {
 };
 
 // 사용자의 family_code 조회
-const getUserFamilyCode = async (user_idx) => {
+export const getUserFamilyCode = async (user_idx) => {
     const query = "SELECT family_code FROM user WHERE snsId = ?"; 
     console.log("user_idx: ", user_idx);
     const [rows] = await pool.query(query, [user_idx]);
@@ -256,4 +256,12 @@ export const updateUserProfileInDb = async (snsId, updateData) => {
         console.error('DB Error in updating user profile:', error);
         throw error;
     }
+};
+
+// 가족 승인
+export const updateFamilyMemberAuth = async (snsId) => {
+    const query = "UPDATE user SET auth = 1 WHERE snsId = ? AND auth = 0";
+    const [result] = await pool.query(query, [snsId]);
+    console.log("result:",result);
+    return result.affectedRows > 0;  // affectedRows가 0보다 크면 업데이트 성공
 };
