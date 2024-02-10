@@ -23,7 +23,7 @@ export const homeService = {
         }
 
         // 요청한 사용자와 게시글의 소유자가 같은지 확인
-        if (post.user_idx !== snsId) {
+        if (String(post.user_idx) !== String(snsId)) {
             console.log(`Logged in user: ${snsId}, Post owner: ${post.user_idx}`);
             throw new Error('You do not have permission to edit this post');
         }
