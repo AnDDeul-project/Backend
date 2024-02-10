@@ -4,7 +4,7 @@ export const insertCheckSQL = "INSERT INTO checklist (sender_idx, receiver_idx, 
 
 export const getCheckIDSQL = "SELECT * FROM checklist WHERE check_idx = ?";
 
-export const callCheckSQL = "SELECT check_idx, sender_idx AS sender, complete, picture, content FROM checklist WHERE receiver_idx = ? AND due_date = ?";
+export const callCheckSQL = "SELECT check_idx, sender_idx, complete, picture, content FROM checklist WHERE receiver_idx = ? AND due_date = ?";
 
 export const contentCheckSQL = "UPDATE checklist SET content = ?, modify_at = ? WHERE check_idx = ?";
 

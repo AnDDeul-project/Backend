@@ -4,7 +4,28 @@ import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 import moment from 'moment-timezone';
+import { find_member } from "../dao/family.dao.js";
 import { insertCheckSQL, getCheckIDSQL, callCheckSQL, contentCheckSQL, dateCheckSQL, finishCheckSQL, deleteCheckSQL, imgCheckSQL } from "./check.sql.js";
+
+
+// 결과값 구성원 id를 닉네임으로 변경
+export const modifyCheckList = async(check) => {
+    try{
+        console.log(check);
+        check[0].sender = check[0].sender_idx;
+        check[0].receiver = check[0].receiver_idx;
+        delete check[0].sender_idx;
+        delete check[0].receiver_idx;
+        const sender = await find_member(check[0].sender);
+        const receiver = await find_member(check[0].receiver);
+        check[0].sender = sender;
+        check[0].receiver = receiver;
+        return check
+    } catch(err){
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG, e);
+    }
+}
 
 // 체크리스트 데이터 삽입
 export const addCheckList = async (data) => {
@@ -29,10 +50,12 @@ export const getCheck = async (checkid) => {
         if(check.length==0){
             return -1;
         }
+        /*
         check[0].sender = check[0].sender_idx;
         check[0].receiver = check[0].receiver_idx;
         delete check[0].sender_idx;
         delete check[0].receiver_idx;
+        */
         //console.log(check);
         conn.release();
         return check;
