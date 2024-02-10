@@ -79,6 +79,39 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
 
   /check/{userid}/{mode}/{date}:
     get:
@@ -160,6 +193,39 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
   
   /check/{checkid}/content:
     put:
@@ -229,6 +295,39 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
 
   /check/{checkid}/date/{date}:
     put:
@@ -295,6 +394,39 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
 
   /check/{checkid}/complete:
     put:
@@ -355,6 +487,39 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
 
   /check/{checkid}:
     delete:
@@ -411,6 +576,39 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+                
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
 
   /check/img:
     patch:
@@ -481,7 +679,6 @@ paths:
                 type: string
                 example: "체크리스트 달성 전에는 인증샷을 추가할 수 없습니다"
 
-
         '500':
           description: 서버 에러
           schema:
@@ -493,4 +690,37 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
+
+        '4001':
+          description: 파라미터 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 4001
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
         
