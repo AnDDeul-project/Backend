@@ -17,7 +17,7 @@ paths:
             receiver_idx:
               type: string
               description: 체크리스트 주인
-              example: "3333333333333"
+              example: "3304133093"
             due_year:
               type: integer
               description: 생일 년도

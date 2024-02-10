@@ -3,14 +3,15 @@
 import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
+import moment from 'moment-timezone';
 import { insertCheckSQL, getCheckIDSQL, callCheckSQL, contentCheckSQL, dateCheckSQL, finishCheckSQL, deleteCheckSQL, imgCheckSQL } from "./check.sql.js";
 
 // 체크리스트 데이터 삽입
 export const addCheckList = async (data) => {
     try{
         const conn = await pool.getConnection();
-
-        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content]);
+        const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content, currentDate]);
         conn.release();
         return result[0].insertId;
     }catch (err){

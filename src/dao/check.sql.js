@@ -1,6 +1,6 @@
 //check.sql.js
 
-export const insertCheckSQL = "INSERT INTO checklist (sender_idx, receiver_idx, due_date, complete, picture, content, create_at, modify_at) VALUES ( ?, ?, ?, ?, ?, ?, NOW(), NOW());";
+export const insertCheckSQL = "INSERT INTO checklist (sender_idx, receiver_idx, due_date, complete, picture, content, create_at) VALUES ( ?, ?, ?, ?, ?, ?, ?) ;";
 
 export const getCheckIDSQL = "SELECT * FROM checklist WHERE check_idx = ?";
 
