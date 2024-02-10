@@ -47,19 +47,19 @@ export const callCheck = async (userid, date) => {
 // 할 일 수정
 export const updateContent = async (checkid, body) => {
     await contentCheckList(checkid, body.content);
-    return contentCheckResponseDTO(await getCheck(checkid));
+    return contentCheckResponseDTO(await modifyCheckList(await getCheck(checkid)));
 }
 
 // 할 일 날짜 수정
 export const updateDate = async (checkid, date) => {
     await dateCheckList(checkid, date);
-    return dateCheckResponseDTO(await getCheck(checkid, date));
+    return dateCheckResponseDTO(await modifyCheckList(await getCheck(checkid, date)));
 }
 
 // 할 일 완료 혹은 완료 취소
 export const updateComplete = async (checkid) => {
     await finishCheckList(checkid);
-    return completeCheckResponseDTO(await getCheck(checkid));
+    return completeCheckResponseDTO(await modifyCheckList(await getCheck(checkid)));
 }
 
 // 할 일 삭제
