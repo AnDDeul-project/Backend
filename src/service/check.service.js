@@ -70,6 +70,7 @@ export const deleteCheck = async (checkid) => {
 
 // 사진 업로드
 export const imgCheck = async (checkid, location) => {
-    await imageCheckList(checkid, location);
-    return imgCheckResponseDTO(await modifyCheckList(await getCheck(checkid)));
+    const result = await imageCheckList(checkid, location);
+    if(result==1) return imgCheckResponseDTO(await modifyCheckList(await getCheck(checkid)));
+    else if(result == -1) return -1;
 }

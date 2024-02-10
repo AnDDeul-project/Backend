@@ -465,6 +465,22 @@ paths:
               isSuccess:
                 type: boolean
                 example: false
+        
+        '450':
+          description: 달성 전 인증샷 추가 불가
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 450
+              isSuccess:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "체크리스트 달성 전에는 인증샷을 추가할 수 없습니다"
+
 
         '500':
           description: 서버 에러

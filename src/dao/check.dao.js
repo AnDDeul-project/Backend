@@ -143,12 +143,18 @@ export const deleteCheckList = async (checkid) => {
     }
 }
 
+//이미지 추가
 export const imageCheckList = async(checkid, location) => {
     try{
         const conn = await pool.getConnection();
+        const isfinished = await pool.query("SELECT complete FROM checklist WHERE check_idx = ?", checkid);
+        if(isfinished[0][0].complete != 1) {
+            return -1;
+        }
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         const [result] = await pool.query(imgCheckSQL, [location, currentDate, checkid]);
         conn.release();
+        return 1;
     } catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
