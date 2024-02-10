@@ -148,6 +148,7 @@ export const imageCheckList = async(checkid, location) => {
     try{
         const conn = await pool.getConnection();
         const isfinished = await pool.query("SELECT complete FROM checklist WHERE check_idx = ?", checkid);
+        console.log(isfinished);
         if(isfinished[0][0].complete != 1) {
             return -1;
         }
