@@ -259,9 +259,8 @@ export const updateUserProfileInDb = async (snsId, updateData) => {
 };
 
 // 가족 승인
-export const updateFamilyMemberAuth = async (snsId) => {
+export const updateFamilyMemberAuth = async (userId) => {
     const query = "UPDATE user SET auth = 1 WHERE snsId = ? AND auth = 0";
-    const [result] = await pool.query(query, [snsId]);
-    console.log("result:",result);
+    const [result] = await pool.query(query, [userId]);
     return result.affectedRows > 0;  // affectedRows가 0보다 크면 업데이트 성공
 };

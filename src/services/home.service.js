@@ -88,15 +88,14 @@ export const homeService = {
         const userFamilyCode = await getUserFamilyCode(snsId);
         const targetFamilyCode = await getUserFamilyCode(userId);
 
-        console.log('userFamilyCode:',userFamilyCode);
-        console.log('targetFamilyCode:',targetFamilyCode);
         if (String(userFamilyCode) !== String(targetFamilyCode)) {
             throw new Error("가족 코드가 다릅니다.");
         }
-    
         // 2. 대상 유저의 auth 값이 0인지 확인하고 1로 업데이트
-        const result = await updateFamilyMemberAuth(snsId);
-    
-        return result ? "가족 승인이 완료되었습니다." : "승인할 사용자가 이미 승인되었거나 존재하지 않습니다.";
+        const result = await updateFamilyMemberAuth(userId);
+        if (!result) {
+            throw new Error("승인할 사용자가 이미 승인되었거나 존재하지 않습니다.");
+        }
+        return "가족 승인이 완료되었습니다.";
     }
 };
