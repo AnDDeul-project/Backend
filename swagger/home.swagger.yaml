@@ -534,8 +534,8 @@ paths:
                 type: boolean
                 example: false
               code:
-                type: integer
-                example: 승인할 사용자가 이미 승인되었거나 존재하지 않습니다.
+                type: string
+                example: HOME4005
               message:
                 type: string
                 example: 승인할 사용자가 이미 승인되었거나 존재하지 않습니다.
