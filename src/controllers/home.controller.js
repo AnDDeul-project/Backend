@@ -163,9 +163,9 @@ export const approveFamilyMember = async (req, res, next) => {
         res.send(response(status.SUCCESS, result));
     } catch (error) {
         if(error.message == "가족 코드가 다릅니다.") {
-            res.send(response(status.FAMILY_CODE_MISMATCH, "가족 코드가 다릅니다."));
+            res.send(response(status.FAMILY_CODE_MISMATCH));
         } else if(error.message == "승인할 사용자가 이미 승인되었거나 존재하지 않습니다.") {
-            res.send(response(status.USER_ALREADY_APPROVED_OR_NOT_FOUND, "승인할 사용자가 이미 승인되었거나 존재하지 않습니다."));
+            res.send(response(status.USER_ALREADY_APPROVED_OR_NOT_FOUND));
         } else {
             next(error);
         }

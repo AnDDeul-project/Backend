@@ -20,9 +20,7 @@ export const createPostInDb = async ({user_idx, content, picture}) => {
 // 사용자의 family_code 조회
 export const getUserFamilyCode = async (user_idx) => {
     const query = "SELECT family_code FROM user WHERE snsId = ?"; 
-    console.log("user_idx: ", user_idx);
     const [rows] = await pool.query(query, [user_idx]);
-    console.log("rows: ", rows);
     return rows.length > 0 ? rows[0].family_code : null;
 };
 
@@ -110,7 +108,7 @@ export const getFamilyMembers = async (user_snsId) => {
     const [waitlistRows] = await pool.query(waitlistQuery, [userFamilyCode]);
 
     // 로그인한 사용자를 결과 배열의 첫 번째 요소로 배치
-    const loginUserIndex = familyMembersRows.findIndex(member => member.snsId === user_snsId);
+    const loginUserIndex = familyMembersRows.findIndex(member => String(member.snsId) === String(user_snsId));
     if (loginUserIndex > -1) {
         const loginUser = familyMembersRows.splice(loginUserIndex, 1)[0];
         familyMembersRows.unshift(loginUser); // 로그인한 사용자를 배열의 첫 번째 요소로 추가
