@@ -1,33 +1,34 @@
-// check.route.js
+//check.route.js
 
 import express from 'express';
-import { checkadd, checkget, checkcontent, checkdate, checkcomplete, checkdelete, checkimg } from '../controllers/check.controller.js';
-import { imageUploader } from '../middleware/image.uploader.js';
+import { addCheck, getCheck, contentCheck, dateCheck, completeCheck, deleteCheck, imgCheck} from '../controllers/check.controller.js'
+import { imageUploader } from "../middleware/image.uploader.js";
 
 export const checkRoute = express.Router();
 
+// directory 값 고정
 const setCheckDirectory = (req, res, next) => {
     req.query.directory = 'check';
     next();
 };
 
-// 리스트 추가
-checkRoute.post('/add', checkadd);
+// 체크리스트 추가 post
+checkRoute.post('/add', addCheck);
 
-// 리스트 불러오기
-checkRoute.get('/:userid/:mode/:date', checkget);
+// 1인 체크리스트 날짜별로 불러오기 get
+checkRoute.get('/:userid/:mode/:date', getCheck);
 
-// 할 일 수정
-checkRoute.put('/:checkid/content', checkcontent);
+// 체크리스트 내용 수정 put
+checkRoute.put('/:checkid/content', contentCheck);
 
-// 기한 수정
-checkRoute.put('/:checkid/date/:date', checkdate);
+// 체크리스트 기한 변경 put
+checkRoute.put('/:checkid/date/:date', dateCheck);
 
-// 할 일 완료 혹은 완료 취소
-checkRoute.put('/:checkid/complete', checkcomplete);
+// 체크리스트 완료 여부 변경 put
+checkRoute.put('/:checkid/complete', completeCheck);
 
-// 할 일 삭제
-checkRoute.delete('/:checkid', checkdelete);
+// 체크리스트 삭제 delete
+checkRoute.delete('/:checkid', deleteCheck);
 
-// 사진 넣기
-checkRoute.patch('/img', setCheckDirectory, imageUploader.single('image'), checkimg);
+// 체크리스트 인증샷 추가 patch
+checkRoute.patch('/img', setCheckDirectory, imageUploader.single('image'), imgCheck);

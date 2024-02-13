@@ -2,41 +2,39 @@ paths:
   /check/add:
     post:
       tags:
-        - Check
-      summary : 체크리스트 추가
-      produces:
-        - application/json
+        - Checklist
+      summary: 체크리스트 추가
       security:
         - Authorization: []
       parameters:
-      - name: add
-        in: body
-        required: true
-        schema:
-          properties:
-            receiver_idx:
-              type: string
-              description: 체크리스트 주인
-              example: "3304133093"
-            due_year:
-              type: integer
-              description: 생일 년도
-              example: 2000
-            due_month:
-              type: integer
-              description: 생일 월(한자리 숫자면 05 안되고 5로 적어주세요!)
-              example: 12
-            due_day:
-              type: integer
-              description: 생일 일(한자리 숫자면 05 안되고 5로 적어주세요!)
-              example: 5
-            content:
-              type: string
-              description: 체크리스트 내용
-              example: 화이팅 힘내서 열심히 할 일 하기
+        - name: add
+          in: body
+          required: true
+          schema:
+            properties:
+              receiver_idx:
+                type: string
+                description: 체크리스트 추가 대상
+                example: "3304133093"
+              due_year:
+                type: integer
+                description: 생일 년도
+                example: 2000
+              due_month:
+                type: integer
+                description: 생일 월(한자리 숫자면 05 안되고 5로 적어주세요!)
+                example: 12
+              due_day:
+                type: integer
+                description: 생일 일(한자리 숫자면 05 안되고 5로 적어주세요!)
+                example: 5
+              content:
+                type: string
+                description: 체크리스트 내용
+                example: 화이팅 힘내서 열심히 할 일 하기
+      
       responses:
         '200':
-          description: 체크리스트 추가 성공!
           schema:
             type: object
             properties:
@@ -46,28 +44,19 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              result:
-                type: object
+              check:
+                type: json
                 example: {
-                  "checkid": 777,
-                  "sender": "exampletokenforsender",
-                  "receiver": "exampletokenforreceiver",
-                  "content": "화이팅 성공했어요",
-                  "create_at" : "2000-12-03T15:00:00.000Z"
+                  checkid: 3,
+                  due_date: '2024-02-13',
+                  complete: 0,
+                  picture: null,
+                  content: "열심히 살기",
+                  create_at : '2024-02-13 22:22:22',
+                  modify_at : null,
+                  sender: "임세현",
+                  receiver: "김정훈"              
                 }
-
-        '400':
-          description: 잘못된 요청
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 400
-              isSuccess:
-                type: boolean
-                example: false
-
         '500':
           description: 서버 에러
           schema:
@@ -82,7 +71,6 @@ paths:
               message:
                 type: string
                 example: 서버 에러, 관리자에게 문의 바랍니다.
-
         '401':
           description: 토큰 오류
           schema:
@@ -97,7 +85,6 @@ paths:
               error:
                 type: string
                 example: 유효하지 않은 토큰입니다.
-
         '4001':
           description: 파라미터 오류
           schema:
@@ -113,11 +100,12 @@ paths:
                 type: string
                 example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
 
+
   /check/{userid}/{mode}/{date}:
     get:
       tags:
-        - Check
-      summary : 가족 구성원 1인 체크리스트 날짜별로 불러오기
+        - Checklist
+      summary: 가족 구성원 1인 체크리스트 날짜별로 불러오기
       security:
         - Authorization: []
       parameters:
@@ -126,7 +114,7 @@ paths:
         required: true
         description: 불러올 체크리스트의 주인
         type: string
-        example: 2222232423424
+        example: "3304133093"
       - name: mode
         in: path
         required: true
@@ -139,9 +127,9 @@ paths:
         description: 불러올 체크리스트의 날짜(YYYY-MM-DD)
         type: string
         example: 2022-01-01
+
       responses:
         '200':
-          description: 체크리스트 가져오기 성공!
           schema:
             type: object
             properties:
@@ -151,37 +139,32 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              result:
-                type: object
+              checklist:
+                type: json
                 example: [
                   {
-                  "checkid": 1,
-                  "sender": "exampletokenforsender",
-                  "complete": 0,
-                  "picture": "examplepicture",
-                  "content": "화이팅 성공했어요"
+                    checkid: 3,
+                    due_date: '2024-02-13',
+                    complete: 0,
+                    picture: null,
+                    content: "열심히 살기",
+                    create_at : '2024-02-13 22:22:22',
+                    modify_at : null,
+                    sender: "임세현",
+                    receiver: "김정훈"              
                   },
                   {
-                  "checkid": 2,
-                  "sender": "exampletokenforsender2",
-                  "complete": 0,
-                  "picture": "examplepicture",
-                  "content": "여러개면 배열에 담깁니다"
-                  },
+                    checkid: 3,
+                    due_date: '2024-02-13',
+                    complete: 0,
+                    picture: null,
+                    content: "행복하게 살기",
+                    create_at : '2024-02-13 22:22:23',
+                    modify_at : null,
+                    sender: "임세현",
+                    receiver: "김정훈"              
+                  }
                 ]
-        
-        '400':
-          description: 잘못된 요청
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 400
-              isSuccess:
-                type: boolean
-                example: false
-        
         '500':
           description: 서버 에러
           schema:
@@ -196,7 +179,6 @@ paths:
               message:
                 type: string
                 example: 서버 에러, 관리자에게 문의 바랍니다.
-
         '401':
           description: 토큰 오류
           schema:
@@ -211,7 +193,20 @@ paths:
               error:
                 type: string
                 example: 유효하지 않은 토큰입니다.
-
+        '451':
+          description: 체크리스트 없음
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 451
+              isSuccess:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: 해당 날짜에 만들어진 체크리스트가 없습니다
         '4001':
           description: 파라미터 오류
           schema:
@@ -226,11 +221,12 @@ paths:
               message:
                 type: string
                 example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
-  
+      
+
   /check/{checkid}/content:
     put:
       tags:
-        - Check
+        - Checklist
       summary: 체크리스트 내용 수정
       security:
         - Authorization: []
@@ -238,9 +234,9 @@ paths:
       - name: checkid
         in: path
         required: true
-        description: 수정할 체크리스트 고유번호
+        description: 수정할 체크리스트의 고유번호
         type: integer
-        example: 12345
+        example: 13
       - name: content
         in: body
         required: true
@@ -248,11 +244,12 @@ paths:
           properties:
             content:
               type: string
-              description: 수정할 내용
+              description: 수정할 체크리스트 내용입니다 !
               example: "이렇게 바뀔거에요"
+      
       responses:
         '200':
-          description: 체크리스트 내용 수정 성공
+          description: 체크리스트 내용 변경 성공
           schema:
             type: object
             properties:
@@ -262,28 +259,19 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              result:
-                type: object
+              check:
+                type: json
                 example: {
-                  "checkid": 1,
-                  "sender": "보낸이",
-                  "receiver": "받는이",
-                  "content": "이렇게 바뀔거에요",
-                  "modify_at" : "2000-12-03T15:00:00.000Z"
+                  checkid: 3,
+                  due_date: '2024-02-13',
+                  complete: 0,
+                  picture: null,
+                  content: "열심히 살기",
+                  create_at : '2024-02-13 22:22:22',
+                  modify_at : '2024-02-13 22:44:44',
+                  sender: "임세현",
+                  receiver: "김정훈"              
                 }
-
-        '400':
-          description: 잘못된 요청
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 400
-              isSuccess:
-                type: boolean
-                example: false
-
         '500':
           description: 서버 에러
           schema:
@@ -298,7 +286,6 @@ paths:
               message:
                 type: string
                 example: 서버 에러, 관리자에게 문의 바랍니다.
-
         '401':
           description: 토큰 오류
           schema:
@@ -313,7 +300,6 @@ paths:
               error:
                 type: string
                 example: 유효하지 않은 토큰입니다.
-
         '4001':
           description: 파라미터 오류
           schema:
@@ -329,10 +315,11 @@ paths:
                 type: string
                 example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
 
+
   /check/{checkid}/date/{date}:
     put:
       tags:
-        - Check
+        - Checklist
       summary: 체크리스트 기한 변경
       security:
         - Authorization: []
@@ -340,18 +327,19 @@ paths:
       - name: checkid
         in: path
         required: true
-        description: 수정할 체크리스트 고유번호
+        description: 수정할 체크리스트의 고유번호
         type: integer
-        example: 12345
+        example: 13
       - name: date
         in: path
         required: true
         description: 체크리스트가 변경될 날짜(YYYY-MM-DD)
         type: string
-        example: 2022-01-01
+        example: 2024-02-15
+      
       responses:
         '200':
-          description: 체크리스트 기한 수정 성공
+          description: 체크리스트 기한 변경 성공
           schema:
             type: object
             properties:
@@ -361,28 +349,19 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              result:
-                type: object
+              check:
+                type: json
                 example: {
-                  "checkid": 1,
-                  "sender": "123",
-                  "receiver": "456",
-                  "due_date": "2000-12-03T15:00:00.000Z",
-                  "modify_at" : "2000-12-03T15:00:00.000Z"
+                  checkid: 3,
+                  due_date: '2024-02-15',
+                  complete: 0,
+                  picture: null,
+                  content: "열심히 살기",
+                  create_at : '2024-02-13 22:22:22',
+                  modify_at : '2024-02-13 22:44:44',
+                  sender: "임세현",
+                  receiver: "김정훈"              
                 }
-
-        '400':
-          description: 잘못된 요청
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 400
-              isSuccess:
-                type: boolean
-                example: false
-
         '500':
           description: 서버 에러
           schema:
@@ -397,7 +376,6 @@ paths:
               message:
                 type: string
                 example: 서버 에러, 관리자에게 문의 바랍니다.
-
         '401':
           description: 토큰 오류
           schema:
@@ -412,7 +390,6 @@ paths:
               error:
                 type: string
                 example: 유효하지 않은 토큰입니다.
-
         '4001':
           description: 파라미터 오류
           schema:
@@ -428,10 +405,11 @@ paths:
                 type: string
                 example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
 
+
   /check/{checkid}/complete:
     put:
       tags:
-        - Check
+        - Checklist
       summary: 체크리스트 완료 여부 변경
       security:
         - Authorization: []
@@ -441,10 +419,11 @@ paths:
         required: true
         description: 수정할 체크리스트 고유번호
         type: integer
-        example: 12345
+        example: 13
+
       responses:
         '200':
-          description: 체크리스트 완료 여부 변경 성공!
+          description: 체크리스트 완료 여부 변경 성공
           schema:
             type: object
             properties:
@@ -454,28 +433,19 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              result:
-                type: object
+              check:
+                type: json
                 example: {
-                  "checkid": 1,
-                  "sender": "123",
-                  "receiver": "456",
-                  "complete": 1,
-                  "modify_at" : "2000-12-03T15:00:00.000Z"
+                  checkid: 3,
+                  due_date: '2024-02-15',
+                  complete: 1,
+                  picture: null,
+                  content: "열심히 살기",
+                  create_at : '2024-02-13 22:22:22',
+                  modify_at : '2024-02-13 22:44:44',
+                  sender: "임세현",
+                  receiver: "김정훈"              
                 }
-
-        '400':
-          description: 잘못된 요청
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 400
-              isSuccess:
-                type: boolean
-                example: false
-
         '500':
           description: 서버 에러
           schema:
@@ -490,7 +460,6 @@ paths:
               message:
                 type: string
                 example: 서버 에러, 관리자에게 문의 바랍니다.
-
         '401':
           description: 토큰 오류
           schema:
@@ -505,7 +474,6 @@ paths:
               error:
                 type: string
                 example: 유효하지 않은 토큰입니다.
-
         '4001':
           description: 파라미터 오류
           schema:
@@ -520,12 +488,13 @@ paths:
               message:
                 type: string
                 example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
+      
 
   /check/{checkid}:
     delete:
       tags:
-        - Check
-      summary: 체크리스트 삭제
+        - Checklist
+      summary:
       security:
         - Authorization: []
       parameters:
@@ -534,10 +503,11 @@ paths:
         required: true
         description: 삭제할 체크리스트 고유번호
         type: integer
-        example: 12345
+        example: 13
+      
       responses:
         '200':
-          description: 체크리스트 삭제 성공!
+          description: 체크리스트 삭제 성공
           schema:
             type: object
             properties:
@@ -547,24 +517,9 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              result:
-                type: object
-                example: {
-                  "result": "1개의 체크리스트가 삭제되었습니다"
-                }
-                
-        '400':
-          description: 잘못된 요청
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 400
-              isSuccess:
-                type: boolean
-                example: false
-
+              message:
+                type: json
+                example: 체크리스트를 삭제했습니다
         '500':
           description: 서버 에러
           schema:
@@ -579,7 +534,6 @@ paths:
               message:
                 type: string
                 example: 서버 에러, 관리자에게 문의 바랍니다.
-
         '401':
           description: 토큰 오류
           schema:
@@ -594,7 +548,6 @@ paths:
               error:
                 type: string
                 example: 유효하지 않은 토큰입니다.
-                
         '4001':
           description: 파라미터 오류
           schema:
@@ -609,30 +562,30 @@ paths:
               message:
                 type: string
                 example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
+    
 
   /check/img:
     patch:
       tags:
-       - Check
+        - Checklist
       summary: 체크리스트 인증샷 추가
-      consumes:
-        - multipart/form-data
       security:
         - Authorization: []
       parameters:
-        - in: formData
-          name: image
+        - name: image
+          in: formData
           type: file
           required: true
-          description: 체크리스트 인증샷으로 첨부할 이미지입니다!
-        - in: formData
-          name: checkid
-          type: string
+          description: 체크리스트에 인증샷으로 첨부할 이미지
+        - name: checkid
+          in: formData
+          type: integer
           required: true
-          description: 인증샷 첨부할 체크리스트 인덱스 번호입니다!
+          description: 인증샷을 추가할 체크리스트 인덱스 번호
+      
       responses:
         '200':
-          description: 체크리스트 삭제 성공!
+          description: 인증샷 추가 성공
           schema:
             type: object
             properties:
@@ -642,73 +595,61 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              result:
-                type: object
+              check:
+                type: json
                 example: {
-                  "checkid": 1,
-                  "sender": "123",
-                  "receiver": "456",
-                  "picture": "사진 url",
-                  "modify_at" : "2000-12-03T15:00:00.000Z"
+                  checkid: 3,
+                  due_date: '2024-02-15',
+                  complete: 1,
+                  picture: '사진 url',
+                  content: "열심히 살기",
+                  create_at : '2024-02-13 22:22:22',
+                  modify_at : '2024-02-13 22:44:44',
+                  sender: "임세현",
+                  receiver: "김정훈"              
                 }
-                
-        '400':
-          description: 잘못된 요청
+        '500':
+          description: 서버 에러
           schema:
             type: object
             properties:
               status:
                 type: integer
-                example: 400
+                example: 500
               isSuccess:
                 type: boolean
                 example: false
-        
+              message:
+                type: string
+                example: 서버 에러, 관리자에게 문의 바랍니다.
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
         '450':
-          description: 달성 전 인증샷 추가 불가
+          description: 미완료 체크리스트
           schema:
             type: object
             properties:
               status:
                 type: integer
                 example: 450
-              isSuccess:
+              isSuccess: 
                 type: boolean
                 example: false
               error:
                 type: string
-                example: "체크리스트 달성 전에는 인증샷을 추가할 수 없습니다"
-
-        '500':
-          description: 서버 에러
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 500
-              isSuccess:
-                type: boolean
-                example: false
-              message:
-                type: string
-                example: 서버 에러, 관리자에게 문의 바랍니다.
-
-        '401':
-          description: 토큰 오류
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 401
-              isSuccess:  
-                type: boolean
-                example: false
-              error:
-                type: string
-                example: 유효하지 않은 토큰입니다.
-
+                example: 체크리스트 달성 전에는 인증샷을 추가할 수 없습니다
         '4001':
           description: 파라미터 오류
           schema:
@@ -723,4 +664,4 @@ paths:
               message:
                 type: string
                 example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
-        
+
