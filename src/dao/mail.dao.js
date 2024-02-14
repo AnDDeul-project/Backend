@@ -61,3 +61,24 @@ export const sendMail = async(snsId, req) => {
         throw new BaseError(status.PARAMETER_IS_WRONG, e);
     }
 }
+
+export const getQuestion = async(snsId) => {
+    try {
+        const conn = await pool.getConnection();
+        const result = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsId);
+        if(result[0][0].family_code==null) {
+            return -1;
+        }
+        const result2 = await pool.query("SELECT create_at FROM userfam WHERE family_code = ?", result[0][0].family_code);
+        const dbDate = moment(result2[0][0].create_at);
+        const currentDate = moment().tz('Asia/Seoul');
+        let diffInDays = currentDate.diff(dbDate, 'days');
+        diffInDays = diffInDays +1;
+        const ques = await pool.query("SELECT content FROM question WHERE question_idx = ?", diffInDays);
+        conn.release();
+        return ques[0];
+    } catch(err) {
+        console.log(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG, err);
+    }
+}
