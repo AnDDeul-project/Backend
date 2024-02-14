@@ -31,8 +31,9 @@ paths:
                       "postbox_idx": 1,
                       "sender_idx": "한승민",
                       "voice": 0,
+                      "content": "1234",
+                      "question": "오늘의 기분은 어떠신가요?",
                       "is_read": 0,
-                      "question": "오늘의 기분은 어떠신가요?"
                     },
                     {
                       "postbox_idx": 2,

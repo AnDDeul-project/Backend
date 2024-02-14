@@ -20,7 +20,7 @@ export const getOne = async(idx) => {
 export const getAll = async(snsId, date) => {
     try{
         const conn = await pool.getConnection();
-        let result = await pool.query("SELECT postbox_idx, sender_idx, voice, is_read FROM postbox WHERE receiver_idx = ? AND send_date = ?", [snsId[0], date]);
+        let result = await pool.query("SELECT postbox_idx, sender_idx, voice, content, question, is_read FROM postbox WHERE receiver_idx = ? AND send_date = ?", [snsId[0], date]);
         console.log(result);
         for(const user of result[0]){
             console.log(user);
