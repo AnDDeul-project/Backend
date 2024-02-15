@@ -77,7 +77,7 @@ export const add_family = async(user_id, family_code, user_name, now_user) => {
         console.log(user_id, family_code, user_name);
         const content = user_id + "님이 가족 신청을 보냈습니다! 지금 확인하고 반겨주세요:)";
         await pool.query("UPDATE user SET family_code = ? , auth=0 , point = 0 WHERE snsId = ?", [family_code, now_user]);
-        await pool.query("INSERT INTO alram (user_idx, checked, content) VALUES (?, ?, ?)", [user_name, 0, content]);
+        await pool.query("INSERT INTO alram (user_idx, checked, content, place) VALUES (?, ?, ?, ?)", [user_name, 0, content, 'family']);
         conn.release();
         return;
     }catch(e){
