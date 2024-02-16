@@ -23,8 +23,9 @@ paths:
                 example: {
                   "idx": 1,
                   "point": 13,
-                  "name": "튤립",
-                  "img": "사진 url"
+                  "name": "툴립",
+                  "img": "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/flower/pot_img_tulip0.svg",
+                  "gauge": "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/flower/pot_img_gauge0.svg"
                 }
         '500':
           description: 서버 에러
