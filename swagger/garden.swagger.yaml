@@ -109,11 +109,16 @@ paths:
                   point:
                     type: integer
                     example: 12
-                  img:
+                  changed_img:
                     type: json
-                    example: {
-                      "changed_img": "사진 url"
-                    }
+                    example: [
+                      {
+                        "img_3": "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/flower/pot_img_tulip3.svg"
+                      },
+                      {
+                        "gauge": "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/flower/pot_img_gauge3.svg"
+                      }
+                    ]
         '402':
           description: 포인트 부족
           schema:
