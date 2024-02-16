@@ -3,7 +3,7 @@ import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 
 
-const ranges = [0, 0.2, 0.4, 0.6, 0.8, 1];
+const ranges = [0.2, 0.4, 0.6, 0.8, 1];
 const images = ['img_0', 'img_1', 'img_2', 'img_3', 'img_4', 'img_5'];
 
 
@@ -15,28 +15,30 @@ export const getOne = async(snsid) => {
         if(result0[0][0].family_code==null) {
             return -1;
         }
-        const result = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", result0[0][0].family_code);
+        const fam = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", result0[0][0].family_code);
        
         //사진 가져와야 하니까 포인트 얼마나 필요한지 가져와
-        const num = result[0][0].f_num;
-        const point = result[0][0].f_point;
-        const result2 = await pool.query("SELECT required FROM flower WHERE idx = ?", num);
+        const num = fam[0][0].f_num;
+        const point = fam[0][0].f_point;
+        const req = await pool.query("SELECT required FROM flower WHERE idx = ?", num);
        
         //이제 꽃 사진 가져오자 + 이름도 같이
-        const standard = result2[0][0].required;
-        console.log(result2);
+        const standard = req[0][0].required;
         let img;
-        for(let i = 0; i < ranges.length; i++) {
-            if(point<ranges[i]*standard || point===standard) {
-                img = images[i];
-                console.log(img);
-                break;
+        if(point===standard) {
+            img = images[5];
+        } else {
+            for(let i = 0; i < ranges.length; i++) {
+                if(point < ranges[i]*standard) {
+                    img = images[i];
+                    break;
+                }
             }
         }
-        const result3 = await pool.query(`SELECT name, ${img} FROM flower WHERE idx = (?, ?)`, [num,17]);
+        const result3 = await pool.query(`SELECT name, ${img} FROM flower WHERE idx IN (?, ?)`, [num,17]);
         conn.release();
         //꽃 번호, 포인트, 이름, 그림
-        return {idx: num, point: point, name: result3[0].name, img: result3[0][img]};
+        return {idx: num, point: point, name: result3[0][0].name, img: result3[0][0][img], gauge: result3[0][1][img]};
     } catch(err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
@@ -61,12 +63,12 @@ export const cal_point = async(snsid) => {
         }
         const fam = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", result[0][0].family_code);
         const req = await pool.query("SELECT required FROM flower WHERE idx = ?", fam[0][0].f_num);
-        
-        //포인트 다 채우면 꽃 바꾸고 포인트 0으로, 다 안 채웠으면 그냥 +2   
-        if(fam[0][0].f_point +2 >= req[0][0].required) {
+        console.log(fam[0][0].f_point+2);
+        //포인트 다 채우면 꽃 바꾸고 포인트 0으로, 다 안 채웠으면 그냥 +2
+        fam[0][0].f_point += 2;
+        if(fam[0][0].f_point >= req[0][0].required) {
             //set f_num = f_num+1 있었던 것
             await pool.query("UPDATE userfam SET f_point = 0 WHERE family_code = ?", result[0][0].family_code);
-            fam[0][0].f_point = 0;
         } else {
             await pool.query("UPDATE userfam SET f_point = f_point + 2 WHERE family_code = ?", result[0][0].family_code);
         }
