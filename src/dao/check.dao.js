@@ -9,7 +9,7 @@ import { find_member } from "./family.dao.js";
 
 export const getOne = async (checkid) => {
     try {
-        const conn = await pool.getConnection();
+        //const conn = await pool.getConnection();
         const [result] = await pool.query("SELECT * FROM checklist WHERE check_idx = ?", checkid);
         
         const sender = await find_member(result[0].sender_idx);
@@ -18,7 +18,7 @@ export const getOne = async (checkid) => {
         delete result2.sender_idx;
         delete result2.receiver_idx;
         
-        conn.release();
+        //conn.release();
         return result2;
     } catch (err) {
         console.error(err);
@@ -29,7 +29,7 @@ export const getOne = async (checkid) => {
 
 export const addOne = async (snsid, body) => {
     try {
-        const conn = await pool.getConnection();
+        //const conn = await pool.getConnection();
         const receiver = body.receiver_idx;
         // 기한 구하기
         const date = new Date(body.due_year, body.due_month-1, body.due_day);
@@ -44,7 +44,7 @@ export const addOne = async (snsid, body) => {
         const [nick] = await pool.query("SELECT nickname FROM user WHERE snsID = ?", snsid);
         const alarm_content = `${nick} 님이 해야 할 일을 남기셨어요`;
         await pool.query("INSERT INTO alram (user_idx, checked, content) VALUES (?, ?, ?)", [receiver, 0, alarm_content]);
-        conn.release();
+        //conn.release();
         return result[0].insertId;
     } catch (err) {
         console.error(err);
@@ -55,7 +55,7 @@ export const addOne = async (snsid, body) => {
 
 export const getAll = async (snsid, date) => {
     try {
-        const conn = await pool.getConnection();
+        //const conn = await pool.getConnection();
         const [result] = await conn.query("SELECT check_idx, sender_idx, complete, picture, content FROM checklist WHERE receiver_idx = ? AND due_date = ?", [snsid, date]);
         if(result.length==0) return -1;
 
@@ -66,7 +66,7 @@ export const getAll = async (snsid, date) => {
             delete newItem.sender_idx;  // sender_idx 속성 삭제
             return newItem;
         }));
-        conn.release();
+        //conn.release();
         return result2;
     } catch (err) {
         console.error(err);
@@ -77,10 +77,10 @@ export const getAll = async (snsid, date) => {
 
 export const changeContent = async (checkid, content) => {
     try {
-        const conn = await pool.getConnection();
+        //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         const [result] = await conn.query("UPDATE checklist SET content = ?, modify_at = ? WHERE check_idx = ?", [content, currentDate, checkid]);
-        conn.release();
+        //conn.release();
         return;
     } catch (err) {
         console.error(err);
@@ -91,10 +91,10 @@ export const changeContent = async (checkid, content) => {
 
 export const changeDate = async (checkid, date) => {
     try {
-        const conn = await pool.getConnection();
+        //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         const [result] = await conn.query("UPDATE checklist SET due_date = ?, modify_at = ? WHERE check_idx = ?", [date, currentDate, checkid]);
-        conn.release();
+        //conn.release();
         return;
     } catch (err) {
         console.error(err);
@@ -105,9 +105,9 @@ export const changeDate = async (checkid, date) => {
 
 export const changeComplete = async (checkid) => {
     try {
-        const conn = await pool.getConnection();
+        //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        await conn.query("UPDATE checklist SET complete = !complete, modify_at = ? WHERE check_idx = ?", [currentDate, checkid]);
+        await pool.query("UPDATE checklist SET complete = !complete, modify_at = ? WHERE check_idx = ?", [currentDate, checkid]);
         
         //알람 추가
         const [member] = await pool.query("SELECT sender_idx, receiver_idx FROM checklist WHERE check_idx = ?", checkid);
@@ -115,7 +115,7 @@ export const changeComplete = async (checkid) => {
         const alarm_content = `${nick} 님이 할 일을 완료하셨어요`;
         await pool.query("INSERT INTO alram (user_idx, checked, content) VALUES (?, ?, ?)", [member[0].sender_idx, 0, alarm_content]);
         
-        conn.release();
+        //conn.release();
         return;
     } catch (err) {
         console.error(err);
@@ -126,8 +126,8 @@ export const changeComplete = async (checkid) => {
 
 export const removeOne = async (checkid) => {
     try {
-        const conn = await pool.getConnection();
-        await conn.query("DELETE FROM checklist WHERE check_idx = ?", checkid);
+        //const conn = await pool.getConnection();
+        await pool.query("DELETE FROM checklist WHERE check_idx = ?", checkid);
         return;
     } catch (err) {
         console.error(err);
@@ -137,13 +137,13 @@ export const removeOne = async (checkid) => {
 
 export const putImg = async (checkid, location) => {
     try {
-        const conn = await pool.getConnection();
-        const [isFinished] = await conn.query("SELECT complete FROM checklist WHERE check_idx = ?", checkid);
+        //const conn = await pool.getConnection();
+        const [isFinished] = await pool.query("SELECT complete FROM checklist WHERE check_idx = ?", checkid);
         console.log(isFinished[0].complete);
         if(isFinished[0].complete != 1) return -1;
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        await conn.query("UPDATE checklist SET picture = ?, modify_at = ? WHERE check_idx = ?", [location, currentDate, checkid]);
-        conn.release();
+        await pool.query("UPDATE checklist SET picture = ?, modify_at = ? WHERE check_idx = ?", [location, currentDate, checkid]);
+        //conn.release();
         return 1;
     } catch (err) {
         console.error(err);
