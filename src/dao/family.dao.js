@@ -67,7 +67,7 @@ export const add_family = async(user_id, family_code, user_name, now_user) => {
         const content = user_id + "님이 가족 신청을 보냈습니다! 지금 확인하고 반겨주세요:)";
         const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         await pool.query("UPDATE user SET family_code = ? , auth=0 , point = 0 WHERE snsId = ?", [family_code, now_user]);
-        await pool.query("INSERT INTO alram (user_idx, checked, content, creat_at) VALUES (?, ?, ?, ?)", [user_name, 0, content, currentDate]);
+        await pool.query("INSERT INTO alram (user_idx, checked, content, creat_at, place) VALUES (?, ?, ?, ?, ?)", [user_name, 0, content, currentDate, 'family']);
         return;
     }catch(e){
         throw new BaseError(status.PARAMETER_IS_WRONG, e);
