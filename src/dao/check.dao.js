@@ -4,157 +4,149 @@ import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 import moment from 'moment-timezone';
-import { find_member } from "../dao/family.dao.js";
-import { insertCheckSQL, getCheckIDSQL, callCheckSQL, contentCheckSQL, dateCheckSQL, finishCheckSQL, deleteCheckSQL, imgCheckSQL } from "./check.sql.js";
+import { find_member } from "./family.dao.js";
 
 
-// 결과값 구성원 id를 닉네임으로 변경
-export const modifyCheckList = async(check) => {
-    try{
-        console.log(check);
-        check[0].sender = check[0].sender_idx;
-        check[0].receiver = check[0].receiver_idx;
-        delete check[0].sender_idx;
-        delete check[0].receiver_idx;
-        const sender = await find_member(check[0].sender);
-        const receiver = await find_member(check[0].receiver);
-        check[0].sender = sender;
-        check[0].receiver = receiver;
-        return check
-    } catch(err){
+export const getOne = async (checkid) => {
+    try {
+        //const conn = await pool.getConnection();
+        const [result] = await pool.query("SELECT * FROM checklist WHERE check_idx = ?", checkid);
+        
+        const sender = await find_member(result[0].sender_idx);
+        const receiver = await find_member(result[0].receiver_idx);
+        const result2 = {...result[0], sender, receiver};
+        delete result2.sender_idx;
+        delete result2.receiver_idx;
+        
+        //conn.release();
+        return result2;
+    } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG, e);
+        throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
-// 체크리스트 데이터 삽입
-export const addCheckList = async (data) => {
-    try{
-        const conn = await pool.getConnection();
+
+export const addOne = async (snsid, body) => {
+    try {
+        //const conn = await pool.getConnection();
+        const receiver = body.receiver_idx;
+        // 기한 구하기
+        const date = new Date(body.due_year, body.due_month-1, body.due_day);
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // 월을 2자리 문자열로 만들기 위해 앞에 0을 붙이고, 뒤의 2자리만 추출
+        const day = ("0" + date.getDate()).slice(-2); // 일을 2자리 문자열로 만들기 위해 앞에 0을 붙이고, 뒤의 2자리만 추출
+        const dueDate = `${year}-${month}-${day}`; // "YYYY-MM-DD" 형식으로 날짜 문자열 생성
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        const result = await pool.query(insertCheckSQL, [data.sender_idx, data.receiver_idx, data.due_date, 0, null, data.content, currentDate]);
-        conn.release();
+        const content = body.content;
+        
+        const result = await pool.query("INSERT INTO checklist (sender_idx, receiver_idx, due_date, complete, content, create_at) VALUES (?, ?, ?, 0, ?, ?)", [snsid, receiver, dueDate, content, currentDate]);
+        const [nick] = await pool.query("SELECT nickname FROM user WHERE snsID = ?", snsid);
+        console.log(nick[0].nickname);
+        const alarm_content = `${nick[0].nickname} 님이 해야 할 일을 남기셨어요`;
+        const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+        await pool.query("INSERT INTO alram (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver, 0, alarm_content, alarmDate, 'checklist']);
+        //conn.release();
         return result[0].insertId;
-    }catch (err){
-        console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
-    }
-}
-
-//체크리스트 하나 조회
-export const getCheck = async (checkid) => {
-    try{
-        const conn = await pool.getConnection();
-        const [check] = await pool.query(getCheckIDSQL, checkid);
-
-        if(check.length==0){
-            return -1;
-        }
-        /*
-        check[0].sender = check[0].sender_idx;
-        check[0].receiver = check[0].receiver_idx;
-        delete check[0].sender_idx;
-        delete check[0].receiver_idx;
-        */
-        //console.log(check);
-        conn.release();
-        return check;
     } catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
-//체크리스트 목록 불러오기
-export const callCheckList = async (userid, date) => {
-    try{
-        const conn = await pool.getConnection();
-        const [rows] = await pool.query(callCheckSQL, [userid, date]);
 
-        conn.release();
+export const getAll = async (snsid, date) => {
+    try {
+        //const conn = await pool.getConnection();
+        const [result] = await pool.query("SELECT check_idx, sender_idx, complete, picture, content FROM checklist WHERE receiver_idx = ? AND due_date = ?", [snsid, date]);
+        if(result.length==0) return -1;
 
-        if(!Array.isArray(rows)) {
-            return [];
-        }
-        const checklist = rows.map(row => ({
-            "check_idx" : row.check_idx,
-            "sender_idx" : row.sender_idx,
-            "complete" : row.complete,
-            "picture" : row.picture==null ? "null" : row.picture,
-            "content" : row.content
+        const result2 = await Promise.all(result.map(async (item) => {
+            console.log(item.sender_idx);
+            const sender = await find_member(item.sender_idx);
+            const newItem = {...item, sender: sender};  
+            delete newItem.sender_idx;  // sender_idx 속성 삭제
+            return newItem;
         }));
-
-        return checklist;
+        //conn.release();
+        return result2;
     } catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
-// 할 일 수정하기
-export const contentCheckList = async (checkid, content) => {
-    try{
-        const conn = await pool.getConnection();
+
+export const changeContent = async (checkid, content) => {
+    try {
+        //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        const [result] = await pool.query(contentCheckSQL, [content, currentDate, checkid]);
-        conn.release();
+        const [result] = await pool.query("UPDATE checklist SET content = ?, modify_at = ? WHERE check_idx = ?", [content, currentDate, checkid]);
+        //conn.release();
+        return;
     } catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
-// 할 일 날짜 바꾸기
-export const dateCheckList = async (checkid, date) => {
-    try{
-        const conn = await pool.getConnection();
+
+export const changeDate = async (checkid, date) => {
+    try {
+        //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        const [result] = await pool.query(dateCheckSQL, [date, currentDate, checkid]);
-        conn.release();
+        const [result] = await pool.query("UPDATE checklist SET due_date = ?, modify_at = ? WHERE check_idx = ?", [date, currentDate, checkid]);
+        //conn.release();
+        return;
     } catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
-// 체크리스트 완료 업데이트하기
-export const finishCheckList = async (checkid) => {
-    try{
-        const conn = await pool.getConnection();
+
+export const changeComplete = async (checkid) => {
+    try {
+        //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        const [result] = await pool.query(finishCheckSQL, [currentDate, checkid]);
-        conn.release();
+        await pool.query("UPDATE checklist SET complete = !complete, modify_at = ? WHERE check_idx = ?", [currentDate, checkid]);
+        
+        //알람 추가
+        const [member] = await pool.query("SELECT sender_idx, receiver_idx FROM checklist WHERE check_idx = ?", checkid);
+        const nick = await find_member(member[0].receiver_idx);
+        const alarm_content = `${nick} 님이 할 일을 완료하셨어요`;
+        const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+        await pool.query("INSERT INTO alram (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [member[0].sender_idx, 0, alarm_content, alarmDate, 'checklist']);
+        
+        //conn.release();
+        return;
     } catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
-// 할 일 삭제
-export const deleteCheckList = async (checkid) => {
-    try{
-        const conn = await pool.getConnection();
-        const [result] = await pool.query(deleteCheckSQL, checkid);
-        conn.release();
-        return result.affectedRows;
+
+export const removeOne = async (checkid) => {
+    try {
+        //const conn = await pool.getConnection();
+        await pool.query("DELETE FROM checklist WHERE check_idx = ?", checkid);
+        return;
     } catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
-//이미지 추가
-export const imageCheckList = async(checkid, location) => {
-    try{
-        const conn = await pool.getConnection();
-        const isfinished = await pool.query("SELECT complete FROM checklist WHERE check_idx = ?", checkid);
-        console.log(isfinished);
-        if(isfinished[0][0].complete != 1) {
-            return -1;
-        }
+export const putImg = async (checkid, location) => {
+    try {
+        //const conn = await pool.getConnection();
+        const [isFinished] = await pool.query("SELECT complete FROM checklist WHERE check_idx = ?", checkid);
+        console.log(isFinished[0].complete);
+        if(isFinished[0].complete != 1) return -1;
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        const [result] = await pool.query(imgCheckSQL, [location, currentDate, checkid]);
-        conn.release();
+        await pool.query("UPDATE checklist SET picture = ?, modify_at = ? WHERE check_idx = ?", [location, currentDate, checkid]);
+        //conn.release();
         return 1;
     } catch (err) {
         console.error(err);

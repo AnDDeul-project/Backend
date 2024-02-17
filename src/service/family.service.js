@@ -22,7 +22,6 @@ export const add_user = async(token, family_code) => {
 
 export const delete_user = async(user) => {
     const leader = await check_leader(user[0]);
-    console.log(leader);
     if(leader!=1)
         return -1;
     await delete_member(user[0]);

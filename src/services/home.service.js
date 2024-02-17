@@ -25,12 +25,12 @@ export const homeService = {
         // 요청한 사용자와 게시글의 소유자가 같은지 확인
         if (String(post.user_idx) !== String(snsId)) {
             console.log(`Logged in user: ${snsId}, Post owner: ${post.user_idx}`);
-            throw new Error('You do not have permission to edit this post');
+            throw new Error('본인이 작성한 게시글이 아닙니다.');
         }
 
         // 게시글 내용이 비어있는 경우 에러 처리
         if (!content) {
-            throw new Error("Content cannot be empty.");
+            throw new Error("게시글 내용을 입력해 주세요.");
         }
 
         // 게시글 수정

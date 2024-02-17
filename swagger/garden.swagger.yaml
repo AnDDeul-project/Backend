@@ -23,8 +23,9 @@ paths:
                 example: {
                   "idx": 1,
                   "point": 13,
-                  "name": "튤립",
-                  "img": "사진 url"
+                  "name": "툴립",
+                  "img": "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/flower/pot_img_tulip0.svg",
+                  "gauge": "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/flower/pot_img_gauge0.svg"
                 }
         '500':
           description: 서버 에러
@@ -109,11 +110,16 @@ paths:
                   point:
                     type: integer
                     example: 12
-                  img:
+                  changed_img:
                     type: json
-                    example: {
-                      "changed_img": "사진 url"
-                    }
+                    example: [
+                      {
+                        "img_3": "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/flower/pot_img_tulip3.svg"
+                      },
+                      {
+                        "gauge": "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/flower/pot_img_gauge3.svg"
+                      }
+                    ]
         '402':
           description: 포인트 부족
           schema:
@@ -186,7 +192,7 @@ paths:
                 example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
 
 
-  /garden/flower/mypoint:
+  /garden/mypoint:
     get:
       tags:
         - Flower
@@ -254,7 +260,7 @@ paths:
                 example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
 
 
-  /garden/flower/{flowerId}:
+  /garden/get/{flowerId}:
     get:
       tags:
         - Flower
