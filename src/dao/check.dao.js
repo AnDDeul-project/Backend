@@ -79,7 +79,7 @@ export const changeContent = async (checkid, content) => {
     try {
         //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        const [result] = await conn.query("UPDATE checklist SET content = ?, modify_at = ? WHERE check_idx = ?", [content, currentDate, checkid]);
+        const [result] = await pool.query("UPDATE checklist SET content = ?, modify_at = ? WHERE check_idx = ?", [content, currentDate, checkid]);
         //conn.release();
         return;
     } catch (err) {
@@ -93,7 +93,7 @@ export const changeDate = async (checkid, date) => {
     try {
         //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        const [result] = await conn.query("UPDATE checklist SET due_date = ?, modify_at = ? WHERE check_idx = ?", [date, currentDate, checkid]);
+        const [result] = await pool.query("UPDATE checklist SET due_date = ?, modify_at = ? WHERE check_idx = ?", [date, currentDate, checkid]);
         //conn.release();
         return;
     } catch (err) {

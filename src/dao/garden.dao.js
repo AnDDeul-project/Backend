@@ -99,7 +99,7 @@ export const cal_point = async(snsid) => {
 export const getPoint = async(snsid) => {
     try {
         //const conn = await pool.getConnection();
-        const result = await conn.query("SELECT point FROM user WHERE snsId = ?", snsid);
+        const result = await pool.query("SELECT point FROM user WHERE snsId = ?", snsid);
         //conn.release();
         return result[0][0];
     } catch(err) {
