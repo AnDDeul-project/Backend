@@ -88,8 +88,7 @@ export const addEmojiToPost = async (req, res, next) => {
     try {
         const snsId = await verify(req, res);
         const postIdx = req.params.postIdx;
-        const { emojiType } = req.body; // emojiType: 'happy_emj', 'laugh_emj', 'sad_emj' 3개로만 보내기. 유효성 검사는 따로 필요 없을듯
-        const result = await homeService.addEmoji(postIdx, snsId, emojiType);
+        const result = await homeService.addEmoji(postIdx, snsId);
         res.send(response(status.SUCCESS, result, "이모지 생성이 완료되었습니다."));
     } catch (error) {
         next(error);
