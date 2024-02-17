@@ -54,7 +54,8 @@ export const sendMail = async(snsId, req) => {
             const now = await pool.query("SELECT point FROM user WHERE snsId = ?", snsId[0]);
             await pool.query("UPDATE user SET point = ? WHERE snsId = ?", [now[0][0].point+1, snsId[0]]);
             const alarm_content = "편지가 도착했어요!! 바로 확인해볼까요??";
-            await pool.query("INSERT INTO alram(user_idx, checked, content, place) VALUES (?, ?, ?, ?)", [memberId, 0, alarm_content, "postbox"]);
+            const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+            await pool.query("INSERT INTO alram(user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [memberId, 0, alarm_content, alarmDate, "postbox"]);
         }
         //conn.release();
     }catch(e){
