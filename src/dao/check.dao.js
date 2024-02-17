@@ -56,7 +56,7 @@ export const addOne = async (snsid, body) => {
 export const getAll = async (snsid, date) => {
     try {
         //const conn = await pool.getConnection();
-        const [result] = await conn.query("SELECT check_idx, sender_idx, complete, picture, content FROM checklist WHERE receiver_idx = ? AND due_date = ?", [snsid, date]);
+        const [result] = await pool.query("SELECT check_idx, sender_idx, complete, picture, content FROM checklist WHERE receiver_idx = ? AND due_date = ?", [snsid, date]);
         if(result.length==0) return -1;
 
         const result2 = await Promise.all(result.map(async (item) => {
