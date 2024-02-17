@@ -12,6 +12,7 @@ export const status = {
     NO_UPDATE_PROVIDED: { status: StatusCodes.BAD_REQUEST, isSuccess: false, code: "HOME4003", message: "변경할 내용이 없습니다." },
     FAMILY_CODE_MISMATCH: {status: StatusCodes.BAD_REQUEST, isSuccess: false, code: "HOME4004", message: "가족 코드가 다릅니다."},
     USER_ALREADY_APPROVED_OR_NOT_FOUND: {status: StatusCodes.BAD_REQUEST, isSuccess: false, code: "HOME4005", message: "승인할 사용자가 이미 승인되었거나 존재하지 않습니다."},
+    INVALID_EMOJI_TYPE: {status: StatusCodes.BAD_REQUEST, isSuccess: false, code: "HOME4006", message: "올바른 이모지값이 아닙니다. 이모지를 확인해 주세요."},
     // error
     WRONG_EXTENSION: {status: StatusCodes.WRONG_EXTENSION, "isSuccess": false, "code": "COMMON1000", "message":"잘못된 확장입니다."},
     DB_ERROR: {status: StatusCodes.DB_ERROR, "isSuccess": false, "code": "COMMON1001", "message": "DB오류입니다."},

@@ -32,7 +32,7 @@ export const createPost = async (req, res, next) => {
     }
 };
 
-// 게시글 조회 (수정됨)
+// 가족 게시글 전체 조회
 export const getPosts = async (req, res, next) => {
     try {
         const snsId = await verify(req, res); // 또는 req.user.snsId (미들웨어를 통해 설정된 경우)
@@ -88,13 +88,32 @@ export const addEmojiToPost = async (req, res, next) => {
     try {
         const snsId = await verify(req, res);
         const postIdx = req.params.postIdx;
-        const { emojiType } = req.body; // emojiType: 'happy_emj', 'laugh_emj', 'sad_emj' 3개로만 보내기. 유효성 검사는 따로 필요 없을듯
+        const { emojiType } = req.body; // emojiType: 'happy_emj', 'laugh_emj', 'sad_emj'
+        // emojiType 유효성 검사
         const result = await homeService.addEmoji(postIdx, snsId, emojiType);
-        res.send(response(status.SUCCESS, result, "이모지 생성이 완료되었습니다."));
+        res.send(response(status.SUCCESS, result));
     } catch (error) {
-        next(error);
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
+// // 게시글 이모지 생성 (기존 버전)
+// export const addEmojiToPost = async (req, res, next) => {
+//     try {
+//         const snsId = await verify(req, res);
+//         const postIdx = req.params.postIdx;
+//         const { emojiType } = req.body; // emojiType: 'happy_emj', 'laugh_emj', 'sad_emj'
+//         // emojiType 유효성 검사
+//         const validEmojiTypes = ['happy_emj', 'laugh_emj', 'sad_emj'];
+//         if (!validEmojiTypes.includes(emojiType)) {
+//             return res.status(400).send(errResponse(status.INVALID_EMOJI_TYPE));
+//         }
+//         await homeService.addEmoji(postIdx, snsId, emojiType);
+//         res.send(response(status.SUCCESS, "이모지 생성이 완료되었습니다."));
+//     } catch (error) {
+//         next(error);
+//     }
+// };
 
 // 특정 유저 프로필 조회
 export const getUserProfile = async (req, res, next) => {
