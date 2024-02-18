@@ -82,9 +82,9 @@ export const cal_point = async(snsid) => {
             }
         }
         console.log(img);
-        const [result4] = await pool.query(`SELECT ${img} FROM flower WHERE idx IN (?,?)`, [fam[0][0].f_num, 17]);
-        result4[1].gauge = result4[1][img];
-        delete result4[1][img];
+        let [result4] = await pool.query(`SELECT ${img} AS img FROM flower WHERE idx IN (?)`, fam[0][0].f_num);
+        const [result5] = await pool.query(`SELECT ${img} AS gauge FROM flower WHERE idx = 17`);
+        result4[1] = result5[0];
         return {point: currentPoint-2, changed_img: result4};
     } catch(err) {
         console.error(err);
