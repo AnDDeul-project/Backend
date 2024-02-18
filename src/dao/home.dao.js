@@ -153,21 +153,24 @@ export const removeUserFromEmojis = async (postIdx, snsId, emojiType) => {
     const emojiInfo = await getEmojiByPostId(postIdx);
     // console.log("Initial emojiInfo:", emojiInfo);
     if (emojiType == 'happy_emj') {
-        if (emojiInfo.happy_emj[0] == snsId) {
+        if(emojiInfo.happy_emj==null) {}
+        else if (emojiInfo.happy_emj[0] == snsId) {
             await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', 
             [JSON.stringify([]), JSON.stringify([]), JSON.stringify([]), postIdx]);
             return 0;
         }
     }
     if (emojiType == 'laugh_emj') {
-        if (emojiInfo.laugh_emj[0] == snsId) {
+        if(emojiInfo.laugh_emj==null) {}
+        else if (emojiInfo.laugh_emj[0] == snsId) {
             await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', 
             [JSON.stringify([]), JSON.stringify([]), JSON.stringify([]), postIdx]);
             return 0;
         }
     }
     if (emojiType == 'sad_emj') {
-        if (emojiInfo.sad_emj[0] == snsId) {
+        if(emojiInfo.sad_emj==null) {}
+        else if (emojiInfo.sad_emj[0] == snsId) {
             await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', 
             [JSON.stringify([]), JSON.stringify([]), JSON.stringify([]), postIdx]);
             return 0;
