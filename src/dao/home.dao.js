@@ -345,7 +345,15 @@ export const getUserProfileData = async (snsId) => {
         const [postIdsRows] = await pool.query(postIdsQuery, [snsId]);
 
         if (profileRows.length) {
-            let firstPostImages = profileRows[0].firstPostImages.map(img => JSON.parse(img)[0]);
+            let firstPostImages = profileRows[0].firstPostImages.map(img => {
+                try {
+                    const parsedImg = JSON.parse(img);
+                    return parsedImg ? parsedImg[0] : null;
+                } catch (error) {
+                    console.error("Error parsing JSON:", error);
+                    return null;
+                }
+            }).filter(img => img !== null);  // null 값 제거;
             let postIdx = postIdsRows.map(row => row.post_idx);
 
             return {
@@ -353,7 +361,7 @@ export const getUserProfileData = async (snsId) => {
                 image: profileRows[0].image,
                 postCount: profileRows[0].postCount,
                 firstPostImages: firstPostImages,
-                postIdx: postIdx  // 별도로 postIdx 값을 포함한 배열
+                postIdx: postIdx 
             };
         }
     } catch (error) {
