@@ -149,45 +149,57 @@ export const createEmojiRow = async (postIdx) => {
     return getEmojiByPostId(postIdx); // 새로 생성된 행 반환
 };
 
-export const removeUserFromEmojis = async (postIdx, snsId) => {
+export const removeUserFromEmojis = async (postIdx, snsId, emojiType) => {
     const emojiInfo = await getEmojiByPostId(postIdx);
-    const updateEmoji = (emoji) => {
-        // emoji가 문자열인 경우만 trim()을 호출하고, 그렇지 않으면 JSON.stringify를 사용
-        const emojiData = typeof emoji === 'string' ? emoji.trim() : JSON.stringify(emoji || []);
-    
-        let currentEmoji;
+    // console.log("Initial emojiInfo:", emojiInfo);
+
+    const updateEmojiList = (currentEmojiData, type) => {
+        let emojiList = [];
     
         try {
-            currentEmoji = JSON.parse(emojiData);
+            // 현재 이모지 데이터를 JSON 배열로 파싱
+            emojiList = JSON.parse(currentEmojiData || '[]');
     
-            // currentEmoji가 유효한 이중 배열인지 확인하고, 아니라면 적절하게 초기화
-            if (!Array.isArray(currentEmoji) || !Array.isArray(currentEmoji[0])) {
-                currentEmoji = [[]];  // 비어 있는 이중 배열로 초기화
+            // emojiList가 배열인지 확인하고, 아니라면 빈 배열로 초기화
+            if (!Array.isArray(emojiList)) {
+                emojiList = [];
             }
-        } catch (error) {
-            console.error("JSON parsing error in updateEmoji:", error);
-            currentEmoji = [[]]; // 파싱 에러 시 비어 있는 이중 배열로 초기화
+        } catch (e) {
+            console.error(`Error parsing emoji data for ${type}:`, e);
+            emojiList = [];  // 에러가 발생한 경우 빈 배열로 초기화
+        }
+        // console.log("emojiList:",emojiList);
+        // console.log("type:",type);
+        // 요청한 이모지 타입과 일치하는 경우, 사용자 ID가 이미 존재하면 삭제, 존재하지 않으면 추가
+        if (type === emojiType) {
+            const index = emojiList.indexOf(snsId);
+            if (index !== -1) {
+                emojiList.splice(index, 1);  // 삭제
+            } else {
+                emojiList.push(snsId);  // 추가
+            }
+        } else {
+            // 다른 이모지 타입에서는 사용자 ID가 존재하면 삭제
+            emojiList = emojiList.filter(id => id !== snsId);
         }
     
-        // 첫 번째 배열 요소가 배열이 아니면 빈 배열로 초기화
-        if (!Array.isArray(currentEmoji[0])) {
-            currentEmoji[0] = [];
-        }
-    
-        // currentEmoji의 첫 번째 배열에서 snsId와 다른 요소만 필터링
-        const filteredEmoji = currentEmoji[0].filter(id => id.toString() !== snsId.toString());
-    
-        // 결과를 다시 이중 배열로 만듦
-        return JSON.stringify([filteredEmoji]);
+        // 수정된 emojiList를 JSON 문자열로 변환하여 반환
+        return JSON.stringify(emojiList);
     };
     
-    const updatedHappy = updateEmoji(emojiInfo.happy_emj);
-    const updatedLaugh = updateEmoji(emojiInfo.laugh_emj);
-    const updatedSad = updateEmoji(emojiInfo.sad_emj);
+    const updatedHappy = updateEmojiList(emojiInfo.happy_emj, 'happy_emj');
+    const updatedLaugh = updateEmojiList(emojiInfo.laugh_emj, 'laugh_emj');
+    const updatedSad = updateEmojiList(emojiInfo.sad_emj, 'sad_emj');
+
+    // console.log("Updated emoji lists:", { updatedHappy, updatedLaugh, updatedSad });
 
     await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', [updatedHappy, updatedLaugh, updatedSad, postIdx]);
-    return getEmojiByPostId(postIdx);
+
+    const updatedEmojiInfo = await getEmojiByPostId(postIdx);
+    // console.log("Final updated emojiInfo:", updatedEmojiInfo);
+    return updatedEmojiInfo;
 };
+
 
 export const addUserToEmoji = async (postIdx, snsId, emojiType) => {
     const emojiInfo = await getEmojiByPostId(postIdx);

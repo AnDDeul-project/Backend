@@ -74,7 +74,7 @@ export const homeService = {
         }
 
         // 사용자가 이전에 선택한 이모지 삭제
-        emojiInfo = await removeUserFromEmojis(postIdx, snsId);
+        emojiInfo = await removeUserFromEmojis(postIdx, snsId, emojiType);
 
         // 새로운 이모지에 사용자 추가
         const updatedEmojiInfo = await addUserToEmoji(postIdx, snsId, emojiType);
