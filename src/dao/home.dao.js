@@ -124,11 +124,67 @@ export const getFamilyMembers = async (user_snsId) => {
 
     return result;
 };
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+export const addEmojiToPost = async (postIdx, snsId, emojiType) => {
+    const emojiList = ['happy_emj', 'laugh_emj', 'sad_emj'];
+    //일단 이모지 있는지 체크
+    const checkExistQuery = 'SELECT EXISTS(SELECT 1 FROM emoji WHERE post_idx = ?) as exist;'
+    const [check] = await pool.query(checkExistQuery, [postIdx]);
+    
+    //이모지 정보가 없으면 추가
+    const exist = check[0].exist;
+    if (exist==0) {
+        const putquery = 'INSERT INTO emoji (post_idx, happy_emj, laugh_emj, sad_emj) VALUES (?, "[]", "[]", "[]");'
+        await pool.query(putquery, [postIdx]);
+        console.log("없");
+    }
+    let typeOfEmoji = emojiType.emojiType;
+    console.log(typeOfEmoji);
+    //이모지 정보 불러와서 수정
 
-export const addEmojiToPost = async (postIdx, snsId) => {
+    for(let emoji of emojiList) {
+        const getEmojiQuery = `SELECT ${emoji} FROM emoji WHERE post_idx = ?`;
+        const [emojiDataResult] = await pool.query(getEmojiQuery, [postIdx]);
+        let emojiData = emojiDataResult[0][typeOfEmoji];
+
+        //빈 배열이면 추가
+        if(emoji===typeOfEmoji) {
+            if(emojiData.length === 0) {
+                emojiData.push(snsId[0]);
+                console.log(emojiData);
+            } else {
+                let index = emojiData.indexOf(snsId[0]);
+
+                if(index != -1) {//있으면 지워
+                    emojiData.splice(index, 1);
+                } else {//없으면 추가해
+                    emojiData.push(snsId[0]);
+                }
+            }    
+        } else {
+            let index = emojiData.indexOf(snsId[0]);
+            if(index != -1) {//있으면 지워
+                emojiData.splice(index, 1);
+            }
+        }
+        //바뀐 배열을 넣어
+        let emojiDataStr = JSON.stringify(emojiData);
+        const putEmojiQuery = `UPDATE emoji SET ${emoji} = ? WHERE post_idx = ?`;
+        await pool.query(putEmojiQuery, [emojiDataStr, postIdx]);
+    }    
+};
+    
+    /*
     const getEmojiQuery = `SELECT happy_emj FROM emoji WHERE post_idx = ?`;
     const [emojiDataResult] = await pool.query(getEmojiQuery, [postIdx]);
-    const emojiData = emojiDataResult[0];
+    let emojiData = emojiDataResult[0].happy_emj;
+    console.log(emojiDataResult.length);
+
+    if(emojiDataResult.length > 0) {
+        let emojiData = emojiDataResult[0].happy_emj;
+        console.log(emojiData);
+    }
+
 
     let emojiList = [];
     if (emojiData && emojiData.happy_emj) {
@@ -144,6 +200,7 @@ export const addEmojiToPost = async (postIdx, snsId) => {
         }
     }
 
+    
     // 새로운 user_idx를 추가하거나 이미 존재한다면 제거합니다.
     const index = emojiList.indexOf(snsId);
     if (index > -1) {
@@ -160,8 +217,8 @@ export const addEmojiToPost = async (postIdx, snsId) => {
         // 새로운 레코드 생성
         const insertEmojiQuery = `INSERT INTO emoji (post_idx, happy_emj) VALUES (?, ?)`;
         await pool.query(insertEmojiQuery, [postIdx, JSON.stringify(emojiList)]);
-    }
-};
+    }*/
+
 
 // export const addEmojiToPost = async (postIdx, user_idx, emojiType) => {
 //     // 이모지 데이터를 가져옵니다.

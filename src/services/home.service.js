@@ -64,8 +64,8 @@ export const homeService = {
     },
 
     // 게시글 이모지 추가
-    addEmoji: async (postIdx, snsId) => {
-        return await addEmojiToPost(postIdx, snsId);
+    addEmoji: async (postIdx, snsId, emojiType) => {
+        return await addEmojiToPost(postIdx, snsId, emojiType);
     },
 
     // 특정 유저 프로필 조회

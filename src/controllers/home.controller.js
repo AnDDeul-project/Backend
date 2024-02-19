@@ -88,7 +88,8 @@ export const addEmojiToPost = async (req, res, next) => {
     try {
         const snsId = await verify(req, res);
         const postIdx = req.params.postIdx;
-        const result = await homeService.addEmoji(postIdx, snsId);
+        const emojiType = req.body;
+        const result = await homeService.addEmoji(postIdx, snsId, emojiType);
         res.send(response(status.SUCCESS, result, "이모지 생성이 완료되었습니다."));
     } catch (error) {
         next(error);
