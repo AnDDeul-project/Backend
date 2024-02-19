@@ -65,25 +65,7 @@ export const homeService = {
 
     // 게시글 이모지 추가
     addEmoji: async (postIdx, snsId, emojiType) => {
-        // post_idx를 통해 emoji 테이블에 정보가 있는지 확인
-        let emojiInfo = await getEmojiByPostId(postIdx);
-
-        if (!emojiInfo) {
-            // 해당 post_idx에 대한 정보가 없으면 새로 추가
-            emojiInfo = await createEmojiRow(postIdx);
-        }
-
-        // 사용자가 이전에 선택한 이모지 삭제
-        emojiInfo = await removeUserFromEmojis(postIdx, snsId, emojiType);
-        if(emojiInfo==0){
-            const update = await getEmojiByPostId(postIdx)
-            return update;
-        }
-
-        // 새로운 이모지에 사용자 추가
-        const updatedEmojiInfo = await addUserToEmoji(postIdx, snsId, emojiType);
-
-        return updatedEmojiInfo;
+        return await addUserToEmoji(postIdx, snsId, emojiType);
     },
     // // 게시글 이모지 추가
     // addEmoji: async (postIdx, snsId, emojiType) => {
