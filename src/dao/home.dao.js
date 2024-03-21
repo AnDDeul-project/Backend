@@ -139,18 +139,18 @@ export const addEmojiToPost = async (postIdx, snsId, emojiType) => {
         console.log("없");
     }
     let typeOfEmoji = emojiType.emojiType;
-    console.log(typeOfEmoji);
+    console.log("type: "+typeOfEmoji);
     //이모지 정보 불러와서 수정
 
     for(let emoji of emojiList) {
         const getEmojiQuery = `SELECT ${emoji} FROM emoji WHERE post_idx = ?`;
         const [emojiDataResult] = await pool.query(getEmojiQuery, [postIdx]);
-        let emojiData = emojiDataResult[0][typeOfEmoji];
-
+        let emojiData = emojiDataResult[0][emoji];
         //빈 배열이면 추가
         if(emoji===typeOfEmoji) {
             if(emojiData.length === 0) {
                 emojiData.push(snsId[0]);
+                console.log(emoji);
                 console.log(emojiData);
             } else {
                 let index = emojiData.indexOf(snsId[0]);
