@@ -1,4 +1,4 @@
-import { createPostInDb, getPostsFromDb, getFamilyMembers, getPostById, updatePostById, deletePostById, addEmojiToPost, getUserProfileData, getSinglePostFromDb, updateUserProfileInDb, getUserFamilyCode, updateFamilyMemberAuth } from '../dao/home.dao.js';
+import { createPostInDb, getPostsFromDb, getFamilyMembers, getPostById, updatePostById, deletePostById, getEmojiByPostId, createEmojiRow, removeUserFromEmojis, addUserToEmoji, getUserProfileData, getSinglePostFromDb, updateUserProfileInDb, getUserFamilyCode, updateFamilyMemberAuth } from '../dao/home.dao.js';
 
 export const homeService = {
     // 게시글 작성
@@ -25,12 +25,12 @@ export const homeService = {
         // 요청한 사용자와 게시글의 소유자가 같은지 확인
         if (String(post.user_idx) !== String(snsId)) {
             console.log(`Logged in user: ${snsId}, Post owner: ${post.user_idx}`);
-            throw new Error('You do not have permission to edit this post');
+            throw new Error('본인이 작성한 게시글이 아닙니다.');
         }
 
         // 게시글 내용이 비어있는 경우 에러 처리
         if (!content) {
-            throw new Error("Content cannot be empty.");
+            throw new Error("게시글 내용을 입력해 주세요.");
         }
 
         // 게시글 수정
@@ -65,8 +65,30 @@ export const homeService = {
 
     // 게시글 이모지 추가
     addEmoji: async (postIdx, snsId, emojiType) => {
-        return await addEmojiToPost(postIdx, snsId, emojiType);
+        // post_idx를 통해 emoji 테이블에 정보가 있는지 확인
+        let emojiInfo = await getEmojiByPostId(postIdx);
+
+        if (!emojiInfo) {
+            // 해당 post_idx에 대한 정보가 없으면 새로 추가
+            emojiInfo = await createEmojiRow(postIdx);
+        }
+
+        // 사용자가 이전에 선택한 이모지 삭제
+        emojiInfo = await removeUserFromEmojis(postIdx, snsId, emojiType);
+        if(emojiInfo==0){
+            const update = await getEmojiByPostId(postIdx)
+            return update;
+        }
+
+        // 새로운 이모지에 사용자 추가
+        const updatedEmojiInfo = await addUserToEmoji(postIdx, snsId, emojiType);
+
+        return updatedEmojiInfo;
     },
+    // // 게시글 이모지 추가
+    // addEmoji: async (postIdx, snsId, emojiType) => {
+    //     return await addEmojiToPost(postIdx, snsId, emojiType);
+    // },
 
     // 특정 유저 프로필 조회
     getUserProfile: async (userId) => {

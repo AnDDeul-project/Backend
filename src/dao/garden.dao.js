@@ -9,7 +9,6 @@ const images = ['img_0', 'img_1', 'img_2', 'img_3', 'img_4', 'img_5'];
 
 export const getOne = async(snsid) => {
     try{
-        //const conn = await pool.getConnection();
         //꽃 이름, 포인트 가져와
         const result0 = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsid);
         if(result0[0][0].family_code==null) {
@@ -36,7 +35,6 @@ export const getOne = async(snsid) => {
             }
         }
         const result3 = await pool.query(`SELECT name, ${img} FROM flower WHERE idx IN (?, ?)`, [num,17]);
-        //conn.release();
         //꽃 번호, 포인트, 이름, 그림
         return {idx: num, point: point, name: result3[0][0].name, img: result3[0][0][img], gauge: result3[0][1][img]};
     } catch(err) {
@@ -47,7 +45,6 @@ export const getOne = async(snsid) => {
 
 export const cal_point = async(snsid) => {
     try {
-        //const conn = await pool.getConnection();
         const point = await pool.query("SELECT point FROM user WHERE snsId = ?", snsid);
         console.log(point);
         if(point[0][0].point < 2)
@@ -85,10 +82,9 @@ export const cal_point = async(snsid) => {
             }
         }
         console.log(img);
-        const [result4] = await pool.query(`SELECT ${img} FROM flower WHERE idx IN (?,?)`, [fam[0][0].f_num, 17]);
-        result4[1].gauge = result4[1][img];
-        delete result4[1][img];
-        //conn.release();
+        let [result4] = await pool.query(`SELECT ${img} AS img FROM flower WHERE idx IN (?)`, fam[0][0].f_num);
+        const [result5] = await pool.query(`SELECT ${img} AS gauge FROM flower WHERE idx = 17`);
+        result4[1] = result5[0];
         return {point: currentPoint-2, changed_img: result4};
     } catch(err) {
         console.error(err);
@@ -98,9 +94,7 @@ export const cal_point = async(snsid) => {
 
 export const getPoint = async(snsid) => {
     try {
-        //const conn = await pool.getConnection();
         const result = await pool.query("SELECT point FROM user WHERE snsId = ?", snsid);
-        //conn.release();
         return result[0][0];
     } catch(err) {
         console.error(err);

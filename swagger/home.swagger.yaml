@@ -87,7 +87,7 @@ paths:
                   properties:
                     post_idx:
                       type: integer
-                      example: 56
+                      example: 35
                       description: 게시글 고유 번호
                     user_idx:
                       type: string
@@ -99,24 +99,48 @@ paths:
                       description: 글 작성자의 닉네임
                     content:
                       type: string
-                      example: "새로운 게시글"
+                      example: "게시글 테스트입니다"
                       description: 게시글 내용
                     picture:
                       type: array
                       items:
                         type: string
                       example:
-                        - "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/4217b4febe753a5dbc877a837b51bfd0_%EB%8B%A4%EC%9D%B4%EB%85%B8%ED%83%B1.png"
-                        - "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/4d646ecf6393a7e7b0ba81363a499a88_%EB%8B%A4%EC%9D%B4%EB%85%B8%ED%83%B12.jpg"
+                        - "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/40efbd1321489fa6b5f91c71322f55cf_IMG_20240129_014312.jpg"
+                        - "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/4a343f1d847b9f38aa099349794ee147_IMG_20240129_014329.jpg"
                       description: 게시글에 첨부된 모든 사진 URL 목록
                     create_at:
                       type: string
-                      example: "2024-02-09T06:18:30.000Z"
+                      example: "2024-02-02T09:30:15.000Z"
                       description: 게시글 작성 날짜
                     userImage:
                       type: string
-                      example: "http://k.kakaocdn.net/dn/xxGa9/btsB5AD9Zx0/GezVLYpUOwIdOpSlU7dYo1/img_640x640.jpg"
+                      example: "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/profile/4a5607bb41de07279c7d126d362208d4_images%20%283%29.jpeg"
                       description: 글 작성자의 프로필 사진 URL
+                    emojis:
+                      type: object
+                      properties:
+                        happy:
+                          type: object
+                          properties:
+                            selected:
+                              type: boolean
+                              example: true
+                              description: 현재 유저가 행복 이모지를 선택했는지 여부
+                        laugh:
+                          type: object
+                          properties:
+                            selected:
+                              type: boolean
+                              example: false
+                              description: 현재 유저가 웃음 이모지를 선택했는지 여부
+                        sad:
+                          type: object
+                          properties:
+                            selected:
+                              type: boolean
+                              example: false
+                              description: 현재 유저가 슬픔 이모지를 선택했는지 여부
         400:
           description: 잘못된 요청입니다. 입력값을 확인해주세요.
         401:
@@ -567,3 +591,79 @@ paths:
               message:
                 type: string
                 example: "서버 에러가 발생했습니다."
+
+  /home/posts/{postIdx}/emoji:
+    post:
+      tags:
+        - Home
+      summary: 게시글에 이모지 추가
+      description: 사용자가 선택한 이모지 유형을 게시글에 추가합니다.
+      produces:
+        - application/json
+      security:
+        - Authorization: []
+      parameters:
+        - in: path
+          name: postIdx
+          required: true
+          type: integer
+          description: 이모지를 추가하고자 하는 게시글의 고유 번호
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - emojiType
+            properties:
+              emojiType:
+                type: string
+                enum: [happy_emj, laugh_emj, sad_emj]
+                example: happy_emj
+                description: 추가하고자 하는 이모지 유형
+      responses:
+        200:
+          description: 이모지 추가에 성공했습니다.
+          schema:
+            type: object
+            properties:
+              isSuccess:
+                type: boolean
+                example: true
+              code:
+                type: integer
+                example: 2000
+              message:
+                type: string
+                example: "success!"
+              result:
+                type: object
+                properties:
+                  post_idx:
+                    type: integer
+                    example: 35
+                    description: 이모지가 추가된 게시글의 고유 번호
+                  happy_emj:
+                    type: array
+                    items:
+                      type: string
+                    description: 행복 이모지를 선택한 사용자의 식별자 목록
+                    example: ["3304133093"]
+                  laugh_emj:
+                    type: array
+                    items:
+                      type: string
+                    description: 웃음 이모지를 선택한 사용자의 식별자 목록
+                    example: []
+                  sad_emj:
+                    type: array
+                    items:
+                      type: string
+                    description: 슬픔 이모지를 선택한 사용자의 식별자 목록
+                    example: []
+        400:
+          description: 잘못된 요청입니다. 입력값을 확인해주세요.
+        401:
+          description: 인증 실패. 유효한 토큰을 제공해야 합니다.
+        500:
+          description: 서버 에러가 발생했습니다.
