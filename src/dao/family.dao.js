@@ -66,3 +66,15 @@ export const add_family = async(user_id, family_code, user_name, now_user) => {
         throw new BaseError(status.PARAMETER_IS_WRONG, e);
     }
 }
+export const now_request = async(user_id) => {
+    try{
+        const result = await pool.query("SELECT 1 AS request FROM user WHERE auth = 0 AND snsId = ?", user_id);
+        console.log(result[0][0]);
+        if(result[0][0] === undefined){
+            return false;
+        }            
+        return true;
+    }catch(e){
+        throw new BaseError(status.PARAMETER_IS_WRONG, e);
+    }
+}
