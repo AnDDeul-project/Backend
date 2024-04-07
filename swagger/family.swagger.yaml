@@ -413,8 +413,12 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              infamily: false
-              request: true
+              infamily: 
+                type: boolean
+                example: false
+              request: 
+                type : boolean
+                example: true
         '500':
           description: 서버 에러
           schema:
