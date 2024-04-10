@@ -1,4 +1,4 @@
-import { createPostInDb, getPostsFromDb, getFamilyMembers, getPostById, updatePostById, deletePostById, getEmojiByPostId, createEmojiRow, removeUserFromEmojis, addUserToEmoji, getUserProfileData, getSinglePostFromDb, updateUserProfileInDb, getUserFamilyCode, updateFamilyMemberAuth } from '../dao/home.dao.js';
+import { createPostInDb, getPostsFromDb, getFamilyMembers, getPostById, updatePostById, deletePostById, addUserToEmoji, getUserProfileData, getSinglePostFromDb, updateUserProfileInDb, getUserFamilyCode, updateFamilyMemberAuth } from '../dao/home.dao.js';
 
 export const homeService = {
     // 게시글 작성
