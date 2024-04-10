@@ -30,7 +30,7 @@ homeRoute.delete('/posts/:postIdx', deletePost);
 // 가족 구성원 조회
 homeRoute.get('/family/members', getFamilyMembers);
 
-// 게시글에 감정 표현 추가
+// 게시글에 이모지 추가
 homeRoute.post('/posts/:postIdx/emoji', addEmojiToPost);
 
 // 특정 유저 프로필 페이지 조회

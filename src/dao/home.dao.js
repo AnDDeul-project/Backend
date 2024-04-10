@@ -36,7 +36,10 @@ export const getPostsFromDb = async (user_idx) => {
         SELECT p.post_idx, p.user_idx, p.content, p.picture, p.create_at, u.image AS userImage, u.nickname,
                JSON_CONTAINS(e.happy_emj, JSON_QUOTE(?)) AS happy_selected,
                JSON_CONTAINS(e.laugh_emj, JSON_QUOTE(?)) AS laugh_selected,
-               JSON_CONTAINS(e.sad_emj, JSON_QUOTE(?)) AS sad_selected
+               JSON_CONTAINS(e.sad_emj, JSON_QUOTE(?)) AS sad_selected,
+               JSON_LENGTH(e.happy_emj) AS happy_count,
+               JSON_LENGTH(e.laugh_emj) AS laugh_count,
+               JSON_LENGTH(e.sad_emj) AS sad_count
         FROM post p
         INNER JOIN user u ON p.user_idx = u.snsId
         LEFT JOIN emoji e ON p.post_idx = e.post_idx
@@ -55,13 +58,16 @@ export const getPostsFromDb = async (user_idx) => {
             userImage: row.userImage,
             emojis: {
                 happy: {
-                    selected: !!row.happy_selected
+                    selected: !!row.happy_selected,
+                    count: parseInt(row.happy_count) || 0
                 },
                 laugh: {
-                    selected: !!row.laugh_selected
+                    selected: !!row.laugh_selected,
+                    count: parseInt(row.laugh_count) || 0
                 },
                 sad: {
-                    selected: !!row.sad_selected
+                    selected: !!row.sad_selected,
+                    count: parseInt(row.sad_count) || 0
                 }
             }
         }));
@@ -69,7 +75,6 @@ export const getPostsFromDb = async (user_idx) => {
         throw error;
     }
 };
-
 
 // 게시글 정보 불러오기
 export const getPostById = async (post_idx) => {
@@ -138,124 +143,47 @@ export const getFamilyMembers = async (user_snsId) => {
     return result;
 };
 
-// 이모지 작업 시작
-export const getEmojiByPostId = async (postIdx) => {
-    const [rows] = await pool.query('SELECT * FROM emoji WHERE post_idx = ?', [postIdx]);
-    return rows[0];
-};
-
-export const createEmojiRow = async (postIdx) => {
-    const result = await pool.query('INSERT INTO emoji (post_idx) VALUES (?)', [postIdx]);
-    return getEmojiByPostId(postIdx); // 새로 생성된 행 반환
-};
-
-export const removeUserFromEmojis = async (postIdx, snsId, emojiType) => {
-    const emojiInfo = await getEmojiByPostId(postIdx);
-    // console.log("Initial emojiInfo:", emojiInfo);
-    if (emojiType == 'happy_emj') {
-        if(emojiInfo.happy_emj==null) {}
-        else if (emojiInfo.happy_emj[0] == snsId) {
-            await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', 
-            [JSON.stringify([]), JSON.stringify([]), JSON.stringify([]), postIdx]);
-            return 0;
-        }
-    }
-    if (emojiType == 'laugh_emj') {
-        if(emojiInfo.laugh_emj==null) {}
-        else if (emojiInfo.laugh_emj[0] == snsId) {
-            await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', 
-            [JSON.stringify([]), JSON.stringify([]), JSON.stringify([]), postIdx]);
-            return 0;
-        }
-    }
-    if (emojiType == 'sad_emj') {
-        if(emojiInfo.sad_emj==null) {}
-        else if (emojiInfo.sad_emj[0] == snsId) {
-            await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', 
-            [JSON.stringify([]), JSON.stringify([]), JSON.stringify([]), postIdx]);
-            return 0;
-        }
-    }
-
-    const updateEmojiList = (currentEmojiData, type) => {
-        let emojiList = [];
-    
-        try {
-            // 현재 이모지 데이터를 JSON 배열로 파싱
-            emojiList = JSON.parse(currentEmojiData || '[]');
-    
-            // emojiList가 배열인지 확인하고, 아니라면 빈 배열로 초기화
-            if (!Array.isArray(emojiList)) {
-                emojiList = [];
-            }
-        } catch (e) {
-            console.error(`Error parsing emoji data for ${type}:`, e);
-            emojiList = [];  // 에러가 발생한 경우 빈 배열로 초기화
-        }
-        // console.log("emojiList:",emojiList);
-        // console.log("type:",type);
-        // 요청한 이모지 타입과 일치하는 경우, 사용자 ID가 이미 존재하면 삭제, 존재하지 않으면 추가
-        if (type === emojiType) {
-            const index = emojiList.indexOf(snsId);
-            if (index !== -1) {
-                emojiList.splice(index, 1);  // 삭제
-            } else {
-                emojiList.push(snsId);  // 추가
-            }
-        } else {
-            // 다른 이모지 타입에서는 사용자 ID가 존재하면 삭제
-            emojiList = emojiList.filter(id => id !== snsId);
-        }
-    
-        // 수정된 emojiList를 JSON 문자열로 변환하여 반환
-        return JSON.stringify(emojiList);
-    };
-    
-    const updatedHappy = updateEmojiList(emojiInfo.happy_emj, 'happy_emj');
-    const updatedLaugh = updateEmojiList(emojiInfo.laugh_emj, 'laugh_emj');
-    const updatedSad = updateEmojiList(emojiInfo.sad_emj, 'sad_emj');
-
-    console.log("Updated emoji lists:", { updatedHappy, updatedLaugh, updatedSad });
-
-    await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', [updatedHappy, updatedLaugh, updatedSad, postIdx]);
-
-    const updatedEmojiInfo = await getEmojiByPostId(postIdx);
-    // console.log("Final updated emojiInfo:", updatedEmojiInfo);
-    return updatedEmojiInfo;
-};
-
-
+// 이모지 추가
 export const addUserToEmoji = async (postIdx, snsId, emojiType) => {
-    const emojiInfo = await getEmojiByPostId(postIdx);
-
-    // snsId를 문자열로 변환
-    const snsIdStr = snsId.toString();
-    let currentEmoji;
-
-    try {
-        // emojiInfo[emojiType]이 유효한 JSON 배열인지 확인하고, 아니라면 기본값 '[]'를 사용
-        // emojiData가 빈 배열 또는 유효한 JSON 문자열인지 확인
-        const emojiData = emojiInfo[emojiType] && emojiInfo[emojiType].length > 0 ? emojiInfo[emojiType] : '[]';
-        currentEmoji = JSON.parse(emojiData);
-
-        // currentEmoji가 배열인지 확인하고, 아니라면 빈 배열로 초기화
-        if (!Array.isArray(currentEmoji)) {
-            currentEmoji = [];
-        }
-
-        // 현재 snsId가 배열에 없으면 추가
-        if (!currentEmoji.includes(snsIdStr)) {
-            currentEmoji.push(snsIdStr);
-        }
-    } catch (error) {
-        console.error("JSON parsing error in addUserToEmoji:", error);
-        // 파싱 에러 발생 시 현재 snsIdStr만 포함하는 배열로 초기화
-        currentEmoji = [snsIdStr];
+    //일단 이모지 있는지 체크
+    const checkExistQuery = 'SELECT EXISTS(SELECT 1 FROM emoji WHERE post_idx = ?) as exist;'
+    const [check] = await pool.query(checkExistQuery, [postIdx]);
+    
+    //이모지 정보가 없으면 추가
+    const exist = check[0].exist;
+    if (exist==0) {
+        const putquery = 'INSERT INTO emoji (post_idx, happy_emj, laugh_emj, sad_emj) VALUES (?, "[]", "[]", "[]");'
+        await pool.query(putquery, [postIdx]);
+        console.log("없");
     }
+    let typeOfEmoji = emojiType;
+    console.log(typeOfEmoji);
+    //이모지 정보 불러와
+    const getEmojiQuery = `SELECT ${typeOfEmoji} FROM emoji WHERE post_idx = ?`;
+    const [emojiDataResult] = await pool.query(getEmojiQuery, [postIdx]);
+    console.log(emojiDataResult);
+    let emojiData = emojiDataResult[0][typeOfEmoji];
+    console.log(emojiData);
 
-    // 변경된 이모지 데이터를 데이터베이스에 업데이트
-    await pool.query(`UPDATE emoji SET ${emojiType} = ? WHERE post_idx = ?`, [JSON.stringify(currentEmoji), postIdx]);
-    return getEmojiByPostId(postIdx);
+    //빈 배열이면 추가
+    if(emojiData.length === 0) {
+        emojiData.push(snsId[0]);
+        console.log(emojiData);
+    } else {
+        let index = emojiData.indexOf(snsId[0]);
+
+        if(index != -1) {//있으면 지워
+            emojiData.splice(index, 1);
+        } else {//없으면 추가해
+            emojiData.push(snsId[0]);
+        }
+    }        
+    console.log(emojiData);
+
+    //바뀐 배열을 넣어
+    let emojiDataStr = JSON.stringify(emojiData);
+    const putEmojiQuery = `UPDATE emoji SET ${typeOfEmoji} = ? WHERE post_idx = ?`;
+    await pool.query(putEmojiQuery, [emojiDataStr, postIdx]);
 };
 
 
