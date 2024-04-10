@@ -154,21 +154,17 @@ export const addUserToEmoji = async (postIdx, snsId, emojiType) => {
     if (exist==0) {
         const putquery = 'INSERT INTO emoji (post_idx, happy_emj, laugh_emj, sad_emj) VALUES (?, "[]", "[]", "[]");'
         await pool.query(putquery, [postIdx]);
-        console.log("없");
     }
     let typeOfEmoji = emojiType;
-    console.log(typeOfEmoji);
+
     //이모지 정보 불러와
     const getEmojiQuery = `SELECT ${typeOfEmoji} FROM emoji WHERE post_idx = ?`;
     const [emojiDataResult] = await pool.query(getEmojiQuery, [postIdx]);
-    console.log(emojiDataResult);
     let emojiData = emojiDataResult[0][typeOfEmoji];
-    console.log(emojiData);
 
     //빈 배열이면 추가
     if(emojiData.length === 0) {
         emojiData.push(snsId[0]);
-        console.log(emojiData);
     } else {
         let index = emojiData.indexOf(snsId[0]);
 
@@ -178,12 +174,48 @@ export const addUserToEmoji = async (postIdx, snsId, emojiType) => {
             emojiData.push(snsId[0]);
         }
     }        
-    console.log(emojiData);
 
     //바뀐 배열을 넣어
     let emojiDataStr = JSON.stringify(emojiData);
     const putEmojiQuery = `UPDATE emoji SET ${typeOfEmoji} = ? WHERE post_idx = ?`;
     await pool.query(putEmojiQuery, [emojiDataStr, postIdx]);
+
+    // 이모지 정보 다시 불러와서 반환
+    const getUpdatedEmojiQuery = `SELECT happy_emj, laugh_emj, sad_emj FROM emoji WHERE post_idx = ?`;
+    const [[updatedEmojiData]] = await pool.query(getUpdatedEmojiQuery, [postIdx]);
+
+    const parseData = (data) => {
+        if (Array.isArray(data)) {
+            return data;
+        }
+        try {
+            return JSON.parse(data);
+        } catch (error) {
+            console.error('Error parsing data:', error);
+            return [];
+        }
+    };
+
+    const happyData = parseData(updatedEmojiData.happy_emj);
+    const laughData = parseData(updatedEmojiData.laugh_emj);
+    const sadData = parseData(updatedEmojiData.sad_emj);
+
+    return {
+        emojis: {
+            happy: {
+                selected: happyData.includes(snsId[0]),
+                count: happyData.length
+            },
+            laugh: {
+                selected: laughData.includes(snsId[0]),
+                count: laughData.length
+            },
+            sad: {
+                selected: sadData.includes(snsId[0]),
+                count: sadData.length
+            }
+        }
+    };
 };
 
 
