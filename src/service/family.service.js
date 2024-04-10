@@ -1,5 +1,5 @@
 import {extract_user, has_family} from "../dao/random.dao.js";
-import {family, add_family, find_member, delete_member, check_leader, family_info} from "../dao/family.dao.js";
+import {family, add_family, find_member, delete_member, check_leader, family_info, now_request} from "../dao/family.dao.js";
 export const getinfo = async(family_code) => {
     const check_family = await family(family_code);
     console.log(check_family);
@@ -26,4 +26,12 @@ export const delete_user = async(user) => {
         return -1;
     await delete_member(user[0]);
     return 0;
+}
+
+export const getrequest = async(user) => {
+    const has = await has_family(user[0]);
+    const request = await now_request(user[0]);
+    if(has === -1)
+        return [false, request];
+    return [true, request];
 }
