@@ -45,6 +45,21 @@ export const has_family = async(data) => {
     }
 }
 
+export const rq_family = async(data) => {
+    try{
+        //const conn = pool.getConnection();
+        const result = await pool.query("SELECT family_code FROM user WHERE snsId = ?", data);
+        console.log(result[0][0]);
+        if(result[0][0] === undefined){
+            return -1;
+        } else {
+            return result[0];
+        }
+    } catch(err){
+        throw new BaseError(status.PARAMETER_IS_WRONG, err);
+    }
+}
+
 export const match_user = async (user_id, token, family_name) => {
     try{
         //const conn = await pool.getConnection();
