@@ -33,7 +33,7 @@ export const extract_user = async(data) => {
 export const has_family = async(data) => {
     try{
         //const conn = pool.getConnection();
-        const result = await pool.query("SELECT family_code FROM user WHERE snsId = ? AND auth = 1", data);
+        const result = await pool.query("SELECT family_code FROM user WHERE snsId = ? AND auth = 1 AND family_code IS NOT NULL", data);
         console.log(result[0][0]);
         if(result[0][0] === undefined){
             return -1;
