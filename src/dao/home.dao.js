@@ -70,7 +70,7 @@ export const getPostsFromDb = async (user_idx) => {
                     count: parseInt(row.sad_count) || 0
                 }
             }
-        }));
+        })); 
     } catch (error) {
         throw error;
     }
@@ -368,23 +368,52 @@ export const getUserProfileData = async (snsId) => {
 };
 
 // 특정 게시글 1개 조회
-export const getSinglePostFromDb = async (postIdx) => {
+export const getSinglePostFromDb = async (postIdx, snsId) => {
     const query = `
         SELECT 
             p.post_idx, p.content, p.picture, p.create_at,
-            u.nickname, u.image AS userImage
+            u.nickname, u.image AS userImage,
+            JSON_CONTAINS(e.happy_emj, JSON_QUOTE(?)) AS happy_selected,
+            JSON_CONTAINS(e.laugh_emj, JSON_QUOTE(?)) AS laugh_selected,
+            JSON_CONTAINS(e.sad_emj, JSON_QUOTE(?)) AS sad_selected,
+            JSON_LENGTH(e.happy_emj) AS happy_count,
+            JSON_LENGTH(e.laugh_emj) AS laugh_count,
+            JSON_LENGTH(e.sad_emj) AS sad_count
         FROM 
             post p
             JOIN user u ON p.user_idx = u.snsId
+            LEFT JOIN emoji e ON p.post_idx = e.post_idx
         WHERE 
             p.post_idx = ?`;
 
     try {
-        const [rows] = await pool.query(query, [postIdx]);
+        const [rows] = await pool.query(query, [snsId, snsId, snsId, postIdx]);
         if (rows.length > 0) {
             const post = rows[0];
             post.picture = JSON.parse(post.picture); // 사진 정보 JSON 파싱
-            return post;
+            return {
+                post_idx: post.post_idx,
+                user_idx: post.user_idx,
+                nickname: post.nickname,
+                content: post.content,
+                picture: post.picture,
+                create_at: post.create_at,
+                userImage: post.userImage,
+                emojis: {
+                    happy: {
+                        selected: !!post.happy_selected,
+                        count: parseInt(post.happy_count) || 0
+                    },
+                    laugh: {
+                        selected: !!post.laugh_selected,
+                        count: parseInt(post.laugh_count) || 0
+                    },
+                    sad: {
+                        selected: !!post.sad_selected,
+                        count: parseInt(post.sad_count) || 0
+                    }
+                }
+            };
         } else {
             throw new Error("Post not found");
         }

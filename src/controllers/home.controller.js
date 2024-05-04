@@ -130,9 +130,9 @@ export const getUserProfile = async (req, res, next) => {
 // 특정 게시글 1개 조회
 export const getSinglePost = async (req, res, next) => {
     try {
-        await verify(req, res);
+        const snsId = await verify(req, res);
         const { postIdx } = req.params;
-        const postDetails = await homeService.getSinglePost(postIdx);
+        const postDetails = await homeService.getSinglePost(postIdx, snsId);
         res.send(response(status.SUCCESS, postDetails));
     } catch (error) {
         next(error);

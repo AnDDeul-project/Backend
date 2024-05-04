@@ -77,8 +77,8 @@ export const homeService = {
         return await getUserProfileData(userId);
     },
 
-    getSinglePost: async (postIdx) => {
-        return await getSinglePostFromDb(postIdx);
+    getSinglePost: async (postIdx, snsId) => {
+        return await getSinglePostFromDb(postIdx, snsId);
     },
 
      // 유저 프로필 정보 수정
