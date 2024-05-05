@@ -49,8 +49,8 @@ export const rq_family = async(data) => {
     try{
         //const conn = pool.getConnection();
         const result = await pool.query("SELECT family_code FROM user WHERE snsId = ?", data);
-        console.log(result[0][0]);
-        if(result[0][0] === undefined){
+        console.log(result[0][0].family_code);
+        if(result[0][0].family_code === null){
             return -1;
         } else {
             return result[0];

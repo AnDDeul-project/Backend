@@ -2,6 +2,7 @@ import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import moment from 'moment-timezone';
 import { status } from "../config/response.status.js";
+import { log } from "console";
 
 export const check_leader  = async(user_id) => {
     try{
@@ -33,6 +34,7 @@ export const family = async(family_code) => {
         }
         return -1;
     }catch(e){
+        log(e);
         throw new BaseError(status.PARAMETER_IS_WRONG, e);
     }
 }
@@ -60,7 +62,7 @@ export const add_family = async(user_id, family_code, user_name, now_user) => {
         const content = user_id + "님이 가족 신청을 보냈습니다! 지금 확인하고 반겨주세요:)";
         const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         await pool.query("UPDATE user SET family_code = ? , auth=0 , point = 0 WHERE snsId = ?", [family_code, now_user]);
-        await pool.query("INSERT INTO alram (user_idx, checked, content, creat_at, place) VALUES (?, ?, ?, ?, ?)", [user_name, 0, content, alarmDate, 'family']);
+        await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [user_name, 0, content, alarmDate, 'family']);
         return;
     }catch(e){
         throw new BaseError(status.PARAMETER_IS_WRONG, e);
