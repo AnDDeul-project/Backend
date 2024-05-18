@@ -19,7 +19,7 @@ const setProfileDirectory = (req, res, next) => {
 homeRoute.post('/board', setBoardDirectory, imageUploader.array('image', 10), createPost);
 
 // 가족 게시글 전체 조회
-homeRoute.get('/posts', getPosts);
+homeRoute.get('/posts/:page', getPosts);
 
 // 게시글 수정
 homeRoute.patch('/posts/:postIdx', updatePost);

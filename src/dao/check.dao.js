@@ -45,7 +45,7 @@ export const addOne = async (snsid, body) => {
         console.log(nick[0].nickname);
         const alarm_content = `${nick[0].nickname} 님이 해야 할 일을 남기셨어요`;
         const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        await pool.query("INSERT INTO alram (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver, 0, alarm_content, alarmDate, 'checklist']);
+        await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver, 0, alarm_content, alarmDate, 'checklist']);
         //conn.release();
         return result[0].insertId;
     } catch (err) {
@@ -116,7 +116,7 @@ export const changeComplete = async (checkid) => {
         const nick = await find_member(member[0].receiver_idx);
         const alarm_content = `${nick} 님이 할 일을 완료하셨어요`;
         const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        await pool.query("INSERT INTO alram (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [member[0].sender_idx, 0, alarm_content, alarmDate, 'checklist']);
+        await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [member[0].sender_idx, 0, alarm_content, alarmDate, 'checklist']);
         
         //conn.release();
         return;

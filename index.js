@@ -14,7 +14,7 @@ import { homeRoute } from './src/routes/home.route.js';
 import { mailRoute } from './src/routes/mail.route.js';
 import {familyRoute } from './src/routes/family.route.js';
 import { gardenRoute } from './src/routes/garden.route.js';
-import { alramRoute } from './src/routes/alram.route.js';
+import { alarmRoute } from './src/routes/alarm.route.js';
 
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
 
@@ -35,7 +35,7 @@ app.use('/home', homeRoute);
 app.use('/family', familyRoute);
 app.use('/mail', mailRoute);
 app.use('/garden', gardenRoute);
-app.use('/alram', alramRoute);
+app.use('/alarm', alarmRoute);
 
 app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));

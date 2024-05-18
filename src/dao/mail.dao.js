@@ -55,7 +55,7 @@ export const sendMail = async(snsId, req) => {
             await pool.query("UPDATE user SET point = ? WHERE snsId = ?", [now[0][0].point+1, snsId[0]]);
             const alarm_content = "편지가 도착했어요!! 바로 확인해볼까요??";
             const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-            await pool.query("INSERT INTO alram(user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [memberId, 0, alarm_content, alarmDate, "postbox"]);
+            await pool.query("INSERT INTO alarm(user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [memberId, 0, alarm_content, alarmDate, "postbox"]);
         }
         //conn.release();
     }catch(e){
