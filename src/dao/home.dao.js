@@ -125,6 +125,15 @@ export const getFamilyMembers = async (user_snsId) => {
         WHERE family_code = ? AND auth = 0`;
     const [waitlistRows] = await pool.query(waitlistQuery, [userFamilyCode]);
 
+    // 가족 그룹 이름 조회
+    const findFamNameQuery = `
+        SELECT fam_name
+        FROM userfam
+        WHERE family_code = ?`;
+    const [famNameRows] = await pool.query(findFamNameQuery, [userFamilyCode]);
+    const famName = famNameRows[0].fam_name;
+    console.log(famName);
+
     // 로그인한 사용자를 결과 배열의 첫 번째 요소로 배치
     const loginUserIndex = familyMembersRows.findIndex(member => String(member.snsId) === String(user_snsId));
     if (loginUserIndex > -1) {
@@ -134,6 +143,7 @@ export const getFamilyMembers = async (user_snsId) => {
 
     // 결과 객체 생성
     const result = {
+        family_name: famName,
         me: familyMembersRows[0], // 로그인한 사용자 정보
         family_code: userFamilyCode, // 가족 코드
         family: familyMembersRows.slice(1), // 가족 구성원 정보 (로그인한 사용자 제외)
