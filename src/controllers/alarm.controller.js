@@ -1,6 +1,6 @@
 
 import { verify } from '../service/auth.js';
-import { countalarm } from '../service/alarm.service.js';
+import { countAlarm } from '../service/alarm.service.js';
 
 export const countalarm = async (req, res) => {
     let snsId;
