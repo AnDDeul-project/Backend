@@ -36,7 +36,8 @@ export const createPost = async (req, res, next) => {
 export const getPosts = async (req, res, next) => {
     try {
         const snsId = await verify(req, res); // 또는 req.user.snsId (미들웨어를 통해 설정된 경우)
-        const posts = await homeService.getPosts(snsId);
+        const page = req.params.page; // URL에서 게시글 번호 추출
+        const posts = await homeService.getPosts(snsId, page);
         res.send(response(status.SUCCESS, posts));
     } catch (error) {
         next(error);

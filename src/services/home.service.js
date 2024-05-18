@@ -8,8 +8,8 @@ export const homeService = {
     },
 
     // 게시글 조회
-    getPosts: async (user_idx) => {
-        return await getPostsFromDb(user_idx);
+    getPosts: async (user_idx, page) => {
+        return await getPostsFromDb(user_idx, page);
     },
 
     // 게시글 수정

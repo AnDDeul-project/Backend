@@ -24,7 +24,7 @@ export const getUserFamilyCode = async (user_idx) => {
 };
 
 // 게시글 전체 조회
-export const getPostsFromDb = async (user_idx) => {
+export const getPostsFromDb = async (user_idx, page) => {
     // 사용자의 family_code 얻기
     const family_code = await getUserFamilyCode(user_idx);
     if (!family_code) {
@@ -44,10 +44,12 @@ export const getPostsFromDb = async (user_idx) => {
         INNER JOIN user u ON p.user_idx = u.snsId
         LEFT JOIN emoji e ON p.post_idx = e.post_idx
         WHERE u.family_code = ?
-        ORDER BY p.create_at DESC`;
+        ORDER BY p.create_at DESC
+        LIMIT ?
+        OFFSET ?`;
 
     try {
-        const [rows] = await pool.query(query, [user_idx, user_idx, user_idx, family_code]);
+        const [rows] = await pool.query(query, [user_idx, user_idx, user_idx, family_code, 20, page*20]);
         return rows.map(row => ({
             post_idx: row.post_idx,
             user_idx: row.user_idx,
