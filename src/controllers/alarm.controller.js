@@ -9,6 +9,6 @@ export const countalarm = async (req, res) => {
     } catch (err) {
         return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."})
     }
-    const result = await countalarm(snsId, req.params.place);
+    const result = await countAlarm(snsId, req.params.place);
     return res.status(200).json({status: 200, isSuccess: true, count: result});
 }
