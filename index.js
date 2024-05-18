@@ -15,9 +15,15 @@ import { mailRoute } from './src/routes/mail.route.js';
 import {familyRoute } from './src/routes/family.route.js';
 import { gardenRoute } from './src/routes/garden.route.js';
 import { alramRoute } from './src/routes/alram.route.js';
+import { pushRoute } from './src/routes/push.js';
+
+import admin from "firebase-admin";
 
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
 
+admin.initializeApp({
+    credential: admin.credential.cert(process.GOOGLE_APPLICATION_CREDENTIALS),
+  });
 
 const app = express();
 // server setting - veiw, static, body-parser etc..
@@ -36,6 +42,7 @@ app.use('/family', familyRoute);
 app.use('/mail', mailRoute);
 app.use('/garden', gardenRoute);
 app.use('/alram', alramRoute);
+app.use('/push', pushRoute);
 
 app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));

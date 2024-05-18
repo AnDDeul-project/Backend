@@ -143,7 +143,9 @@ export const getSinglePost = async (req, res, next) => {
 export const updateUserProfile = async (req, res, next) => {
     try {
         const snsId = await verify(req, res);
-        const { nickname } = req.body; // 프론트엔드에서 닉네임 값을 보낼 경우 받아옴
+        const { nickname } = req.body; // 프론트엔드에서 닉네임 값을 보낼 경우 받아옴4
+        console.log(`nickname : ${nickname}`);
+        // if(req.body) {const { nickname } = req.body;}
         let imageUpdate = {}; // 이미지 업데이트 정보를 담을 객체
 
         // 이미지가 첨부된 경우만 처리
