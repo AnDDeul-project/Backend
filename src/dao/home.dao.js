@@ -50,7 +50,9 @@ export const getPostsFromDb = async (user_idx, page) => {
 
     try {
         const [rows] = await pool.query(query, [user_idx, user_idx, user_idx, family_code, 20, page*20]);
-        return rows.map(row => ({
+        return {
+            count : rows.length,
+            data : rows.map(row => ({
             post_idx: row.post_idx,
             user_idx: row.user_idx,
             nickname: row.nickname,
@@ -72,7 +74,7 @@ export const getPostsFromDb = async (user_idx, page) => {
                     count: parseInt(row.sad_count) || 0
                 }
             }
-        })); 
+        }))}; 
     } catch (error) {
         throw error;
     }
