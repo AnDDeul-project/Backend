@@ -24,7 +24,7 @@ export const getUserFamilyCode = async (user_idx) => {
 };
 
 // 게시글 전체 조회
-export const getPostsFromDb = async (user_idx) => {
+export const getPostsFromDb = async (user_idx, page) => {
     // 사용자의 family_code 얻기
     const family_code = await getUserFamilyCode(user_idx);
     if (!family_code) {
@@ -44,10 +44,12 @@ export const getPostsFromDb = async (user_idx) => {
         INNER JOIN user u ON p.user_idx = u.snsId
         LEFT JOIN emoji e ON p.post_idx = e.post_idx
         WHERE u.family_code = ?
-        ORDER BY p.create_at DESC`;
+        ORDER BY p.create_at DESC
+        LIMIT ?
+        OFFSET ?`;
 
     try {
-        const [rows] = await pool.query(query, [user_idx, user_idx, user_idx, family_code]);
+        const [rows] = await pool.query(query, [user_idx, user_idx, user_idx, family_code, 20, page*20]);
         return rows.map(row => ({
             post_idx: row.post_idx,
             user_idx: row.user_idx,
@@ -125,6 +127,15 @@ export const getFamilyMembers = async (user_snsId) => {
         WHERE family_code = ? AND auth = 0`;
     const [waitlistRows] = await pool.query(waitlistQuery, [userFamilyCode]);
 
+    // 가족 그룹 이름 조회
+    const findFamNameQuery = `
+        SELECT fam_name
+        FROM userfam
+        WHERE family_code = ?`;
+    const [famNameRows] = await pool.query(findFamNameQuery, [userFamilyCode]);
+    const famName = famNameRows[0].fam_name;
+    console.log(famName);
+
     // 로그인한 사용자를 결과 배열의 첫 번째 요소로 배치
     const loginUserIndex = familyMembersRows.findIndex(member => String(member.snsId) === String(user_snsId));
     if (loginUserIndex > -1) {
@@ -134,6 +145,7 @@ export const getFamilyMembers = async (user_snsId) => {
 
     // 결과 객체 생성
     const result = {
+        family_name: famName,
         me: familyMembersRows[0], // 로그인한 사용자 정보
         family_code: userFamilyCode, // 가족 코드
         family: familyMembersRows.slice(1), // 가족 구성원 정보 (로그인한 사용자 제외)

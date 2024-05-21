@@ -14,7 +14,7 @@ import { homeRoute } from './src/routes/home.route.js';
 import { mailRoute } from './src/routes/mail.route.js';
 import {familyRoute } from './src/routes/family.route.js';
 import { gardenRoute } from './src/routes/garden.route.js';
-import { alramRoute } from './src/routes/alram.route.js';
+import { alarmRoute } from './src/routes/alarm.route.js';
 import { pushRoute } from './src/routes/push.js';
 
 import admin from "firebase-admin";
@@ -41,7 +41,7 @@ app.use('/home', homeRoute);
 app.use('/family', familyRoute);
 app.use('/mail', mailRoute);
 app.use('/garden', gardenRoute);
-app.use('/alram', alramRoute);
+app.use('/alarm', alarmRoute);
 app.use('/push', pushRoute);
 
 app.get('/', (req, res, next) => {

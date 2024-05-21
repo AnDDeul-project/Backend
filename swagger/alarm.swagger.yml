@@ -1,8 +1,8 @@
 paths:
-  /alram/{place}:
+  /alarm/{place}:
     get:
       tags:
-        - Alram
+        - alarm
       summary: 알람 종류별로 불러오기
       security:
         - Authorization: []
