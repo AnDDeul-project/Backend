@@ -15,15 +15,16 @@ import { mailRoute } from './src/routes/mail.route.js';
 import {familyRoute } from './src/routes/family.route.js';
 import { gardenRoute } from './src/routes/garden.route.js';
 import { alarmRoute } from './src/routes/alarm.route.js';
-import { pushRoute } from './src/routes/push.js';
+import { pushRoute } from './src/routes/push.route.js';
 
 import admin from "firebase-admin";
 
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
 
+const serviceAccount = JSON.parse(fs.readFileSync(process.GOOGLE_APPLICATION_CREDENTIALS, "utf8"));
 admin.initializeApp({
-    credential: admin.credential.cert(process.GOOGLE_APPLICATION_CREDENTIALS),
-  });
+    credential: admin.credential.cert(serviceAccount)
+});
 
 const app = express();
 // server setting - veiw, static, body-parser etc..

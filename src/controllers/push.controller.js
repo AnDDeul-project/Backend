@@ -1,6 +1,6 @@
 import express from "express";
 import { verify } from '../service/auth.js';
-import { pushService } from '../service/push.js';
+// import { pushService } from '../service/push.service.js';
 
 export const makeAlarm = async (req, res) => {
     let snsId;
