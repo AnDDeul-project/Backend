@@ -3,7 +3,7 @@ import { specs } from './swagger/swagger.config.js';
 import SwaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-// import fs from 'fs';
+import fs from 'fs';
 import {healthRoute} from './src/routes/health.route.js'
 import { response } from './src/config/response.js';
 import { BaseError } from './src/config/error.js';
@@ -22,10 +22,10 @@ import admin from "firebase-admin";
 
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
 
-// const serviceAccount = JSON.parse(fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, "utf8"));
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount)
-// });
+const serviceAccount = JSON.parse(fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, "utf8"));
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
 
 const app = express();
 // server setting - veiw, static, body-parser etc..
