@@ -1,69 +1,71 @@
-import express from 'express';
-import { specs } from './swagger/swagger.config.js';
-import SwaggerUi from 'swagger-ui-express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import fs from 'fs';
-import {healthRoute} from './src/routes/health.route.js'
-import { response } from './src/config/response.js';
-import { BaseError } from './src/config/error.js';
-import { status } from './src/config/response.status.js';
-import { kakaoRouter } from './src/routes/kakao.route.js';
-import { randomRoute } from './src/routes/random.route.js';
-import { checkRoute } from './src/routes/check.route.js';
-import { homeRoute } from './src/routes/home.route.js';
-import { mailRoute } from './src/routes/mail.route.js';
-import {familyRoute } from './src/routes/family.route.js';
-import { gardenRoute } from './src/routes/garden.route.js';
-import { alarmRoute } from './src/routes/alarm.route.js';
-import { pushRoute } from './src/routes/push.route.js';
+import express from "express";
+import { specs } from "./swagger/swagger.config.js";
+import SwaggerUi from "swagger-ui-express";
+import dotenv from "dotenv";
+import cors from "cors";
+import fs from "fs";
+import { healthRoute } from "./src/routes/health.route.js";
+import { response } from "./src/config/response.js";
+import { BaseError } from "./src/config/error.js";
+import { status } from "./src/config/response.status.js";
+import { kakaoRouter } from "./src/routes/kakao.route.js";
+import { randomRoute } from "./src/routes/random.route.js";
+import { checkRoute } from "./src/routes/check.route.js";
+import { homeRoute } from "./src/routes/home.route.js";
+import { mailRoute } from "./src/routes/mail.route.js";
+import { familyRoute } from "./src/routes/family.route.js";
+import { gardenRoute } from "./src/routes/garden.route.js";
+import { alarmRoute } from "./src/routes/alarm.route.js";
+import { pushRoute } from "./src/routes/push.route.js";
 
 import admin from "firebase-admin";
 
-dotenv.config();    // .env 파일 사용 (환경 변수 관리)
+dotenv.config(); // .env 파일 사용 (환경 변수 관리)
 
-const serviceAccount = JSON.parse(fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, "utf8"));
+const serviceAccount = JSON.parse(
+  fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, "utf8")
+);
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
 });
 
 const app = express();
 // server setting - veiw, static, body-parser etc..
-app.set('port', process.env.PORT || 3000)   // 서버 포트 지정
+app.set("port", process.env.PORT || 3000); // 서버 포트 지정
 app.use(cors());
-app.use('/health', healthRoute);                            // cors 방식 허용
-app.use(express.static('public'));          // 정적 파일 접근
-app.use(express.json());                    // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
-app.use(express.urlencoded({extended: false})); // 단순 객체 문자열 형태로 본문 데이터 해석
-app.use('/auth', kakaoRouter);
-app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
-app.use('/random', randomRoute);
-app.use('/check', checkRoute);
-app.use('/home', homeRoute);
-app.use('/family', familyRoute);
-app.use('/mail', mailRoute);
-app.use('/garden', gardenRoute);
-app.use('/alarm', alarmRoute);
-app.use('/push', pushRoute);
+app.use("/health", healthRoute); // cors 방식 허용
+app.use(express.static("public")); // 정적 파일 접근
+app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
+app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
+app.use("/auth", kakaoRouter);
+app.use("/api-docs", SwaggerUi.serve, SwaggerUi.setup(specs));
+app.use("/random", randomRoute);
+app.use("/check", checkRoute);
+app.use("/home", homeRoute);
+app.use("/family", familyRoute);
+app.use("/mail", mailRoute);
+app.use("/garden", gardenRoute);
+app.use("/alarm", alarmRoute);
+app.use("/push", pushRoute);
 
-app.get('/', (req, res, next) => {
-    res.send(response(status.SUCCESS, "루트 페이지!"));
-})
+app.get("/", (req, res, next) => {
+  res.send(response(status.SUCCESS, "루트 페이지!"));
+});
 
 // error handling
 app.use((req, res, next) => {
-    const err = new BaseError(status.NOT_FOUND);
-    next(err);
+  const err = new BaseError(status.NOT_FOUND);
+  next(err);
 });
 
 app.use((err, req, res, next) => {
-    // 템플릿 엔진 변수 설정
-    res.locals.message = err.message;   
-    // 개발환경이면 에러를 출력하고 아니면 출력하지 않기
-    res.locals.error = process.env.NODE_ENV !== 'production' ? err : {}; 
-    console.error(err);
+  // 템플릿 엔진 변수 설정
+  res.locals.message = err.message;
+  // 개발환경이면 에러를 출력하고 아니면 출력하지 않기
+  res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
+  console.error(err);
 });
 
-app.listen(app.get('port'), () => {
-    console.log(`Example app listening on port ${app.get('port')}`);
+app.listen(app.get("port"), () => {
+  console.log(`Example app listening on port ${app.get("port")}`);
 });

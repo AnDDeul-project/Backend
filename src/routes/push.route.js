@@ -3,6 +3,6 @@ import { makeAlarm, putToken } from '../controllers/push.controller.js';
 
 export const pushRoute = express.Router();
 
-pushRoute.get('/', makeAlarm);
+// pushRoute.get('/', makeAlarm);
 
 pushRoute.put('/putToken', putToken);
