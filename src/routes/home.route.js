@@ -37,7 +37,7 @@ homeRoute.post('/posts/:postIdx/emoji', addEmojiToPost);
 homeRoute.get('/user/:userId/profile', getUserProfile);
 
 // 특정 게시글 1개 조회
-homeRoute.get('/posts/:postIdx', getSinglePost);
+homeRoute.get('/posts/one/:postIdx', getSinglePost);
 
 // 유저 프로필 정보 수정(Put)
 homeRoute.patch('/user/profile', setProfileDirectory, imageUploader.single('image'), updateUserProfile);

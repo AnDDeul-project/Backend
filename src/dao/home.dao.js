@@ -30,6 +30,7 @@ export const getPostsFromDb = async (user_idx, page) => {
     if (!family_code) {
         throw new Error("유저의 가족코드가 조회되지 않습니다.");
     }
+    
 
     // 게시글, 작성자 정보, 이모지 정보 조회
     const query = `

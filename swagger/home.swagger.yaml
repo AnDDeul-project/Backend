@@ -264,7 +264,7 @@ paths:
         "500":
           description: 서버 에러
 
-  /home/posts/{postIdx}:
+  /home/posts/one/{postIdx}:
     get:
       tags:
         - Home
