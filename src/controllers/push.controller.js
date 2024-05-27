@@ -1,38 +1,18 @@
 import express from "express";
 import { verify } from "../service/auth.js";
-import { updateToken } from "../service/push.service.js"; //makePush 넣기
 
-export const makeAlarm = async (req, res) => {
-  let snsId;
-  try {
-    snsId = await verify(req, res);
-  } catch (err) {
-    return res
-      .status(401)
-      .json({
-        status: 401,
-        isSuccess: false,
-        error: "유효하지 않은 토큰입니다.",
-      });
-  }
-  console.log("푸시알림 만들기");
-  //사용자 토큰 불러오고
-  //내용 넣어서 보내기
-  const result = await makePush(snsId);
-};
+import { updateToken } from "../service/push.service.js"; //makePush 넣기
 
 export const putToken = async (req, res) => {
   let snsId;
   try {
     snsId = await verify(req, res);
   } catch (err) {
-    return res
-      .status(401)
-      .json({
-        status: 401,
-        isSuccess: false,
-        error: "유효하지 않은 토큰입니다.",
-      });
+    return res.status(401).json({
+      status: 401,
+      isSuccess: false,
+      error: "유효하지 않은 토큰입니다.",
+    });
   }
   console.log("디바이스 토큰 추가하기");
   const result = await updateToken(snsId, req.body.deviceToken);
