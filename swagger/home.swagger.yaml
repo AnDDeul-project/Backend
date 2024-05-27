@@ -87,77 +87,83 @@ paths:
                 type: string
                 example: "success!"
               result:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    post_idx:
-                      type: integer
-                      example: 26
-                      description: 게시글 고유 번호
-                    user_idx:
-                      type: string
-                      example: "3324185004"
-                      description: 글 작성자의 고유 식별자
-                    nickname:
-                      type: string
-                      example: "이지은"
-                      description: 글 작성자의 닉네임
-                    content:
-                      type: string
-                      example: "귀여워서 이름이 귀요미인 고냥잉🐱🤍"
-                      description: 게시글 내용
-                    picture:
-                      type: array
-                      items:
-                        type: string
-                      example:
-                        - "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/41207b1c73add5688982d2fcaadc4f0a_KakaoTalk_Photo_2024-02-19-02-33-48%20030.jpeg"
-                      description: 게시글에 첨부된 모든 사진 URL 목록
-                    create_at:
-                      type: string
-                      example: "2024-02-18T08:59:26.000Z"
-                      description: 게시글 작성 날짜
-                    userImage:
-                      type: string
-                      example: "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/profile/4e764accb74fd6e8a9bc6a28eda228e8_%C3%AB%C2%8B%C2%A4%C3%AC%C2%9A%C2%B4%C3%AB%C2%A1%C2%9C%C3%AB%C2%93%C2%9C%20%281%29.jpeg"
-                      description: 글 작성자의 프로필 사진 URL
-                    emojis:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 1
+                  data:
+                    type: array
+                    items:
                       type: object
                       properties:
-                        happy:
+                        post_idx:
+                          type: integer
+                          example: 26
+                          description: 게시글 고유 번호
+                        user_idx:
+                          type: string
+                          example: "3324185004"
+                          description: 글 작성자의 고유 식별자
+                        nickname:
+                          type: string
+                          example: "이지은"
+                          description: 글 작성자의 닉네임
+                        content:
+                          type: string
+                          example: "귀여워서 이름이 귀요미인 고냥잉🐱🤍"
+                          description: 게시글 내용
+                        picture:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                            - "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/board/41207b1c73add5688982d2fcaadc4f0a_KakaoTalk_Photo_2024-02-19-02-33-48%20030.jpeg"
+                          description: 게시글에 첨부된 모든 사진 URL 목록
+                        create_at:
+                          type: string
+                          example: "2024-02-18T08:59:26.000Z"
+                          description: 게시글 작성 날짜
+                        userImage:
+                          type: string
+                          example: "https://garden-photo-s3.s3.ap-northeast-2.amazonaws.com/profile/4e764accb74fd6e8a9bc6a28eda228e8_%C3%AB%C2%8B%C2%A4%C3%AC%C2%9A%C2%B4%C3%AB%C2%A1%C2%9C%C3%AB%C2%93%C2%9C%20%281%29.jpeg"
+                          description: 글 작성자의 프로필 사진 URL
+                        emojis:
                           type: object
                           properties:
-                            selected:
-                              type: boolean
-                              example: false
-                              description: 현재 유저가 행복 이모지를 선택했는지 여부
-                            count:
-                              type: integer
-                              example: 2
-                              description: 행복 이모지를 선택한 유저의 수
-                        laugh:
-                          type: object
-                          properties:
-                            selected:
-                              type: boolean
-                              example: true
-                              description: 현재 유저가 웃음 이모지를 선택했는지 여부
-                            count:
-                              type: integer
-                              example: 1
-                              description: 웃음 이모지를 선택한 유저의 수
-                        sad:
-                          type: object
-                          properties:
-                            selected:
-                              type: boolean
-                              example: false
-                              description: 현재 유저가 슬픔 이모지를 선택했는지 여부
-                            count:
-                              type: integer
-                              example: 0
-                              description: 슬픔 이모지를 선택한 유저의 수
+                            happy:
+                              type: object
+                              properties:
+                                selected:
+                                  type: boolean
+                                  example: false
+                                  description: 현재 유저가 행복 이모지를 선택했는지 여부
+                                count:
+                                  type: integer
+                                  example: 2
+                                  description: 행복 이모지를 선택한 유저의 수
+                            laugh:
+                              type: object
+                              properties:
+                                selected:
+                                  type: boolean
+                                  example: true
+                                  description: 현재 유저가 웃음 이모지를 선택했는지 여부
+                                count:
+                                  type: integer
+                                  example: 1
+                                  description: 웃음 이모지를 선택한 유저의 수
+                            sad:
+                              type: object
+                              properties:
+                                selected:
+                                  type: boolean
+                                  example: false
+                                  description: 현재 유저가 슬픔 이모지를 선택했는지 여부
+                                count:
+                                  type: integer
+                                  example: 0
+                                  description: 슬픔 이모지를 선택한 유저의 수
         400:
           description: 잘못된 요청입니다. 입력값을 확인해주세요.
         401:
@@ -258,7 +264,7 @@ paths:
         "500":
           description: 서버 에러
 
-  /home/posts/{postIdx}:
+  /home/posts/one/{postIdx}:
     get:
       tags:
         - Home

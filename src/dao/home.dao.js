@@ -30,6 +30,7 @@ export const getPostsFromDb = async (user_idx, page) => {
     if (!family_code) {
         throw new Error("유저의 가족코드가 조회되지 않습니다.");
     }
+    
 
     // 게시글, 작성자 정보, 이모지 정보 조회
     const query = `
@@ -50,7 +51,9 @@ export const getPostsFromDb = async (user_idx, page) => {
 
     try {
         const [rows] = await pool.query(query, [user_idx, user_idx, user_idx, family_code, 20, page*20]);
-        return rows.map(row => ({
+        return {
+            count : rows.length,
+            data : rows.map(row => ({
             post_idx: row.post_idx,
             user_idx: row.user_idx,
             nickname: row.nickname,
@@ -72,7 +75,7 @@ export const getPostsFromDb = async (user_idx, page) => {
                     count: parseInt(row.sad_count) || 0
                 }
             }
-        })); 
+        }))}; 
     } catch (error) {
         throw error;
     }
