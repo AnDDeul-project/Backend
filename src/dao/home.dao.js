@@ -348,7 +348,7 @@ export const getUserProfileData = async (snsId) => {
         WHERE 
             u.snsId = ?
         ORDER BY 
-            p.create_at DESC
+            p.post_idx DESC
     `;
 
     try {
@@ -367,6 +367,7 @@ export const getUserProfileData = async (snsId) => {
             }).filter(img => img !== null);  // null 값 제거;
             let postIdx = postIdsRows.map(row => row.post_idx);
 
+            firstPostImages.reverse();
             return {
                 nickname: profileRows[0].nickname,
                 image: profileRows[0].image,
