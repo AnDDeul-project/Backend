@@ -206,6 +206,10 @@ paths:
                     type: string
                     example: "세현이의 뽀짝뽀짝 가족모임"
                     description: 가족 그룹의 이름
+                  family_leader:
+                    type: string
+                    example: "이지연"
+                    description: 가족장 이름
                   me:
                     type: object
                     properties:
@@ -263,6 +267,20 @@ paths:
           description: 인증 실패
         "500":
           description: 서버 에러
+        "HOME4007":
+          description: 가족 승인 이전
+          schema:
+            type: object
+            properties:
+              isSuccess:
+                type: boolean
+                example: false
+              code:
+                type: integer
+                example: HOME4007
+              message:
+                type: string
+                example: "아직 가족요청이 승인되지 않았습니다. 잠시만 기다려주세요."
 
   /home/posts/one/{postIdx}:
     get:
