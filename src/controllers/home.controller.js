@@ -78,6 +78,8 @@ export const getFamilyMembers = async (req, res, next) => {
     try {
         const snsId = await verify(req, res); // 또는 req.user.snsId (미들웨어를 통해 설정된 경우)
         const members = await homeService.getFamilyMembers(snsId);
+        if(members === -1)
+            res.send(response(status.USER_NOT_YET_FAMILY));
         res.send(response(status.SUCCESS, members));
     } catch (error) {
         next(error);
