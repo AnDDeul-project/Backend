@@ -5,12 +5,12 @@ import moment from 'moment-timezone';
 export const getOne = async(idx) => {
     try{
         //const conn = await pool.getConnection();
-        let result = await pool.query("SELECT * FROM postbox WHERE postbox_idx = ?", idx);
+        let [result] = await pool.query("SELECT * FROM postbox WHERE postbox_idx = ?", idx);
         console.log(result);
-        const sender = await pool.query("SELECT nickname FROM user WHERE snsId = ?", result[0][0].sender_idx)
-        result[0][0].sender_idx = sender[0][0].nickname;
-        const reciever = await pool.query("SELECT nickname FROM user WHERE snsId = ?", result[0][0].receiver_idx)
-        result[0][0].receiver_idx = reciever[0][0].nickname;
+        const [sender] = await pool.query("SELECT nickname FROM user WHERE snsId = ?", result[0].sender_idx)
+        result[0].sender_idx = sender[0].nickname;
+        const [reciever] = await pool.query("SELECT nickname FROM user WHERE snsId = ?", result[0].receiver_idx)
+        result[0].receiver_idx = reciever[0].nickname;
         await pool.query("UPDATE postbox SET is_read = 1 WHERE postbox_idx = ?", idx);
         return result[0];
     }catch(e){
