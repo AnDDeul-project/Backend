@@ -7,6 +7,7 @@ import moment from 'moment-timezone';
 import { find_member } from "./family.dao.js";
 
 
+// 체크리스트 단일 조회//근데 이거 단일 조회에서 바꾸는게 맞나? 날짜별로 바꾸는게 맞나?
 export const getOne = async (checkid) => {
     try {
         //const conn = await pool.getConnection();
@@ -44,8 +45,7 @@ export const addOne = async (snsid, body) => {
         const [nick] = await pool.query("SELECT nickname FROM user WHERE snsID = ?", snsid);
         console.log(nick[0].nickname);
         const alarm_content = `${nick[0].nickname} 님이 해야 할 일을 남기셨어요`;
-        const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver, 0, alarm_content, alarmDate, 'checklist']);
+        await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver, 0, alarm_content, currentDate, 'checklist']);
         //conn.release();
         return result[0].insertId;
     } catch (err) {
@@ -54,21 +54,29 @@ export const addOne = async (snsid, body) => {
     }
 }
 
-
-export const getAll = async (snsid, date) => {
+//날짜별 체크리스트 불러오기
+export const getAll = async (snsid, date, mode) => {
     try {
         //const conn = await pool.getConnection();
         const [result] = await pool.query("SELECT check_idx, sender_idx, complete, picture, content FROM checklist WHERE receiver_idx = ? AND due_date = ?", [snsid, date]);
         if(result.length==0) return -1;
 
         const result2 = await Promise.all(result.map(async (item) => {
-            console.log(item.sender_idx);
             const sender = await find_member(item.sender_idx);
             const newItem = {...item, sender: sender};  
             delete newItem.sender_idx;  // sender_idx 속성 삭제
             return newItem;
         }));
+        if(mode=='false') {
+            const checkIdxList = result2.map(item => item.check_idx);
+            // 알림 읽음처리 추가
+            const alarmQuery = `
+            UPDATE alarm SET checked=1
+            WHERE create_at = (SELECT create_at FROM checklist WHERE check_idx in (?))`
+            await pool.query(alarmQuery, [checkIdxList]);
+        }
         //conn.release();
+        console.log("result2:" + result2);
         return result2;
     } catch (err) {
         console.error(err);
