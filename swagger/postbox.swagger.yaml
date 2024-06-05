@@ -117,11 +117,13 @@ paths:
                       "postbox_idx": 1,
                       "sender_idx": "한승민",
                       "receiver_idx": "한승민",
-                      "content": "fdsfd",
+                      "content": "example",
                       "voice": 0,
-                      "send_date": "2024-02-05T15:00:00.000Z",
+                      "send_date": "2024-06-05T14:00:00.000Z",
                       "is_read": 0,
-                      "question": "오늘의 기분은 어떠신가요?"
+                      "question": "오늘의 기분은 어떠신가요?",
+                      "create_at": "2024-06-05T14:43:24.000Z",
+                      "alarm_idx": 13
                     }
                   ]
         '500':
