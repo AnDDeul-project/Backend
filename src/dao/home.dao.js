@@ -474,5 +474,7 @@ export const updateUserProfileInDb = async (snsId, updateData) => {
 export const updateFamilyMemberAuth = async (userId) => {
     const query = "UPDATE user SET auth = 1 WHERE snsId = ? AND auth = 0";
     const [result] = await pool.query(query, [userId]);
+    const alarmQuery = "UPDATE alarm set checked = 1 WHERE alarm_idx = (SELECT alarm_idx FROM user WHERE snsId = ?)";
+    await pool.query(alarmQuery, [userId]);
     return result.affectedRows > 0;  // affectedRows가 0보다 크면 업데이트 성공
 };

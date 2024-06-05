@@ -47,13 +47,14 @@ paths:
               check:
                 type: json
                 example: {
-                  checkid: 3,
-                  due_date: '2024-02-13',
+                  check_idx: 3,
+                  due_date: '2024-02-13T00:00:00.000Z',
                   complete: 0,
                   picture: null,
                   content: "열심히 살기",
-                  create_at : '2024-02-13 22:22:22',
+                  create_at : '2024-02-13T22:22:22.000Z',
                   modify_at : null,
+                  alarm_idx : 13,
                   sender: "임세현",
                   receiver: "김정훈"              
                 }

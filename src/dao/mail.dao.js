@@ -14,7 +14,7 @@ export const getOne = async(idx) => {
         await pool.query("UPDATE postbox SET is_read = 1 WHERE postbox_idx = ?", idx);
         const alarmQuery = `
         UPDATE alarm SET checked=1
-        WHERE create_at = (SELECT create_at FROM postbox WHERE postbox_idx = ?)`
+        WHERE alarm_idx = (SELECT alarm_idx FROM postbox WHERE postbox_idx = ?)`
         await pool.query(alarmQuery, [idx]);
         return result[0];
     }catch(e){
@@ -48,18 +48,19 @@ export const sendMail = async(snsId, req) => {
             const question = req.body.question;
             const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD');
             const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+            //알림 내용 기록
+            const alarm_content = "편지가 도착했어요!! 바로 확인해볼까요??";
+            const [alarm_idx] = await pool.query("INSERT INTO alarm(user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [memberId, 0, alarm_content, alarmDate, "postbox"]);
             if(req.file && req.file.location) {
                 content = req.file.location;
-                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question, create_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '1', currentDate, '0', question, alarmDate]);
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question, create_at, alarm_idx) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '1', currentDate, '0', question, alarmDate, alarm_idx.insertId]);
             } else {
                 content = req.body.content;
                 console.log(content);
-                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question, create_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '0', currentDate, '0', question, alarmDate]);
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question, create_at, alarm_idx) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '0', currentDate, '0', question, alarmDate, alarm_idx.insertId]);
             }
             const now = await pool.query("SELECT point FROM user WHERE snsId = ?", snsId[0]);
             await pool.query("UPDATE user SET point = ? WHERE snsId = ?", [now[0][0].point+1, snsId[0]]);
-            const alarm_content = "편지가 도착했어요!! 바로 확인해볼까요??";
-            await pool.query("INSERT INTO alarm(user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [memberId, 0, alarm_content, alarmDate, "postbox"]);
         }
         //conn.release();
     }catch(e){
