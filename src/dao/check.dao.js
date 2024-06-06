@@ -44,7 +44,7 @@ export const addOne = async (snsid, body) => {
         //알림 정보 기록
         const [nick] = await pool.query("SELECT nickname FROM user WHERE snsID = ?", snsid);
         console.log(nick[0].nickname);
-        const alarm_content = `${nick[0].nickname} 님이 해야 할 일을 남기셨어요`;
+        const alarm_content = `${nick[0].nickname}님의 따듯한 잔소리를 확인해보세요!`;
         // FCM 요청
         console.log("FCM 호출");
         pushAlarm(alarm_content);
