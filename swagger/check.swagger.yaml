@@ -15,18 +15,18 @@ paths:
               receiver_idx:
                 type: string
                 description: 체크리스트 추가 대상
-                example: "3304133093"
+                example: "3303580750"
               due_year:
                 type: integer
-                description: 생일 년도
-                example: 2000
+                description: 기한 년도
+                example: 2024
               due_month:
                 type: integer
-                description: 생일 월(한자리 숫자면 05 안되고 5로 적어주세요!)
-                example: 12
+                description: 기한 월(한자리 숫자면 05 안되고 5로 적어주세요!)
+                example: 6
               due_day:
                 type: integer
-                description: 생일 일(한자리 숫자면 05 안되고 5로 적어주세요!)
+                description: 기한 일(한자리 숫자면 05 안되고 5로 적어주세요!)
                 example: 5
               content:
                 type: string
