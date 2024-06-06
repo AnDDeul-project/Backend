@@ -46,9 +46,7 @@ export const addOne = async (snsid, body) => {
         console.log(nick[0].nickname);
         const alarm_content = `${nick[0].nickname}님의 따듯한 잔소리를 확인해보세요!`;
         // FCM 요청
-        console.log("FCM 호출");
         pushAlarm(alarm_content);
-        console.log("FCM 호출 끝");
         const [alarm_idx] = await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver, 0, alarm_content, currentDate, 'checklist']);
         const [result] = await pool.query("INSERT INTO checklist (sender_idx, receiver_idx, due_date, complete, content, create_at, alarm_idx) VALUES (?, ?, ?, 0, ?, ?, ?)", [snsid, receiver, dueDate, content, currentDate, alarm_idx.insertId]);
         
