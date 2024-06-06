@@ -5,6 +5,7 @@ import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 import moment from 'moment-timezone';
 import { find_member } from "./family.dao.js";
+import { pushAlarm } from "../service/push.service.js";
 
 
 // 체크리스트 단일 조회
@@ -44,6 +45,10 @@ export const addOne = async (snsid, body) => {
         const [nick] = await pool.query("SELECT nickname FROM user WHERE snsID = ?", snsid);
         console.log(nick[0].nickname);
         const alarm_content = `${nick[0].nickname} 님이 해야 할 일을 남기셨어요`;
+        // FCM 요청
+        console.log("FCM 호출");
+        pushAlarm(alarm_content);
+        console.log("FCM 호출 끝");
         const [alarm_idx] = await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver, 0, alarm_content, currentDate, 'checklist']);
         const [result] = await pool.query("INSERT INTO checklist (sender_idx, receiver_idx, due_date, complete, content, create_at, alarm_idx) VALUES (?, ?, ?, 0, ?, ?, ?)", [snsid, receiver, dueDate, content, currentDate, alarm_idx.insertId]);
         
