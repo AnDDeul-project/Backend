@@ -5,13 +5,17 @@ import moment from 'moment-timezone';
 export const getOne = async(idx) => {
     try{
         //const conn = await pool.getConnection();
-        let result = await pool.query("SELECT * FROM postbox WHERE postbox_idx = ?", idx);
+        let [result] = await pool.query("SELECT * FROM postbox WHERE postbox_idx = ?", idx);
         console.log(result);
-        const sender = await pool.query("SELECT nickname FROM user WHERE snsId = ?", result[0][0].sender_idx)
-        result[0][0].sender_idx = sender[0][0].nickname;
-        const reciever = await pool.query("SELECT nickname FROM user WHERE snsId = ?", result[0][0].receiver_idx)
-        result[0][0].receiver_idx = reciever[0][0].nickname;
+        const [sender] = await pool.query("SELECT nickname FROM user WHERE snsId = ?", result[0].sender_idx)
+        result[0].sender_idx = sender[0].nickname;
+        const [reciever] = await pool.query("SELECT nickname FROM user WHERE snsId = ?", result[0].receiver_idx)
+        result[0].receiver_idx = reciever[0].nickname;
         await pool.query("UPDATE postbox SET is_read = 1 WHERE postbox_idx = ?", idx);
+        const alarmQuery = `
+        UPDATE alarm SET checked=1
+        WHERE alarm_idx = (SELECT alarm_idx FROM postbox WHERE postbox_idx = ?)`
+        await pool.query(alarmQuery, [idx]);
         return result[0];
     }catch(e){
         throw new BaseError(status.PARAMETER_IS_WRONG, e);
@@ -43,19 +47,20 @@ export const sendMail = async(snsId, req) => {
             let content;
             const question = req.body.question;
             const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD');
+            const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+            //알림 내용 기록
+            const alarm_content = "편지가 도착했어요!! 바로 확인해볼까요??";
+            const [alarm_idx] = await pool.query("INSERT INTO alarm(user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [memberId, 0, alarm_content, alarmDate, "postbox"]);
             if(req.file && req.file.location) {
                 content = req.file.location;
-                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question) VALUES (?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '1', currentDate, '0', question]);
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question, create_at, alarm_idx) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '1', currentDate, '0', question, alarmDate, alarm_idx.insertId]);
             } else {
                 content = req.body.content;
                 console.log(content);
-                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question) VALUES (?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '0', currentDate, '0', question]);
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question, create_at, alarm_idx) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '0', currentDate, '0', question, alarmDate, alarm_idx.insertId]);
             }
             const now = await pool.query("SELECT point FROM user WHERE snsId = ?", snsId[0]);
             await pool.query("UPDATE user SET point = ? WHERE snsId = ?", [now[0][0].point+1, snsId[0]]);
-            const alarm_content = "편지가 도착했어요!! 바로 확인해볼까요??";
-            const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-            await pool.query("INSERT INTO alarm(user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [memberId, 0, alarm_content, alarmDate, "postbox"]);
         }
         //conn.release();
     }catch(e){

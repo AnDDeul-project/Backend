@@ -116,12 +116,23 @@ export const getFamilyMembers = async (user_snsId) => {
         throw new Error('Family code not found for the user');
     }
 
+    //본인 확인
+    const findMe = `
+        SELECT snsId, nickname, image
+        FROM user
+        WHERE snsId = ? AND auth = 1`;
+    const [forme] = await pool.query(findMe, user_snsId);
+
+    if(forme.length === 0) {
+        return -1;
+    }
+
     // 같은 가족 코드를 가진 모든 가족 구성원 조회
     const familyMembersQuery = `
         SELECT snsId, nickname, image
         FROM user
-        WHERE family_code = ? AND auth = 1`;
-    const [familyMembersRows] = await pool.query(familyMembersQuery, [userFamilyCode]);
+        WHERE family_code = ? AND auth = 1 AND snsId != ?`;
+    const [familyMembersRows] = await pool.query(familyMembersQuery, [userFamilyCode, user_snsId]);
 
     // 가족으로 들어오고 싶은 유저 조회 (auth 값이 0인 유저)
     const waitlistQuery = `
@@ -137,21 +148,24 @@ export const getFamilyMembers = async (user_snsId) => {
         WHERE family_code = ?`;
     const [famNameRows] = await pool.query(findFamNameQuery, [userFamilyCode]);
     const famName = famNameRows[0].fam_name;
-    console.log(famName);
+
+    // 가족장 정보 조회
+    const family_leaderQuery = `
+    SELECT u.nickname
+    FROM user u JOIN userfam uf on u.snsId = uf.user_idx
+    WHERE uf.family_code =?`;
+    const [family_leader] = await pool.query(family_leaderQuery, [userFamilyCode]);
 
     // 로그인한 사용자를 결과 배열의 첫 번째 요소로 배치
-    const loginUserIndex = familyMembersRows.findIndex(member => String(member.snsId) === String(user_snsId));
-    if (loginUserIndex > -1) {
-        const loginUser = familyMembersRows.splice(loginUserIndex, 1)[0];
-        familyMembersRows.unshift(loginUser); // 로그인한 사용자를 배열의 첫 번째 요소로 추가
-    }
+    const loginUserIndex = [forme, familyMembersRows, waitlistRows];
 
     // 결과 객체 생성
     const result = {
         family_name: famName,
-        me: familyMembersRows[0], // 로그인한 사용자 정보
+        family_leader: family_leader[0].nickname,
+        me: loginUserIndex[0], // 로그인한 사용자 정보
         family_code: userFamilyCode, // 가족 코드
-        family: familyMembersRows.slice(1), // 가족 구성원 정보 (로그인한 사용자 제외)
+        family: loginUserIndex.slice(1), // 가족 구성원 정보 (로그인한 사용자 제외)
         waitlist: waitlistRows // 대기 중인 가족 구성원 정보
     };
 
@@ -348,7 +362,7 @@ export const getUserProfileData = async (snsId) => {
         WHERE 
             u.snsId = ?
         ORDER BY 
-            p.create_at DESC
+            p.post_idx DESC
     `;
 
     try {
@@ -367,6 +381,7 @@ export const getUserProfileData = async (snsId) => {
             }).filter(img => img !== null);  // null 값 제거;
             let postIdx = postIdsRows.map(row => row.post_idx);
 
+            firstPostImages.reverse();
             return {
                 nickname: profileRows[0].nickname,
                 image: profileRows[0].image,
@@ -459,5 +474,7 @@ export const updateUserProfileInDb = async (snsId, updateData) => {
 export const updateFamilyMemberAuth = async (userId) => {
     const query = "UPDATE user SET auth = 1 WHERE snsId = ? AND auth = 0";
     const [result] = await pool.query(query, [userId]);
+    const alarmQuery = "UPDATE alarm set checked = 1 WHERE alarm_idx = (SELECT alarm_idx FROM user WHERE snsId = ?)";
+    await pool.query(alarmQuery, [userId]);
     return result.affectedRows > 0;  // affectedRows가 0보다 크면 업데이트 성공
 };

@@ -7,6 +7,7 @@ import moment from 'moment-timezone';
 import { find_member } from "./family.dao.js";
 
 
+// 체크리스트 단일 조회
 export const getOne = async (checkid) => {
     try {
         //const conn = await pool.getConnection();
@@ -39,36 +40,45 @@ export const addOne = async (snsid, body) => {
         const dueDate = `${year}-${month}-${day}`; // "YYYY-MM-DD" 형식으로 날짜 문자열 생성
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         const content = body.content;
-        
-        const result = await pool.query("INSERT INTO checklist (sender_idx, receiver_idx, due_date, complete, content, create_at) VALUES (?, ?, ?, 0, ?, ?)", [snsid, receiver, dueDate, content, currentDate]);
+        //알림 정보 기록
         const [nick] = await pool.query("SELECT nickname FROM user WHERE snsID = ?", snsid);
         console.log(nick[0].nickname);
         const alarm_content = `${nick[0].nickname} 님이 해야 할 일을 남기셨어요`;
-        const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-        await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver, 0, alarm_content, alarmDate, 'checklist']);
+        const [alarm_idx] = await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver, 0, alarm_content, currentDate, 'checklist']);
+        const [result] = await pool.query("INSERT INTO checklist (sender_idx, receiver_idx, due_date, complete, content, create_at, alarm_idx) VALUES (?, ?, ?, 0, ?, ?, ?)", [snsid, receiver, dueDate, content, currentDate, alarm_idx.insertId]);
+        
+        
         //conn.release();
-        return result[0].insertId;
+        return result.insertId;
     } catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
     }
 }
 
-
-export const getAll = async (snsid, date) => {
+//날짜별 체크리스트 불러오기
+export const getAll = async (snsid, date, mode) => {
     try {
         //const conn = await pool.getConnection();
-        const [result] = await pool.query("SELECT check_idx, sender_idx, complete, picture, content FROM checklist WHERE receiver_idx = ? AND due_date = ?", [snsid, date]);
+        const [result] = await pool.query("SELECT check_idx, sender_idx, complete, picture, content, alarm_idx FROM checklist WHERE receiver_idx = ? AND due_date = ?", [snsid, date]);
         if(result.length==0) return -1;
 
         const result2 = await Promise.all(result.map(async (item) => {
-            console.log(item.sender_idx);
             const sender = await find_member(item.sender_idx);
             const newItem = {...item, sender: sender};  
             delete newItem.sender_idx;  // sender_idx 속성 삭제
             return newItem;
         }));
+        if(mode=='false') {
+            const alarmIdxList = result2.map(item => item.alarm_idx);
+            // 알림 읽음처리 추가
+            const alarmQuery = `
+            UPDATE alarm SET checked=1
+            WHERE alarm_idx in (?)`
+            await pool.query(alarmQuery, [alarmIdxList]);
+        }
         //conn.release();
+        console.log("result2:" + result2);
         return result2;
     } catch (err) {
         console.error(err);

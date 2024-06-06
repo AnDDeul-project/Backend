@@ -8,6 +8,7 @@ export const status = {
     TOKEN_IS_INVALID: {status: StatusCodes.TOKEN_IS_INVALID, "isSuccess":false, "code":401, "message": "토큰이 유효하지 않습니다."},
     // home error
     IMAGE_NOT_EXIST: {status: StatusCodes.BAD_REQUEST, "isSuccess":false, "code":"HOME4001", "message": "사진이 첨부되지 않았습니다. 사진을 첨부해 주세요."},
+    USER_NOT_YET_FAMILY: {status: StatusCodes.BAD_REQUEST, "isSuccess":false, "code":"HOME4007", "message": "아직 가족요청이 승인되지 않았습니다. 잠시만 기다려주세요."},
     CONTENT_NOT_EXIST: {status: StatusCodes.BAD_REQUEST, "isSuccess":false, "code":"HOME4002", "message": "게시글 내용이 없습니다. 내용을 입력해 주세요."},
     NO_UPDATE_PROVIDED: { status: StatusCodes.BAD_REQUEST, isSuccess: false, code: "HOME4003", message: "변경할 내용이 없습니다." },
     FAMILY_CODE_MISMATCH: {status: StatusCodes.BAD_REQUEST, isSuccess: false, code: "HOME4004", message: "가족 코드가 다릅니다."},
