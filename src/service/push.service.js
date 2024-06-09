@@ -9,10 +9,10 @@ admin.initializeApp({
   credential: admin.credential.cert(process.env.GOOGLE_APPLICATION_CREDENTIALS)
 });
 
-export const pushAlarm = async(content) => {
+export const pushAlarm = async(content, deviceToken) => {
 
 //일단 바로 넣고 테스트할 예정
-const registrationToken = process.env.DEVICE_TOKEN;
+const registrationToken = deviceToken;
 
 const message = {
   data: {
