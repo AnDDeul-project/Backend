@@ -128,12 +128,16 @@ export const changeComplete = async (checkid) => {
         await pool.query("UPDATE checklist SET complete = !complete, modify_at = ? WHERE check_idx = ?", [currentDate, checkid]);
         
         //알람 추가
-        const [member] = await pool.query("SELECT sender_idx, receiver_idx FROM checklist WHERE check_idx = ?", checkid);
+        const [member] = await pool.query("SELECT sender_idx, receiver_idx, alarm_idx FROM checklist WHERE check_idx = ?", checkid);
         const nick = await find_member(member[0].receiver_idx);
-        const alarm_content = `${nick} 님이 할 일을 완료하셨어요`;
+        const alarm_content = `${nick}님이 남긴 할 일을 완료했어요`;
         const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [member[0].sender_idx, 0, alarm_content, alarmDate, 'checklist']);
         
+        const [senderToken] = await pool.query("SELECT device_token FROM user WHERE snsId = ?", [member[0].sender_idx]);
+        const deviceToken = senderToken[0].device_token;
+        // FCM 요청
+        pushAlarm(alarm_content, deviceToken);
         //conn.release();
         return;
     } catch (err) {
