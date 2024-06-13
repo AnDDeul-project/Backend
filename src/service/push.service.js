@@ -4,9 +4,12 @@ import { putToken } from "../dao/push.dao.js";
 
 dotenv.config();
 
+const base64Credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const credentials = JSON.parse(Buffer.from(base64Credentials, 'base64').toString('utf-8'));
+
 // Firebase Admin SDK 초기화
 admin.initializeApp({
-  credential: admin.credential.cert(process.env.GOOGLE_APPLICATION_CREDENTIALS)
+  credential: admin.credential.cert(credentials)
 });
 
 export const pushAlarm = async(content, deviceToken) => {
