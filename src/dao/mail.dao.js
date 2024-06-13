@@ -48,8 +48,12 @@ export const sendMail = async(snsId, req) => {
             const question = req.body.question;
             const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD');
             const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-            //알림 내용 기록
-            const alarm_content = "편지가 도착했어요!! 바로 확인해볼까요??";
+            //알림 정보 기록
+            const [nick] = await pool.query("SELECT nickname FROM user WHERE snsID = ?", snsId);
+            console.log(nick[0].nickname);
+            const alarm_content = `${nick[0].nickname}님이 편지를 보내셨어요`;
+            // FCM 요청
+            pushAlarm(alarm_content);
             const [alarm_idx] = await pool.query("INSERT INTO alarm(user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [memberId, 0, alarm_content, alarmDate, "postbox"]);
             if(req.file && req.file.location) {
                 content = req.file.location;

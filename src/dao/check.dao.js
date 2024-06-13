@@ -42,13 +42,14 @@ export const addOne = async (snsid, body) => {
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         const content = body.content;
         //알림 정보 기록
-        const [nick] = await pool.query("SELECT nickname FROM user WHERE snsID = ?", snsid);
-        console.log(nick[0].nickname);
-        const alarm_content = `${nick[0].nickname} 님이 해야 할 일을 남기셨어요`;
+        const [nick] = await pool.query("SELECT nickname FROM user WHERE snsId = ?", snsid);
+        const nickname = nick[0].nickname;
+        console.log("받는사람 : "+nick[0].nickname);
+        const [receiverToken] = await pool.query("SELECT device_token FROM user WHERE snsId = ?", [receiver]);
+        const deviceToken = receiverToken[0].device_token;
+        const alarm_content = `${nickname}님의 따듯한 잔소리를 확인해보세요!`;
         // FCM 요청
-        console.log("FCM 호출");
-        pushAlarm(alarm_content);
-        console.log("FCM 호출 끝");
+        pushAlarm(alarm_content, deviceToken);
         const [alarm_idx] = await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver, 0, alarm_content, currentDate, 'checklist']);
         const [result] = await pool.query("INSERT INTO checklist (sender_idx, receiver_idx, due_date, complete, content, create_at, alarm_idx) VALUES (?, ?, ?, 0, ?, ?, ?)", [snsid, receiver, dueDate, content, currentDate, alarm_idx.insertId]);
         
@@ -127,12 +128,16 @@ export const changeComplete = async (checkid) => {
         await pool.query("UPDATE checklist SET complete = !complete, modify_at = ? WHERE check_idx = ?", [currentDate, checkid]);
         
         //알람 추가
-        const [member] = await pool.query("SELECT sender_idx, receiver_idx FROM checklist WHERE check_idx = ?", checkid);
+        const [member] = await pool.query("SELECT sender_idx, receiver_idx, alarm_idx FROM checklist WHERE check_idx = ?", checkid);
         const nick = await find_member(member[0].receiver_idx);
-        const alarm_content = `${nick} 님이 할 일을 완료하셨어요`;
+        const alarm_content = `${nick}님이 남긴 할 일을 완료했어요`;
         const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [member[0].sender_idx, 0, alarm_content, alarmDate, 'checklist']);
         
+        const [senderToken] = await pool.query("SELECT device_token FROM user WHERE snsId = ?", [member[0].sender_idx]);
+        const deviceToken = senderToken[0].device_token;
+        // FCM 요청
+        pushAlarm(alarm_content, deviceToken);
         //conn.release();
         return;
     } catch (err) {
