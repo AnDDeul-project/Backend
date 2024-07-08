@@ -165,7 +165,7 @@ export const getFamilyMembers = async (user_snsId) => {
         family_leader: family_leader[0].nickname,
         me: forme[0], // 로그인한 사용자 정보
         family_code: userFamilyCode, // 가족 코드
-        family: loginUserIndex.slice(1), // 가족 구성원 정보 (로그인한 사용자 제외)
+        family: loginUserIndex.slice(1)[0], // 가족 구성원 정보 (로그인한 사용자 제외)
         waitlist: waitlistRows // 대기 중인 가족 구성원 정보
     };
 
