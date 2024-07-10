@@ -6,6 +6,7 @@ import { getOne, addOne, getAll, changeContent, changeDate, changeComplete, remo
 export const writeCheckService = async(snsid, body) => {
     const checkid = await addOne(snsid, body);
     const result = await getOne(checkid);
+    // console.log("result : "+result);
     return result;
 }
 
