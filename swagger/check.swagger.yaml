@@ -425,14 +425,15 @@ paths:
                 type: json
                 example: {
                   checkid: 3,
-                  due_date: '2024-02-15',
                   complete: 1,
                   picture: null,
                   content: "열심히 살기",
-                  create_at : '2024-02-13 22:22:22',
-                  modify_at : '2024-02-13 22:44:44',
+                  create_at : '2024-07-10T22:22:22.000Z',
+                  modify_at : '2024-07-10T33:33:33.000Z',
+                  alarm_idx: 3,
                   sender: "임세현",
-                  receiver: "김정훈"              
+                  receiver: "김정훈",
+                  due_date: '2024-02-15',
                 }
         '500':
           description: 서버 에러
