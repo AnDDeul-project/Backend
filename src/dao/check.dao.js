@@ -11,9 +11,7 @@ import { pushAlarm } from "../service/push.service.js";
 // 체크리스트 단일 조회
 export const getOne = async (checkid) => {
     try {
-        //const conn = await pool.getConnection();
         const [result] = await pool.query("SELECT * FROM checklist WHERE check_idx = ?", checkid);
-        
         const sender = await find_member(result[0].sender_idx);
         const receiver = await find_member(result[0].receiver_idx);
         const dueDate = moment(result[0].due_date).format("YYYY-MM-DD");
@@ -22,8 +20,6 @@ export const getOne = async (checkid) => {
         delete result2.receiver_idx;
         delete result2.due_date;
         
-        //conn.release();
-        console.log(result2);
         return result2;
     } catch (err) {
         console.error(err);
@@ -61,7 +57,6 @@ export const addOne = async (snsid, body) => {
 //날짜별 체크리스트 불러오기
 export const getAll = async (snsid, date, mode) => {
     try {
-        //const conn = await pool.getConnection();
         const [result] = await pool.query("SELECT check_idx, sender_idx, complete, picture, content, alarm_idx FROM checklist WHERE receiver_idx = ? AND due_date = ?", [snsid, date]);
         if(result.length==0) return -1;
 
@@ -79,7 +74,6 @@ export const getAll = async (snsid, date, mode) => {
             WHERE alarm_idx in (?)`
             await pool.query(alarmQuery, [alarmIdxList]);
         }
-        //conn.release();
         console.log("result2:" + result2);
         return result2;
     } catch (err) {
@@ -91,10 +85,8 @@ export const getAll = async (snsid, date, mode) => {
 
 export const changeContent = async (checkid, content) => {
     try {
-        //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         const [result] = await pool.query("UPDATE checklist SET content = ?, modify_at = ? WHERE check_idx = ?", [content, currentDate, checkid]);
-        //conn.release();
         return;
     } catch (err) {
         console.error(err);
@@ -105,10 +97,8 @@ export const changeContent = async (checkid, content) => {
 
 export const changeDate = async (checkid, date) => {
     try {
-        //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         const [result] = await pool.query("UPDATE checklist SET due_date = ?, modify_at = ? WHERE check_idx = ?", [date, currentDate, checkid]);
-        //conn.release();
         return;
     } catch (err) {
         console.error(err);
@@ -119,7 +109,6 @@ export const changeDate = async (checkid, date) => {
 
 export const changeComplete = async (checkid) => {
     try {
-        //const conn = await pool.getConnection();
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         await pool.query("UPDATE checklist SET complete = !complete, modify_at = ? WHERE check_idx = ?", [currentDate, checkid]);
         
@@ -134,7 +123,6 @@ export const changeComplete = async (checkid) => {
         const deviceToken = senderToken[0].device_token;
         // FCM 요청
         pushAlarm(alarm_content, deviceToken);
-        //conn.release();
         return;
     } catch (err) {
         console.error(err);
@@ -145,7 +133,6 @@ export const changeComplete = async (checkid) => {
 
 export const removeOne = async (checkid) => {
     try {
-        //const conn = await pool.getConnection();
         await pool.query("DELETE FROM checklist WHERE check_idx = ?", checkid);
         return;
     } catch (err) {
@@ -156,13 +143,11 @@ export const removeOne = async (checkid) => {
 
 export const putImg = async (checkid, location) => {
     try {
-        //const conn = await pool.getConnection();
         const [isFinished] = await pool.query("SELECT complete FROM checklist WHERE check_idx = ?", checkid);
         console.log(isFinished[0].complete);
         if(isFinished[0].complete != 1) return -1;
         const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         await pool.query("UPDATE checklist SET picture = ?, modify_at = ? WHERE check_idx = ?", [location, currentDate, checkid]);
-        //conn.release();
         return 1;
     } catch (err) {
         console.error(err);
