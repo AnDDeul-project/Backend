@@ -3,30 +3,21 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import { BaseError } from '../config/error.js';
 import { status } from "../config/response.status.js";
-const formUrlEncoded = (x) =>
-    Object.keys(x).reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, "");
 export const logOutKakao = async (kakaoToken) => {
+    console.log(kakaoToken);
+    
     try {
-        const user = await axios.get("https://kapi.kakao.com/v2/user/me", {
-            headers: {
-                Authorization: `Bearer ${kakaoToken}`,
-            },
-        });
-        const {data} = user;
         const result = await axios.post(
             "https://kapi.kakao.com/v1/user/logout",
-            formUrlEncoded({
-                target_id: data.id,
-                target_id_type: "user_id",
-            }),
+            null, 
             {
-                headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                authorization: `KakaoAK ${process.env.ADMIN_ID}`,
+                headers: { 
+                    Authorization:  `Bearer ${kakaoToken}`,
                 },
             }
         );
 
+        console.log(result.data); 
 
         return result.data; 
     } catch (error) {
@@ -35,28 +26,22 @@ export const logOutKakao = async (kakaoToken) => {
     }
 };
 
-export const unlinkKakao = async (kakaoToken, content) => {
+export const unlinkKakao = async (kakaoToken) => {
+    console.log(kakaoToken);
+    
     try {
-        const user = await axios.get("https://kapi.kakao.com/v2/user/me", {
-            headers: {
-                Authorization: `Bearer ${kakaoToken}`,
-            },
-        });
-        const {data} = user;
         const result = await axios.post(
             "https://kapi.kakao.com/v1/user/unlink",
-            formUrlEncoded({
-                target_id: data.id,
-                target_id_type: "user_id",
-            }),
+            null, 
             {
-                headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                authorization: `KakaoAK ${process.env.ADMIN_ID}`,
+                headers: { 
+                    Authorization:  `Bearer ${kakaoToken}`,
                 },
             }
         );
-        await deleteUser(data.id, content);
+        const data = result.data;
+        console.log(data.id);
+        await deleteUser(data.id);
         return data.id; 
     } catch (error) {
         console.error("Error during unlink:", error);
@@ -70,7 +55,6 @@ export const signInKakao = async (kakaoToken) => {
             Authorization: `Bearer ${kakaoToken}`,
         },
     });
-
     const {data} = result
     const nickname = data.properties.nickname;
     const email = data.kakao_account.email;
@@ -81,7 +65,7 @@ export const signInKakao = async (kakaoToken) => {
     if (!nickname || !email || !snsId) throw new BaseError(status.BAD_REQUEST);
 
     const user = await findUser(snsId);
-
+    console.log(user);
     if (user==-1) {
         await createUser({
             'email': email, 
@@ -92,10 +76,9 @@ export const signInKakao = async (kakaoToken) => {
         });
     }
 
-    return [jwt.sign({ kakao_id: data.id }, process.env.KAKAO_ID, {expiresIn: 864000}), snsId];
+    return [jwt.sign({ kakao_id: user }, process.env.KAKAO_ID), snsId];
     
 };
-
 export const has_family = async(userid) => {
     const result = await has(userid);
     return result;

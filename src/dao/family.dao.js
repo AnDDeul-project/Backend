@@ -7,21 +7,11 @@ import { log } from "console";
 export const check_leader  = async(user_id) => {
     try{
         const result = await pool.query("SELECT family_code FROM userfam WHERE user_idx = ?", user_id);
-        console.log(user_id);
+        console.log(result[0].length);
         if(result[0].length > 0){
             return -1;
         }
         return 1;
-    }catch(e){
-        throw new BaseError(status.PARAMETER_IS_WRONG, e);
-    }
-}
-
-export const nextleader  = async(user_id, family_code) => {
-    try{
-        console.log(user_id, family_code);
-        const result = await pool.query("UPDATE userfam SET user_idx = ? WHERE family_code = ?", [user_id, family_code]);
-        return 0 ;
     }catch(e){
         throw new BaseError(status.PARAMETER_IS_WRONG, e);
     }
