@@ -35,9 +35,9 @@ export const getPostsFromDb = async (user_idx, page) => {
     // 게시글, 작성자 정보, 이모지 정보 조회
     const query = `
         SELECT p.post_idx, p.user_idx, p.content, p.picture, p.create_at, u.image AS userImage, u.nickname,
-               JSON_CONTAINS(e.happy_emj, JSON_QUOTE(?)) AS happy_selected,
-               JSON_CONTAINS(e.laugh_emj, JSON_QUOTE(?)) AS laugh_selected,
-               JSON_CONTAINS(e.sad_emj, JSON_QUOTE(?)) AS sad_selected,
+               JSON_CONTAINS(e.happy_emj, JSON_QUOTE(CAST(? AS CHAR))) AS happy_selected,
+               JSON_CONTAINS(e.laugh_emj, JSON_QUOTE(CAST(? AS CHAR))) AS laugh_selected,
+               JSON_CONTAINS(e.sad_emj, JSON_QUOTE(CAST(? AS CHAR))) AS sad_selected,
                JSON_LENGTH(e.happy_emj) AS happy_count,
                JSON_LENGTH(e.laugh_emj) AS laugh_count,
                JSON_LENGTH(e.sad_emj) AS sad_count
