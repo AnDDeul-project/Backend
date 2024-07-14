@@ -3,8 +3,6 @@ import jwt from "jsonwebtoken";
 export const verify = async(req, res, next) =>{
     try {
         const [authType, authToken] = req.headers.authorization.split(" ");
-        console.log(authToken);
-      
         req.decoded = jwt.verify(authToken, process.env.KAKAO_ID);
         return req.decoded.kakao_id;
       } catch (error) {
