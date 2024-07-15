@@ -1,4 +1,4 @@
-import { createPostInDb, getPostsFromDb, getFamilyMembers, getPostById, updatePostById, deletePostById, getEmojiByPostId, createEmojiRow, removeUserFromEmojis, addUserToEmoji, getUserProfileData, getSinglePostFromDb, updateUserProfileInDb, getUserFamilyCode, updateFamilyMemberAuth } from '../dao/home.dao.js';
+import { createPostInDb, getPostsFromDb, getFamilyMembers, getPostById, updatePostById, deletePostById, addUserToEmoji, getUserProfileData, getSinglePostFromDb, updateUserProfileInDb, getUserFamilyCode, updateFamilyMemberAuth } from '../dao/home.dao.js';
 
 export const homeService = {
     // 게시글 작성
@@ -8,8 +8,8 @@ export const homeService = {
     },
 
     // 게시글 조회
-    getPosts: async (user_idx) => {
-        return await getPostsFromDb(user_idx);
+    getPosts: async (user_idx, page) => {
+        return await getPostsFromDb(user_idx, page);
     },
 
     // 게시글 수정
@@ -65,25 +65,7 @@ export const homeService = {
 
     // 게시글 이모지 추가
     addEmoji: async (postIdx, snsId, emojiType) => {
-        // post_idx를 통해 emoji 테이블에 정보가 있는지 확인
-        let emojiInfo = await getEmojiByPostId(postIdx);
-
-        if (!emojiInfo) {
-            // 해당 post_idx에 대한 정보가 없으면 새로 추가
-            emojiInfo = await createEmojiRow(postIdx);
-        }
-
-        // 사용자가 이전에 선택한 이모지 삭제
-        emojiInfo = await removeUserFromEmojis(postIdx, snsId, emojiType);
-        if(emojiInfo==0){
-            const update = await getEmojiByPostId(postIdx)
-            return update;
-        }
-
-        // 새로운 이모지에 사용자 추가
-        const updatedEmojiInfo = await addUserToEmoji(postIdx, snsId, emojiType);
-
-        return updatedEmojiInfo;
+        return await addUserToEmoji(postIdx, snsId, emojiType);
     },
     // // 게시글 이모지 추가
     // addEmoji: async (postIdx, snsId, emojiType) => {
@@ -95,8 +77,8 @@ export const homeService = {
         return await getUserProfileData(userId);
     },
 
-    getSinglePost: async (postIdx) => {
-        return await getSinglePostFromDb(postIdx);
+    getSinglePost: async (postIdx, snsId) => {
+        return await getSinglePostFromDb(postIdx, snsId);
     },
 
      // 유저 프로필 정보 수정

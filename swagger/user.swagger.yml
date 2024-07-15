@@ -120,7 +120,15 @@ paths:
       - application/json
       security:
         - Authorization: []
-
+      parameters:
+        - name: reason
+          in: body
+          required: true
+          schema:
+              properties:
+                content:
+                  type: string
+                  example: 탈퇴 이유
       responses:
         '200':
           description: 탈퇴 성공

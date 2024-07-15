@@ -19,7 +19,7 @@ const setProfileDirectory = (req, res, next) => {
 homeRoute.post('/board', setBoardDirectory, imageUploader.array('image', 10), createPost);
 
 // 가족 게시글 전체 조회
-homeRoute.get('/posts', getPosts);
+homeRoute.get('/posts/:page', getPosts);
 
 // 게시글 수정
 homeRoute.patch('/posts/:postIdx', updatePost);
@@ -30,14 +30,14 @@ homeRoute.delete('/posts/:postIdx', deletePost);
 // 가족 구성원 조회
 homeRoute.get('/family/members', getFamilyMembers);
 
-// 게시글에 감정 표현 추가
+// 게시글에 이모지 추가
 homeRoute.post('/posts/:postIdx/emoji', addEmojiToPost);
 
 // 특정 유저 프로필 페이지 조회
 homeRoute.get('/user/:userId/profile', getUserProfile);
 
 // 특정 게시글 1개 조회
-homeRoute.get('/posts/:postIdx', getSinglePost);
+homeRoute.get('/posts/one/:postIdx', getSinglePost);
 
 // 유저 프로필 정보 수정(Put)
 homeRoute.patch('/user/profile', setProfileDirectory, imageUploader.single('image'), updateUserProfile);

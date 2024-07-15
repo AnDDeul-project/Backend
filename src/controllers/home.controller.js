@@ -36,7 +36,8 @@ export const createPost = async (req, res, next) => {
 export const getPosts = async (req, res, next) => {
     try {
         const snsId = await verify(req, res); // 또는 req.user.snsId (미들웨어를 통해 설정된 경우)
-        const posts = await homeService.getPosts(snsId);
+        const page = req.params.page; // URL에서 게시글 번호 추출
+        const posts = await homeService.getPosts(snsId, page);
         res.send(response(status.SUCCESS, posts));
     } catch (error) {
         next(error);
@@ -77,6 +78,8 @@ export const getFamilyMembers = async (req, res, next) => {
     try {
         const snsId = await verify(req, res); // 또는 req.user.snsId (미들웨어를 통해 설정된 경우)
         const members = await homeService.getFamilyMembers(snsId);
+        if(members === -1)
+            res.send(response(status.USER_NOT_YET_FAMILY));
         res.send(response(status.SUCCESS, members));
     } catch (error) {
         next(error);
@@ -130,9 +133,9 @@ export const getUserProfile = async (req, res, next) => {
 // 특정 게시글 1개 조회
 export const getSinglePost = async (req, res, next) => {
     try {
-        await verify(req, res);
+        const snsId = await verify(req, res);
         const { postIdx } = req.params;
-        const postDetails = await homeService.getSinglePost(postIdx);
+        const postDetails = await homeService.getSinglePost(postIdx, snsId);
         res.send(response(status.SUCCESS, postDetails));
     } catch (error) {
         next(error);
@@ -143,7 +146,9 @@ export const getSinglePost = async (req, res, next) => {
 export const updateUserProfile = async (req, res, next) => {
     try {
         const snsId = await verify(req, res);
-        const { nickname } = req.body; // 프론트엔드에서 닉네임 값을 보낼 경우 받아옴
+        const { nickname } = req.body; // 프론트엔드에서 닉네임 값을 보낼 경우 받아옴4
+        console.log(`nickname : ${nickname}`);
+        // if(req.body) {const { nickname } = req.body;}
         let imageUpdate = {}; // 이미지 업데이트 정보를 담을 객체
 
         // 이미지가 첨부된 경우만 처리

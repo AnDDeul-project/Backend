@@ -33,8 +33,23 @@ export const extract_user = async(data) => {
 export const has_family = async(data) => {
     try{
         //const conn = pool.getConnection();
+        const result = await pool.query("SELECT family_code FROM user WHERE snsId = ? AND auth = 1 AND family_code IS NOT NULL", data);
+        if(result[0][0] === undefined){
+            return -1;
+        } else {
+            return result[0];
+        }
+    } catch(err){
+        throw new BaseError(status.PARAMETER_IS_WRONG, err);
+    }
+}
+
+export const rq_family = async(data) => {
+    try{
+        console.log(data);
+        //const conn = pool.getConnection();
         const result = await pool.query("SELECT family_code FROM user WHERE snsId = ?", data);
-        console.log(result[0]);
+        console.log(result[0][0].family_code);
         if(result[0][0].family_code === null){
             return -1;
         } else {

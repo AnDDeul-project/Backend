@@ -5,8 +5,7 @@ import { status } from "../config/response.status.js";
 export const count = async(snsId, place) => {
     try{
         //const conn = await pool.getConnection();
-        const result = await pool.query("SELECT COUNT(*) AS COUNT FROM alram WHERE user_idx = ? AND checked = ? AND place = ?", [snsId, 0, place]);
-        console.log(snsId, place);
+        const result = await pool.query("SELECT COUNT(*) AS COUNT FROM alarm WHERE user_idx = ? AND checked = ? AND place = ?", [snsId, 0, place]);
         return result[0][0].COUNT;
     }catch(e){
         console.error(err);

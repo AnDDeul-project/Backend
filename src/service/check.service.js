@@ -10,8 +10,8 @@ export const writeCheckService = async(snsid, body) => {
 }
 
 // 체크리스트 목록 불러오기
-export const callCheckService = async(snsid, date) => {
-    const result = await getAll(snsid, date);
+export const callCheckService = async(snsid, date, mode) => {
+    const result = await getAll(snsid, date, mode);
     if(result==-1) return -1;
     return result;
 }

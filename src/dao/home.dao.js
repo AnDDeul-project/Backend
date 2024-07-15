@@ -24,28 +24,36 @@ export const getUserFamilyCode = async (user_idx) => {
 };
 
 // 게시글 전체 조회
-export const getPostsFromDb = async (user_idx) => {
+export const getPostsFromDb = async (user_idx, page) => {
     // 사용자의 family_code 얻기
     const family_code = await getUserFamilyCode(user_idx);
     if (!family_code) {
         throw new Error("유저의 가족코드가 조회되지 않습니다.");
     }
+    
 
     // 게시글, 작성자 정보, 이모지 정보 조회
     const query = `
         SELECT p.post_idx, p.user_idx, p.content, p.picture, p.create_at, u.image AS userImage, u.nickname,
-               JSON_CONTAINS(e.happy_emj, JSON_QUOTE(?)) AS happy_selected,
-               JSON_CONTAINS(e.laugh_emj, JSON_QUOTE(?)) AS laugh_selected,
-               JSON_CONTAINS(e.sad_emj, JSON_QUOTE(?)) AS sad_selected
+               JSON_CONTAINS(e.happy_emj, JSON_QUOTE(CAST(? AS CHAR))) AS happy_selected,
+               JSON_CONTAINS(e.laugh_emj, JSON_QUOTE(CAST(? AS CHAR))) AS laugh_selected,
+               JSON_CONTAINS(e.sad_emj, JSON_QUOTE(CAST(? AS CHAR))) AS sad_selected,
+               JSON_LENGTH(e.happy_emj) AS happy_count,
+               JSON_LENGTH(e.laugh_emj) AS laugh_count,
+               JSON_LENGTH(e.sad_emj) AS sad_count
         FROM post p
         INNER JOIN user u ON p.user_idx = u.snsId
         LEFT JOIN emoji e ON p.post_idx = e.post_idx
         WHERE u.family_code = ?
-        ORDER BY p.create_at DESC`;
+        ORDER BY p.create_at DESC
+        LIMIT ?
+        OFFSET ?`;
 
     try {
-        const [rows] = await pool.query(query, [user_idx, user_idx, user_idx, family_code]);
-        return rows.map(row => ({
+        const [rows] = await pool.query(query, [user_idx, user_idx, user_idx, family_code, 20, page*20]);
+        return {
+            count : rows.length,
+            data : rows.map(row => ({
             post_idx: row.post_idx,
             user_idx: row.user_idx,
             nickname: row.nickname,
@@ -55,21 +63,23 @@ export const getPostsFromDb = async (user_idx) => {
             userImage: row.userImage,
             emojis: {
                 happy: {
-                    selected: !!row.happy_selected
+                    selected: !!row.happy_selected,
+                    count: parseInt(row.happy_count) || 0
                 },
                 laugh: {
-                    selected: !!row.laugh_selected
+                    selected: !!row.laugh_selected,
+                    count: parseInt(row.laugh_count) || 0
                 },
                 sad: {
-                    selected: !!row.sad_selected
+                    selected: !!row.sad_selected,
+                    count: parseInt(row.sad_count) || 0
                 }
             }
-        }));
+        }))}; 
     } catch (error) {
         throw error;
     }
 };
-
 
 // 게시글 정보 불러오기
 export const getPostById = async (post_idx) => {
@@ -106,12 +116,23 @@ export const getFamilyMembers = async (user_snsId) => {
         throw new Error('Family code not found for the user');
     }
 
+    //본인 확인
+    const findMe = `
+        SELECT snsId, nickname, image
+        FROM user
+        WHERE snsId = ? AND auth = 1`;
+    const [forme] = await pool.query(findMe, user_snsId);
+
+    if(forme.length === 0) {
+        return -1;
+    }
+
     // 같은 가족 코드를 가진 모든 가족 구성원 조회
     const familyMembersQuery = `
         SELECT snsId, nickname, image
         FROM user
-        WHERE family_code = ? AND auth = 1`;
-    const [familyMembersRows] = await pool.query(familyMembersQuery, [userFamilyCode]);
+        WHERE family_code = ? AND auth = 1 AND snsId != ?`;
+    const [familyMembersRows] = await pool.query(familyMembersQuery, [userFamilyCode, user_snsId]);
 
     // 가족으로 들어오고 싶은 유저 조회 (auth 값이 0인 유저)
     const waitlistQuery = `
@@ -120,142 +141,110 @@ export const getFamilyMembers = async (user_snsId) => {
         WHERE family_code = ? AND auth = 0`;
     const [waitlistRows] = await pool.query(waitlistQuery, [userFamilyCode]);
 
+    // 가족 그룹 이름 조회
+    const findFamNameQuery = `
+        SELECT fam_name
+        FROM userfam
+        WHERE family_code = ?`;
+    const [famNameRows] = await pool.query(findFamNameQuery, [userFamilyCode]);
+    const famName = famNameRows[0].fam_name;
+
+    // 가족장 정보 조회
+    const family_leaderQuery = `
+    SELECT u.nickname
+    FROM user u JOIN userfam uf on u.snsId = uf.user_idx
+    WHERE uf.family_code =?`;
+    const [family_leader] = await pool.query(family_leaderQuery, [userFamilyCode]);
+
     // 로그인한 사용자를 결과 배열의 첫 번째 요소로 배치
-    const loginUserIndex = familyMembersRows.findIndex(member => String(member.snsId) === String(user_snsId));
-    if (loginUserIndex > -1) {
-        const loginUser = familyMembersRows.splice(loginUserIndex, 1)[0];
-        familyMembersRows.unshift(loginUser); // 로그인한 사용자를 배열의 첫 번째 요소로 추가
-    }
+    const loginUserIndex = [forme, familyMembersRows, waitlistRows];
 
     // 결과 객체 생성
     const result = {
-        me: familyMembersRows[0], // 로그인한 사용자 정보
+        family_name: famName,
+        family_leader: family_leader[0].nickname,
+        me: forme[0], // 로그인한 사용자 정보
         family_code: userFamilyCode, // 가족 코드
-        family: familyMembersRows.slice(1), // 가족 구성원 정보 (로그인한 사용자 제외)
+        family: loginUserIndex.slice(1)[0], // 가족 구성원 정보 (로그인한 사용자 제외)
         waitlist: waitlistRows // 대기 중인 가족 구성원 정보
     };
 
     return result;
 };
 
-// 이모지 작업 시작
-export const getEmojiByPostId = async (postIdx) => {
-    const [rows] = await pool.query('SELECT * FROM emoji WHERE post_idx = ?', [postIdx]);
-    return rows[0];
-};
-
-export const createEmojiRow = async (postIdx) => {
-    const result = await pool.query('INSERT INTO emoji (post_idx) VALUES (?)', [postIdx]);
-    return getEmojiByPostId(postIdx); // 새로 생성된 행 반환
-};
-
-export const removeUserFromEmojis = async (postIdx, snsId, emojiType) => {
-    const emojiInfo = await getEmojiByPostId(postIdx);
-    // console.log("Initial emojiInfo:", emojiInfo);
-    if (emojiType == 'happy_emj') {
-        if(emojiInfo.happy_emj==null) {}
-        else if (emojiInfo.happy_emj[0] == snsId) {
-            await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', 
-            [JSON.stringify([]), JSON.stringify([]), JSON.stringify([]), postIdx]);
-            return 0;
-        }
-    }
-    if (emojiType == 'laugh_emj') {
-        if(emojiInfo.laugh_emj==null) {}
-        else if (emojiInfo.laugh_emj[0] == snsId) {
-            await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', 
-            [JSON.stringify([]), JSON.stringify([]), JSON.stringify([]), postIdx]);
-            return 0;
-        }
-    }
-    if (emojiType == 'sad_emj') {
-        if(emojiInfo.sad_emj==null) {}
-        else if (emojiInfo.sad_emj[0] == snsId) {
-            await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', 
-            [JSON.stringify([]), JSON.stringify([]), JSON.stringify([]), postIdx]);
-            return 0;
-        }
-    }
-
-    const updateEmojiList = (currentEmojiData, type) => {
-        let emojiList = [];
-    
-        try {
-            // 현재 이모지 데이터를 JSON 배열로 파싱
-            emojiList = JSON.parse(currentEmojiData || '[]');
-    
-            // emojiList가 배열인지 확인하고, 아니라면 빈 배열로 초기화
-            if (!Array.isArray(emojiList)) {
-                emojiList = [];
-            }
-        } catch (e) {
-            console.error(`Error parsing emoji data for ${type}:`, e);
-            emojiList = [];  // 에러가 발생한 경우 빈 배열로 초기화
-        }
-        // console.log("emojiList:",emojiList);
-        // console.log("type:",type);
-        // 요청한 이모지 타입과 일치하는 경우, 사용자 ID가 이미 존재하면 삭제, 존재하지 않으면 추가
-        if (type === emojiType) {
-            const index = emojiList.indexOf(snsId);
-            if (index !== -1) {
-                emojiList.splice(index, 1);  // 삭제
-            } else {
-                emojiList.push(snsId);  // 추가
-            }
-        } else {
-            // 다른 이모지 타입에서는 사용자 ID가 존재하면 삭제
-            emojiList = emojiList.filter(id => id !== snsId);
-        }
-    
-        // 수정된 emojiList를 JSON 문자열로 변환하여 반환
-        return JSON.stringify(emojiList);
-    };
-    
-    const updatedHappy = updateEmojiList(emojiInfo.happy_emj, 'happy_emj');
-    const updatedLaugh = updateEmojiList(emojiInfo.laugh_emj, 'laugh_emj');
-    const updatedSad = updateEmojiList(emojiInfo.sad_emj, 'sad_emj');
-
-    console.log("Updated emoji lists:", { updatedHappy, updatedLaugh, updatedSad });
-
-    await pool.query('UPDATE emoji SET happy_emj = ?, laugh_emj = ?, sad_emj = ? WHERE post_idx = ?', [updatedHappy, updatedLaugh, updatedSad, postIdx]);
-
-    const updatedEmojiInfo = await getEmojiByPostId(postIdx);
-    // console.log("Final updated emojiInfo:", updatedEmojiInfo);
-    return updatedEmojiInfo;
-};
-
-
+// 이모지 추가
 export const addUserToEmoji = async (postIdx, snsId, emojiType) => {
-    const emojiInfo = await getEmojiByPostId(postIdx);
-
-    // snsId를 문자열로 변환
-    const snsIdStr = snsId.toString();
-    let currentEmoji;
-
-    try {
-        // emojiInfo[emojiType]이 유효한 JSON 배열인지 확인하고, 아니라면 기본값 '[]'를 사용
-        // emojiData가 빈 배열 또는 유효한 JSON 문자열인지 확인
-        const emojiData = emojiInfo[emojiType] && emojiInfo[emojiType].length > 0 ? emojiInfo[emojiType] : '[]';
-        currentEmoji = JSON.parse(emojiData);
-
-        // currentEmoji가 배열인지 확인하고, 아니라면 빈 배열로 초기화
-        if (!Array.isArray(currentEmoji)) {
-            currentEmoji = [];
-        }
-
-        // 현재 snsId가 배열에 없으면 추가
-        if (!currentEmoji.includes(snsIdStr)) {
-            currentEmoji.push(snsIdStr);
-        }
-    } catch (error) {
-        console.error("JSON parsing error in addUserToEmoji:", error);
-        // 파싱 에러 발생 시 현재 snsIdStr만 포함하는 배열로 초기화
-        currentEmoji = [snsIdStr];
+    //일단 이모지 있는지 체크
+    const checkExistQuery = 'SELECT EXISTS(SELECT 1 FROM emoji WHERE post_idx = ?) as exist;'
+    const [check] = await pool.query(checkExistQuery, [postIdx]);
+    
+    //이모지 정보가 없으면 추가
+    const exist = check[0].exist;
+    if (exist==0) {
+        const putquery = 'INSERT INTO emoji (post_idx, happy_emj, laugh_emj, sad_emj) VALUES (?, "[]", "[]", "[]");'
+        await pool.query(putquery, [postIdx]);
     }
+    let typeOfEmoji = emojiType;
 
-    // 변경된 이모지 데이터를 데이터베이스에 업데이트
-    await pool.query(`UPDATE emoji SET ${emojiType} = ? WHERE post_idx = ?`, [JSON.stringify(currentEmoji), postIdx]);
-    return getEmojiByPostId(postIdx);
+    //이모지 정보 불러와
+    const getEmojiQuery = `SELECT ${typeOfEmoji} FROM emoji WHERE post_idx = ?`;
+    const [emojiDataResult] = await pool.query(getEmojiQuery, [postIdx]);
+    let emojiData = emojiDataResult[0][typeOfEmoji];
+
+    //빈 배열이면 추가
+    if(emojiData.length === 0) {
+        emojiData.push(snsId[0]);
+    } else {
+        let index = emojiData.indexOf(snsId[0]);
+
+        if(index != -1) {//있으면 지워
+            emojiData.splice(index, 1);
+        } else {//없으면 추가해
+            emojiData.push(snsId[0]);
+        }
+    }        
+
+    //바뀐 배열을 넣어
+    let emojiDataStr = JSON.stringify(emojiData);
+    const putEmojiQuery = `UPDATE emoji SET ${typeOfEmoji} = ? WHERE post_idx = ?`;
+    await pool.query(putEmojiQuery, [emojiDataStr, postIdx]);
+
+    // 이모지 정보 다시 불러와서 반환
+    const getUpdatedEmojiQuery = `SELECT happy_emj, laugh_emj, sad_emj FROM emoji WHERE post_idx = ?`;
+    const [[updatedEmojiData]] = await pool.query(getUpdatedEmojiQuery, [postIdx]);
+
+    const parseData = (data) => {
+        if (Array.isArray(data)) {
+            return data;
+        }
+        try {
+            return JSON.parse(data);
+        } catch (error) {
+            console.error('Error parsing data:', error);
+            return [];
+        }
+    };
+
+    const happyData = parseData(updatedEmojiData.happy_emj);
+    const laughData = parseData(updatedEmojiData.laugh_emj);
+    const sadData = parseData(updatedEmojiData.sad_emj);
+
+    return {
+        emojis: {
+            happy: {
+                selected: happyData.includes(snsId[0]),
+                count: happyData.length
+            },
+            laugh: {
+                selected: laughData.includes(snsId[0]),
+                count: laughData.length
+            },
+            sad: {
+                selected: sadData.includes(snsId[0]),
+                count: sadData.length
+            }
+        }
+    };
 };
 
 
@@ -373,7 +362,7 @@ export const getUserProfileData = async (snsId) => {
         WHERE 
             u.snsId = ?
         ORDER BY 
-            p.create_at DESC
+            p.post_idx DESC
     `;
 
     try {
@@ -392,6 +381,7 @@ export const getUserProfileData = async (snsId) => {
             }).filter(img => img !== null);  // null 값 제거;
             let postIdx = postIdsRows.map(row => row.post_idx);
 
+            firstPostImages.reverse();
             return {
                 nickname: profileRows[0].nickname,
                 image: profileRows[0].image,
@@ -408,23 +398,52 @@ export const getUserProfileData = async (snsId) => {
 };
 
 // 특정 게시글 1개 조회
-export const getSinglePostFromDb = async (postIdx) => {
+export const getSinglePostFromDb = async (postIdx, snsId) => {
     const query = `
         SELECT 
             p.post_idx, p.content, p.picture, p.create_at,
-            u.nickname, u.image AS userImage
+            u.nickname, u.image AS userImage,
+            JSON_CONTAINS(e.happy_emj, JSON_QUOTE(?)) AS happy_selected,
+            JSON_CONTAINS(e.laugh_emj, JSON_QUOTE(?)) AS laugh_selected,
+            JSON_CONTAINS(e.sad_emj, JSON_QUOTE(?)) AS sad_selected,
+            JSON_LENGTH(e.happy_emj) AS happy_count,
+            JSON_LENGTH(e.laugh_emj) AS laugh_count,
+            JSON_LENGTH(e.sad_emj) AS sad_count
         FROM 
             post p
             JOIN user u ON p.user_idx = u.snsId
+            LEFT JOIN emoji e ON p.post_idx = e.post_idx
         WHERE 
             p.post_idx = ?`;
 
     try {
-        const [rows] = await pool.query(query, [postIdx]);
+        const [rows] = await pool.query(query, [snsId, snsId, snsId, postIdx]);
         if (rows.length > 0) {
             const post = rows[0];
             post.picture = JSON.parse(post.picture); // 사진 정보 JSON 파싱
-            return post;
+            return {
+                post_idx: post.post_idx,
+                user_idx: post.user_idx,
+                nickname: post.nickname,
+                content: post.content,
+                picture: post.picture,
+                create_at: post.create_at,
+                userImage: post.userImage,
+                emojis: {
+                    happy: {
+                        selected: !!post.happy_selected,
+                        count: parseInt(post.happy_count) || 0
+                    },
+                    laugh: {
+                        selected: !!post.laugh_selected,
+                        count: parseInt(post.laugh_count) || 0
+                    },
+                    sad: {
+                        selected: !!post.sad_selected,
+                        count: parseInt(post.sad_count) || 0
+                    }
+                }
+            };
         } else {
             throw new Error("Post not found");
         }
@@ -455,5 +474,7 @@ export const updateUserProfileInDb = async (snsId, updateData) => {
 export const updateFamilyMemberAuth = async (userId) => {
     const query = "UPDATE user SET auth = 1 WHERE snsId = ? AND auth = 0";
     const [result] = await pool.query(query, [userId]);
+    const alarmQuery = "UPDATE alarm set checked = 1 WHERE alarm_idx = (SELECT alarm_idx FROM user WHERE snsId = ?)";
+    await pool.query(alarmQuery, [userId]);
     return result.affectedRows > 0;  // affectedRows가 0보다 크면 업데이트 성공
 };
