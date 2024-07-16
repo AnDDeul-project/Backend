@@ -73,7 +73,7 @@ export const cal_point = async(snsid) => {
         }
         //이미지 불러와 이거 반환할거야
         let img;
-        if(fam[0].f_point==req[0].required) {
+        if(fam[0].f_point>=req[0].required) {
             img = images[5];
         } else {
             for(let i = 0; i < ranges.length; i++) {
