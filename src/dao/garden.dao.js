@@ -63,8 +63,7 @@ export const cal_point = async(snsid) => {
         fam[0].f_point += 2;
         console.log(fam[0].f_point);
         if(fam[0].f_point >= req[0].required) {
-            //set f_num = f_num+1 있었던 것
-            await pool.query("UPDATE userfam SET f_point = 0 WHERE family_code = ?", familyCode);
+            await pool.query("UPDATE userfam SET f_point = 0, f_num = f_num+1 WHERE family_code = ?", familyCode);
         } else {
             await pool.query("UPDATE userfam SET f_point = f_point + 2 WHERE family_code = ?", familyCode);
         }
