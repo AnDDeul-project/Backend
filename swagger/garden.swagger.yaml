@@ -268,7 +268,7 @@ paths:
       security:
         - Authorization: []
       parameters:
-      - name: id
+      - name: flowerId
         in: path
         required: true
         description: 현재 키우고 있는 꽃 번호입니다
