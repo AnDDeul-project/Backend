@@ -107,10 +107,10 @@ export const getAll = async(snsId, flowerId) => {
         if(result0[0].family_code==null) {
             return -1;
         }
-        const fam_name = await pool.query("SELECT fam_name FROM userfam WHERE family_code = ?", result0[0].family_code);
-        let result = await pool.query("SELECT idx, img_5 FROM flower WHERE idx < ?", flowerId);
+        const [fam_garden] = await pool.query("SELECT U.fam_name, F.theme FROM userfam U INNER JOIN flower F ON U.f_num = F.idx WHERE family_code = ?", result0[0].family_code);
+        let [result] = await pool.query("SELECT idx, img_5 FROM flower WHERE idx < ?", flowerId);
         result = result.length > 0 ? result[0]:[];
-        return {family_name: fam_name[0], flowers: result};
+        return {family_name: fam_garden[0].fam_name, theme: fam_garden[0].theme, flowers: result};
     } catch(err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
