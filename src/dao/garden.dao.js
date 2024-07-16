@@ -109,7 +109,6 @@ export const getAll = async(snsId, flowerId) => {
         }
         const [fam_garden] = await pool.query("SELECT U.fam_name, F.theme FROM userfam U INNER JOIN flower F ON U.f_num = F.idx WHERE family_code = ?", result0[0].family_code);
         let [result] = await pool.query("SELECT idx, img_5 FROM flower WHERE idx < ?", flowerId);
-        result = result.length > 0 ? result[0]:[];
         return {family_name: fam_garden[0].fam_name, theme: fam_garden[0].theme, flowers: result};
     } catch(err) {
         console.error(err);
