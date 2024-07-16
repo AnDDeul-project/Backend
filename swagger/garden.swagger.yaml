@@ -286,12 +286,15 @@ paths:
               isSuccess:
                 type: boolean
                 example: true
-              result:
+              garden:
                 type: object
                 properties:
                   family_name:
                     type: string
                     example: "행복한 우리 가족"
+                  theme:
+                    type: string
+                    example: "봄"
                   flowers:
                     type: array
                     example: [
