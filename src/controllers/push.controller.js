@@ -8,11 +8,7 @@ export const putToken = async (req, res) => {
   try {
     snsId = await verify(req, res);
   } catch (err) {
-    return res.status(401).json({
-      status: 401,
-      isSuccess: false,
-      error: "유효하지 않은 토큰입니다.",
-    });
+    return ;
   }
   console.log("디바이스 토큰 추가하기");
   const result = await updateToken(snsId, req.body.deviceToken);
