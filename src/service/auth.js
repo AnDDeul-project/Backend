@@ -6,6 +6,7 @@ export const verify = async(req, res, next) =>{
         req.decoded = jwt.verify(authToken, process.env.KAKAO_ID);
         return req.decoded.kakao_id;
       } catch (error) {
+        console.log(error);
         if (error.name === "TokenExpiredError") {
           return res.status(419).json({ code: 419, message: "토큰 만료" });
         }
