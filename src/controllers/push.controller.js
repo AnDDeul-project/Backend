@@ -16,5 +16,5 @@ export const putToken = async (req, res) => {
     return res
       .status(405)
       .json({ status: 403, isSuccess: false, error: "토큰 입력 실패" }); //나중에 에러코드 수정하기
-  return res.status(200).json({ status: 200, isSuccess: true });
+  return res.status(200).json({ status: 200, isSuccess: true, updatedToken: result});
 };
