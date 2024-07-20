@@ -40,10 +40,7 @@ export const getAll = async(snsId, date) => {
 }
 export const sendMail = async(snsId, req) => {
     try{
-        console.log(typeof req.body.member);
-        //const conn = await pool.getConnection();
         const memberArray = req.body.member.split(',').map(Number);
-        console.log(memberArray);
         for (const memberId of memberArray) {
             let content;
             const question = req.body.question;
@@ -59,18 +56,13 @@ export const sendMail = async(snsId, req) => {
             const [alarm_idx] = await pool.query("INSERT INTO alarm(user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [memberId, 0, alarm_content, alarmDate, "postbox"]);
             if(req.file && req.file.location) {
                 content = req.file.location;
-                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question, create_at, alarm_idx) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '1', currentDate, '0', question, alarmDate, alarm_idx.insertId]);
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question, create_at, alarm_idx) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [snsId, memberId, content, '1', currentDate, '0', question, alarmDate, alarm_idx.insertId]);
             } else {
                 content = req.body.content;
-                console.log(content);
-                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question, create_at, alarm_idx) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [snsId[0], memberId, content, '0', currentDate, '0', question, alarmDate, alarm_idx.insertId]);
+                await pool.query("INSERT INTO postbox(sender_idx, receiver_idx, content, voice, send_date, is_read, question, create_at, alarm_idx) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [snsId, memberId, content, '0', currentDate, '0', question, alarmDate, alarm_idx.insertId]);
             }
-            // const [now] = await pool.query("SELECT point FROM user WHERE snsId = ?", snsId[0]);
-            // await pool.query("UPDATE user SET point = ? WHERE snsId = ?", [now[0].point+1, snsId[0]]);
         }
-        console.log(lengthOf(memberArray));
-        await pool.query("UPDATE user SET point = ? WHERE snsId = ?", [lengthof(memberArray), snsId]);
-        //conn.release();
+        await pool.query("UPDATE user SET point = point + ? WHERE snsId = ?", [memberArray.length, snsId]);
     }catch(e){
         throw new BaseError(status.PARAMETER_IS_WRONG, e);
     }
