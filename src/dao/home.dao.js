@@ -1,6 +1,7 @@
 import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
+import { pushAlarm } from "../service/push.service.js";
 
 // 게시글 작성
 export const createPostInDb = async ({user_idx, content, picture}) => {
@@ -193,14 +194,22 @@ export const addUserToEmoji = async (postIdx, snsId, emojiType) => {
 
     //빈 배열이면 추가
     if(emojiData.length === 0) {
-        emojiData.push(snsId[0]);
+        emojiData.push(snsId);
     } else {
-        let index = emojiData.indexOf(snsId[0]);
+        let index = emojiData.indexOf(snsId);
 
         if(index != -1) {//있으면 지워
             emojiData.splice(index, 1);
         } else {//없으면 추가해
-            emojiData.push(snsId[0]);
+            const [nick] = await pool.query("SELECT nickname FROM user WHERE snsId = ?", snsId);
+            const nickname = nick[0].nickname;
+            const alarm_content = `${nickname}님이 남긴 반응을 확인해보세요!`
+            const [receiverToken] = await pool.query("SELECT device_token FROM user WHERE snsId = (SELECT user_idx from post WHERE post_idx = ? )", [postIdx]);
+            const deviceToken = receiverToken[0].device_token;
+            console.log("alarm: " + alarm_content);
+            console.log("deviceToken: " + deviceToken);
+            pushAlarm(alarm_content, deviceToken);
+            emojiData.push(snsId);
         }
     }        
 
@@ -232,15 +241,15 @@ export const addUserToEmoji = async (postIdx, snsId, emojiType) => {
     return {
         emojis: {
             happy: {
-                selected: happyData.includes(snsId[0]),
+                selected: happyData.includes(snsId),
                 count: happyData.length
             },
             laugh: {
-                selected: laughData.includes(snsId[0]),
+                selected: laughData.includes(snsId),
                 count: laughData.length
             },
             sad: {
-                selected: sadData.includes(snsId[0]),
+                selected: sadData.includes(snsId),
                 count: sadData.length
             }
         }
