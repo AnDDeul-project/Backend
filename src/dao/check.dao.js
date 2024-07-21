@@ -15,11 +15,11 @@ export const getOne = async (checkid) => {
         const sender = await find_member(result[0].sender_idx);
         const receiver = await find_member(result[0].receiver_idx);
         const dueDate = moment(result[0].due_date).format("YYYY-MM-DD");
-        const result2 = {...result[0], sender, receiver, dueDate};
+        let result2 = {...result[0]};
         delete result2.sender_idx;
         delete result2.receiver_idx;
         delete result2.due_date;
-        
+        result2 = {...result2, sender, receiver, due_date:dueDate};
         return result2;
     } catch (err) {
         console.error(err);
