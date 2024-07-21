@@ -5,11 +5,10 @@ export const make_random = async(user_id, family_name) => {
     while(await verify_random(token)!=-1){
         token[0] = await make_token();
     }
-    const user = await extract_user(user_id);
-    const family = await has_family(user);
+    const family = await has_family(user_id);
     if(family!=-1){
         return -1;
     }
-    await match_user(user, token, family_name);
+    await match_user(user_id, token, family_name);
     return token;
 }

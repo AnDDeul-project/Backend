@@ -26,7 +26,6 @@ export const make_token = async() => {
 export const extract_user = async(data) => {
     const result = await data;
     const extractedNumber = result[0];
-    console.log(extractedNumber);
     return extractedNumber;
 }
 

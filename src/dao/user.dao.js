@@ -36,7 +36,7 @@ export const deleteUser = async (data, reason) => {
         console.log(data, reason);
         //const conn = await pool.getConnection();
         await pool.query("DELETE FROM user WHERE snsId = ?", data);
-        await pool.query("INSERT INTO delete_reason(content) VALUES(?)", reason); 
+        await pool.query("INSERT INTO delete_reason VALUES(?)", reason); 
         //conn.release();
         return;
     }catch(err){
