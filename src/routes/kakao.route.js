@@ -5,4 +5,4 @@ export const kakaoRouter = express.Router();
 kakaoRouter.post('/kakao/signin', signInkakao);
 kakaoRouter.post('/token', token);
 kakaoRouter.post('/kakao/logout', signOutKakao);
-kakaoRouter.delete('/kakao/unlink', unLinkKakao);
+kakaoRouter.post('/kakao/unlink', unLinkKakao);
