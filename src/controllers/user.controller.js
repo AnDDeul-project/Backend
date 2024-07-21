@@ -1,24 +1,34 @@
 import { signInKakao, logOutKakao, unlinkKakao, has_family} from "../service/user.service.js";
-
+import {verify} from "../service/auth.js";
 export const signInkakao = async (req, res) => {
     try{
-    console.log(req.headers);
     const headers = req.headers["authorization"];
     const kakaoToken = headers.split(" ")[1];
     const accessToken = await signInKakao(kakaoToken);
     const has = await has_family(accessToken[1]);
-    console.log(accessToken);
     return res.status(200).json({status: 200, isSuccess: true, accessToken: accessToken[0], has : has });
     }catch(err){
         return res.status(500).json({status: 500, isSuccess: false, message: "서버 에러, 관리자에게 문의 바랍니다."});
     }
 };
 
+export const token = async(req, res) => {
+    try {
+        await verify(req, res);
+        return res.status(200).json({status: 200, isSuccess: true});
+    } catch (err) {
+        return;
+    }
+}
+
 export const signOutKakao = async (req, res) => {
     try{
+        
         const headers = req.headers["authorization"];
         const kakaoToken = headers.split(" ")[1];
         const result = await logOutKakao(kakaoToken);
+
+        if(result===-1) return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
         return res.status(200).json({ status: 200, isSuccess: true, message: "로그아웃 성공"});
     }catch(errors){
         return res.status(500).json({ status: 500, isSuccess: false, message: "서버 에러, 관리자에게 문의 바랍니다."});
@@ -29,7 +39,8 @@ export const unLinkKakao = async (req, res) => {
     try{
         const headers = req.headers["authorization"];
         const kakaoToken = headers.split(" ")[1];
-        const result = await unlinkKakao(kakaoToken);
+        const result = await unlinkKakao(kakaoToken, req.body.content);
+        if(result===-1) return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."});
         return res.status(200).json({ status: 200, isSuccess: true, message: "탈퇴 성공"});
     }catch(errors){
         return res.status(500).json({status: 500, isSuccess: false, message: "서버 에러, 관리자에게 문의 바랍니다."});

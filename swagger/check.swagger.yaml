@@ -16,18 +16,10 @@ paths:
                 type: string
                 description: 체크리스트 추가 대상
                 example: "3303580750"
-              due_year:
-                type: integer
-                description: 기한 년도
-                example: 2024
-              due_month:
-                type: integer
-                description: 기한 월(한자리 숫자면 05 안되고 5로 적어주세요!)
-                example: 6
-              due_day:
-                type: integer
-                description: 기한 일(한자리 숫자면 05 안되고 5로 적어주세요!)
-                example: 5
+              due_date:
+                type: string
+                description: 체크리스트 만료 날짜
+                example: "2024-07-20"
               content:
                 type: string
                 description: 체크리스트 내용
@@ -56,7 +48,8 @@ paths:
                   modify_at : null,
                   alarm_idx : 13,
                   sender: "임세현",
-                  receiver: "김정훈"              
+                  receiver: "김정훈",
+                  dueDate: "2024-07-20"
                 }
         '500':
           description: 서버 에러
@@ -145,24 +138,18 @@ paths:
                 example: [
                   {
                     checkid: 3,
-                    due_date: '2024-02-13',
                     complete: 0,
                     picture: null,
                     content: "열심히 살기",
-                    create_at : '2024-02-13 22:22:22',
-                    modify_at : null,
-                    sender: "임세현",
-                    receiver: "김정훈"              
+                    alarm_idx: 7,
+                    sender: "임세현"              
                   },
                   {
                     checkid: 3,
-                    due_date: '2024-02-13',
                     complete: 0,
                     picture: null,
                     content: "행복하게 살기",
-                    create_at : '2024-02-13 22:22:23',
-                    modify_at : null,
-                    sender: "임세현",
+                    alarm_idx: 8,
                     receiver: "김정훈"              
                   }
                 ]
@@ -438,14 +425,15 @@ paths:
                 type: json
                 example: {
                   checkid: 3,
-                  due_date: '2024-02-15',
                   complete: 1,
                   picture: null,
                   content: "열심히 살기",
-                  create_at : '2024-02-13 22:22:22',
-                  modify_at : '2024-02-13 22:44:44',
+                  create_at : '2024-07-10T22:22:22.000Z',
+                  modify_at : '2024-07-10T33:33:33.000Z',
+                  alarm_idx: 3,
                   sender: "임세현",
-                  receiver: "김정훈"              
+                  receiver: "김정훈",
+                  due_date: '2024-02-15',
                 }
         '500':
           description: 서버 에러

@@ -35,9 +35,9 @@ export const getPostsFromDb = async (user_idx, page) => {
     // 게시글, 작성자 정보, 이모지 정보 조회
     const query = `
         SELECT p.post_idx, p.user_idx, p.content, p.picture, p.create_at, u.image AS userImage, u.nickname,
-               JSON_CONTAINS(e.happy_emj, JSON_QUOTE(?)) AS happy_selected,
-               JSON_CONTAINS(e.laugh_emj, JSON_QUOTE(?)) AS laugh_selected,
-               JSON_CONTAINS(e.sad_emj, JSON_QUOTE(?)) AS sad_selected,
+               JSON_CONTAINS(e.happy_emj, JSON_QUOTE(CAST(? AS CHAR))) AS happy_selected,
+               JSON_CONTAINS(e.laugh_emj, JSON_QUOTE(CAST(? AS CHAR))) AS laugh_selected,
+               JSON_CONTAINS(e.sad_emj, JSON_QUOTE(CAST(? AS CHAR))) AS sad_selected,
                JSON_LENGTH(e.happy_emj) AS happy_count,
                JSON_LENGTH(e.laugh_emj) AS laugh_count,
                JSON_LENGTH(e.sad_emj) AS sad_count
@@ -163,9 +163,9 @@ export const getFamilyMembers = async (user_snsId) => {
     const result = {
         family_name: famName,
         family_leader: family_leader[0].nickname,
-        me: loginUserIndex[0], // 로그인한 사용자 정보
+        me: forme[0], // 로그인한 사용자 정보
         family_code: userFamilyCode, // 가족 코드
-        family: loginUserIndex.slice(1), // 가족 구성원 정보 (로그인한 사용자 제외)
+        family: loginUserIndex.slice(1)[0], // 가족 구성원 정보 (로그인한 사용자 제외)
         waitlist: waitlistRows // 대기 중인 가족 구성원 정보
     };
 

@@ -45,47 +45,48 @@ export const getOne = async(snsid) => {
 
 export const cal_point = async(snsid) => {
     try {
-        const point = await pool.query("SELECT point FROM user WHERE snsId = ?", snsid);
-        console.log(point);
-        if(point[0][0].point < 2)
+        const [point] = await pool.query("SELECT point FROM user WHERE snsId = ?", snsid);
+        if(point[0].point < 2)
             return -1;
-        const currentPoint = point[0][0].point;
-        console.log(currentPoint);
+        const userPoint = point[0].point;
         await pool.query("UPDATE user SET point = point - 2 WHERE snsId = ?", snsid);
         //가족 꽃번호, 포인트, required 불러와서 f_point+2랑 비교한 뒤에 userfam 업데이트
-        const result = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsid);
-        console.log(result[0][0].family_code);
-        if(result[0][0].family_code==null) {
+        const [fCode] = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsid);
+        const familyCode = fCode[0].family_code
+        if(familyCode==null) {
             return -2;
         }
-        const fam = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", result[0][0].family_code);
-        const req = await pool.query("SELECT required FROM flower WHERE idx = ?", fam[0][0].f_num);
-        console.log(fam[0][0].f_point+2);
+        const [cnt] = await pool.query("SELECT COUNT(*) AS count FROM flower");
+        const total = cnt[0].count-1;
+        const [fam] = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", familyCode);
+        const [req] = await pool.query("SELECT required FROM flower WHERE idx = ?", fam[0].f_num);
         //포인트 다 채우면 꽃 바꾸고 포인트 0으로, 다 안 채웠으면 그냥 +2
-        fam[0][0].f_point += 2;
-        if(fam[0][0].f_point >= req[0][0].required) {
-            //set f_num = f_num+1 있었던 것
-            await pool.query("UPDATE userfam SET f_point = 0 WHERE family_code = ?", result[0][0].family_code);
+        fam[0].f_point += 2;
+        if(fam[0].f_point >= req[0].required) {
+            if(fam[0].f_num==total) {
+                fam[0].f_point -= 2;
+                await pool.query("UPDATE userfam SET f_point = ? WHERE family_code = ?", [req[0].required, familyCode]);
+            }
+            else await pool.query("UPDATE userfam SET f_point = 0, f_num = f_num+1 WHERE family_code = ?", familyCode);
         } else {
-            await pool.query("UPDATE userfam SET f_point = f_point + 2 WHERE family_code = ?", result[0][0].family_code);
+            await pool.query("UPDATE userfam SET f_point = f_point + 2 WHERE family_code = ?", familyCode);
         }
         //이미지 불러와 이거 반환할거야
         let img;
-        if(fam[0][0].f_point===req[0][0].required) {
+        if(fam[0].f_point>=req[0].required) {
             img = images[5];
         } else {
             for(let i = 0; i < ranges.length; i++) {
-                if(fam[0][0].f_point < ranges[i]*req[0][0].required) {
+                if(fam[0].f_point < ranges[i]*req[0].required) {
                     img = images[i];
                     break;
                 }
             }
         }
-        console.log(img);
-        let [result4] = await pool.query(`SELECT ${img} AS img FROM flower WHERE idx IN (?)`, fam[0][0].f_num);
+        let [result4] = await pool.query(`SELECT ${img} AS img FROM flower WHERE idx IN (?)`, fam[0].f_num);
         const [result5] = await pool.query(`SELECT ${img} AS gauge FROM flower WHERE idx = 17`);
         result4[1] = result5[0];
-        return {point: currentPoint-2, changed_img: result4};
+        return {point: userPoint-2, changed_img: result4};
     } catch(err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');
@@ -105,16 +106,13 @@ export const getPoint = async(snsid) => {
 
 export const getAll = async(snsId, flowerId) => {
     try {
-        //const conn = await pool.getConnection();
-        const result0 = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsId);
-        if(result0[0][0].family_code==null) {
+        const [result0] = await pool.query("SELECT family_code FROM user WHERE snsId = ?", snsId);
+        if(result0[0].family_code==null) {
             return -1;
         }
-        const fam_name = await pool.query("SELECT fam_name FROM userfam WHERE family_code = ?", result0[0][0].family_code);
-        let result = await pool.query("SELECT idx, img_5 FROM flower WHERE idx < ?", flowerId);
-        result = result.length > 0 ? result[0]:[];
-        //conn.release();
-        return {family_name: fam_name[0], flowers: result};
+        const [fam_garden] = await pool.query("SELECT U.fam_name, F.theme FROM userfam U INNER JOIN flower F ON U.f_num = F.idx WHERE family_code = ?", result0[0].family_code);
+        let [result] = await pool.query("SELECT idx, img_5 FROM flower WHERE idx < ?", flowerId);
+        return {family_name: fam_garden[0].fam_name, theme: fam_garden[0].theme, flowers: result};
     } catch(err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG, 'DB 쿼리 실행 중 에러 발생');

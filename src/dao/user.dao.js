@@ -21,7 +21,6 @@ export const findUser = async (data) => {
         //const conn = await pool.getConnection();
         const result = await pool.query("SELECT snsId FROM user WHERE snsId = ?", data);
         //conn.release();
-        console.log(result[0]);
         if (result[0].length > 0) {
             return result[0].map(item => item.snsId);
         } else {
@@ -32,10 +31,12 @@ export const findUser = async (data) => {
     }
 }
 
-export const deleteUser = async (data) => {
+export const deleteUser = async (data, reason) => {
     try{
+        console.log(data, reason);
         //const conn = await pool.getConnection();
         await pool.query("DELETE FROM user WHERE snsId = ?", data);
+        await pool.query("INSERT INTO delete_reason(content) VALUES(?)", reason); 
         //conn.release();
         return;
     }catch(err){

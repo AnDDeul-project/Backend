@@ -71,7 +71,7 @@ paths:
                 type: string
                 example: 쿼리 실행 시 전달되는 파라미터가 잘못되었습니다. 파라미터 개수 혹은 파라미터 형식을 확인해주세요.
       
-  /putToken:
+  /push/putToken:
     put:
       tags:
         - Alarm
@@ -82,9 +82,12 @@ paths:
         - name: deviceToken
           in: body
           required: true
-          description: 새로 가입한 사용자의 디바이스 토큰
-          type: string
-          example: cTiWtm3OSau3WoDS7ddUt0:APA91bGamb0kVbeUvKuXHPz272iwu_V6sjsj56Mi9shLyuSlfKUZiA7g5POMk0mO-Nyjxs1n9X6fFDwb7YV8pYBMHWzUpYUkJerkv0BIJCxGiWFqKYjrv8KonkiDz7JpfYkUXD05dE1P
+          schema:
+              properties:
+                deviceToken:
+                  description: 새로 가입한 사용자의 디바이스 토큰
+                  type: string
+                  example: cTiWtm3OSau3WoDS7ddUt0:APA91bGamb0kVbeUvKuXHPz272iwu_V6sjsj56Mi9shLyuSlfKUZiA7g5POMk0mO-Nyjxs1n9X6fFDwb7YV8pYBMHWzUpYUkJerkv0BIJCxGiWFqKYjrv8KonkiDz7JpfYkUXD05dE1P
       responses:
         '200':
           schema:

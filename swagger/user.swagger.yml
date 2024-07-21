@@ -120,7 +120,15 @@ paths:
       - application/json
       security:
         - Authorization: []
-
+      parameters:
+        - name: reason
+          in: body
+          required: true
+          schema:
+              properties:
+                content:
+                  type: string
+                  example: 탈퇴 이유
       responses:
         '200':
           description: 탈퇴 성공
@@ -166,6 +174,41 @@ paths:
               message:
                 type: string
                 example: 서버 에러, 관리자에게 문의 바랍니다.
+  
+  /auth/token:
+    post:
+      tags:
+        - User
+      produces:
+      - application/json
+      security:
+        - Authorization: []
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              isSuccess:
+                type: boolean
+                example: true
+        
+        '401':
+          description: 토큰 오류
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              isSuccess:  
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: 유효하지 않은 토큰입니다.
 
   /random/new:
     put:
