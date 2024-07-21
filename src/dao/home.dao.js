@@ -399,5 +399,12 @@ export const updateFamilyMemberAuth = async (userId) => {
     const [result] = await pool.query(query, [userId]);
     const alarmQuery = "UPDATE alarm set checked = 1 WHERE alarm_idx = (SELECT alarm_idx FROM user WHERE snsId = ?)";
     await pool.query(alarmQuery, [userId]);
+    //FCM 전송
+    const [fam] = await pool.query("SELECT fam_name FROM userfam WHERE family_code = (SELECT family_code FROM user WHERE snsId = ?)", [userId]);
+    const famName = fam[0].fam_name;
+    const [receiverToken] = await pool.query("SELECT device_token FROM user WHERE snsId = ?", [userId]);
+    const deviceToken = receiverToken[0].device_token;
+    const alarm_content = `${famName}에서 활동을 시작해보세요`;
+    pushAlarm(alarm_content, deviceToken);
     return result.affectedRows > 0;  // affectedRows가 0보다 크면 업데이트 성공
 };
