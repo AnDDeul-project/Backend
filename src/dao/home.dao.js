@@ -410,5 +410,7 @@ export const updateFamilyMemberAuth = async (userId) => {
     const deviceToken = receiverToken[0].device_token;
     const alarm_content = `${famName}에서 활동을 시작해보세요`;
     pushAlarm(alarm_content, deviceToken);
+    const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+    await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [userId, 0, alarm_content, currentDate, 'home']);
     return result.affectedRows > 0;  // affectedRows가 0보다 크면 업데이트 성공
 };
