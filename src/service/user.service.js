@@ -1,11 +1,14 @@
-import { findUser, createUser, deleteUser, has } from "../dao/user.dao.js";
-import axios from "axios";
 import jwt from "jsonwebtoken";
+import { findUser, createUser, deleteUser, has } from "../dao/user.dao.js";
+import axios from 'axios';
 import { BaseError } from '../config/error.js';
 import { status } from "../config/response.status.js";
 const formUrlEncoded = (x) =>
     Object.keys(x).reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, "");
+
 export const logOutKakao = async (kakaoToken) => {
+    console.log(kakaoToken);
+
     try {
         const user = await axios.get("https://kapi.kakao.com/v2/user/me", {
             headers: {
@@ -27,11 +30,10 @@ export const logOutKakao = async (kakaoToken) => {
             }
         );
 
+        console.log(result.data); 
 
         return result.data; 
     } catch (error) {
-        console.error("Error during logout:", error);
-        return -1;
     }
 };
 
@@ -56,13 +58,13 @@ export const unlinkKakao = async (kakaoToken, content) => {
                 },
             }
         );
-        await deleteUser(data.id, content);
-        return data.id; 
+        await deleteUser(result.data.id, content);
+        return result.data.id; 
     } catch (error) {
         console.error("Error during unlink:", error);
         return -1;
     }
-};
+}
 
 export const signInKakao = async (kakaoToken) => {
     const result = await axios.get("https://kapi.kakao.com/v2/user/me", {
@@ -77,11 +79,9 @@ export const signInKakao = async (kakaoToken) => {
     const snsId = data.id;
     const image = data.properties.profile_image;
     const providerType = "kakao";
-
     if (!nickname || !email || !snsId) throw new BaseError(status.BAD_REQUEST);
 
     const user = await findUser(snsId);
-
     if (user==-1) {
         await createUser({
             'email': email, 
@@ -90,11 +90,12 @@ export const signInKakao = async (kakaoToken) => {
             'image': image, 
             'providerType': providerType
         });
-    }
-
-    return [jwt.sign({ kakao_id: data.id }, process.env.KAKAO_ID, {expiresIn: 864000}), snsId];
+    }; 
     
-};
+    
+    return [jwt.sign({ kakao_id: data.id }, process.env.KAKAO_ID, {expiresIn: 864000}), snsId];
+}
+
 
 export const has_family = async(userid) => {
     const result = await has(userid);

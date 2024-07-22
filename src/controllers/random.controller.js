@@ -4,7 +4,7 @@ import {make_random} from "../service/random.service.js";
 export const randomController = async(req, res) => {
     let user;
     try {
-        usesr = await verify(req, res);
+        user = await verify(req, res);
     } catch (err) {
         return;
     }
