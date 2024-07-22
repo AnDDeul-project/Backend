@@ -1,6 +1,8 @@
 import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
+import { pushAlarm } from "../service/push.service.js";
+import moment from 'moment-timezone';
 
 
 const ranges = [0.2, 0.4, 0.6, 0.8, 1];
@@ -59,7 +61,7 @@ export const cal_point = async(snsid) => {
         const [cnt] = await pool.query("SELECT COUNT(*) AS count FROM flower");
         const total = cnt[0].count-1;
         const [fam] = await pool.query("SELECT f_num, f_point FROM userfam WHERE family_code = ?", familyCode);
-        const [req] = await pool.query("SELECT required FROM flower WHERE idx = ?", fam[0].f_num);
+        const [req] = await pool.query("SELECT required, name FROM flower WHERE idx = ?", fam[0].f_num);
         //포인트 다 채우면 꽃 바꾸고 포인트 0으로, 다 안 채웠으면 그냥 +2
         fam[0].f_point += 2;
         if(fam[0].f_point >= req[0].required) {
@@ -67,7 +69,20 @@ export const cal_point = async(snsid) => {
                 fam[0].f_point -= 2;
                 await pool.query("UPDATE userfam SET f_point = ? WHERE family_code = ?", [req[0].required, familyCode]);
             }
-            else await pool.query("UPDATE userfam SET f_point = 0, f_num = f_num+1 WHERE family_code = ?", familyCode);
+            else {
+                await pool.query("UPDATE userfam SET f_point = 0, f_num = f_num+1 WHERE family_code = ?", familyCode);
+                // 가족들에게 알림 보내기
+                const [receivers] = await pool.query(`SELECT snsId FROM user WHERE family_code = ?`, [familyCode]);
+                for( const receiver of receivers ) {
+                    console.log(receiver.snsId);
+                    const [receiverToken] = await pool.query("SELECT device_token FROM user WHERE snsId = ?", [receiver.snsId]);
+                    const deviceToken = receiverToken[0].device_token;
+                    const alarm_content = `우리 가족의 ${req[0].name} 화분이 완성되었어요!`;
+                    pushAlarm(alarm_content, deviceToken);
+                    const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+                    await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiver.snsId, 0, alarm_content, currentDate, 'garden']);
+                }
+            }
         } else {
             await pool.query("UPDATE userfam SET f_point = f_point + 2 WHERE family_code = ?", familyCode);
         }

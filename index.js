@@ -17,12 +17,14 @@ import { familyRoute } from "./src/routes/family.route.js";
 import { gardenRoute } from "./src/routes/garden.route.js";
 import { alarmRoute } from "./src/routes/alarm.route.js";
 import { pushRoute } from "./src/routes/push.route.js";
+import { checkComplete } from "./src/utils/schedule.js";
 
 dotenv.config(); // .env 파일 사용 (환경 변수 관리)
 
 const app = express();
 // server setting - veiw, static, body-parser etc..
 app.set("port", process.env.PORT || 3000); // 서버 포트 지정
+checkComplete();
 app.use(cors());
 app.use("/health", healthRoute); // cors 방식 허용
 app.use(express.static("public")); // 정적 파일 접근

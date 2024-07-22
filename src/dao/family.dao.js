@@ -73,6 +73,8 @@ export const add_family = async(user_id, family_code, user_name, now_user) => {
         const alarmDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
         const [alarmIdx] = await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [user_name, 0, content, alarmDate, 'family']);
         await pool.query("UPDATE user SET family_code = ?, auth=0 , point = 0, alarm_idx = ? WHERE snsId = ?", [family_code, alarmIdx.insertId, now_user]);
+        const [deviceToken] = await pool.query("SELECT device_token FROM user WHERE snsId = ?", [user_name]);
+        pushAlarm(content, deviceToken[0].device_token);
         return;
     }catch(e){
         throw new BaseError(status.PARAMETER_IS_WRONG, e);
