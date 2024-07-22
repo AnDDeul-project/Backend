@@ -2,6 +2,7 @@ import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 import { pushAlarm } from "../service/push.service.js";
+import moment from 'moment-timezone';
 
 // 게시글 작성
 export const createPostInDb = async ({user_idx, content, picture}) => {
@@ -204,11 +205,14 @@ export const addUserToEmoji = async (postIdx, snsId, emojiType) => {
             const [nick] = await pool.query("SELECT nickname FROM user WHERE snsId = ?", snsId);
             const nickname = nick[0].nickname;
             const alarm_content = `${nickname}님이 남긴 반응을 확인해보세요!`
-            const [receiverToken] = await pool.query("SELECT device_token FROM user WHERE snsId = (SELECT user_idx from post WHERE post_idx = ? )", [postIdx]);
+            const [receiverToken] = await pool.query("SELECT snsId, device_token FROM user WHERE snsId = (SELECT user_idx from post WHERE post_idx = ? )", [postIdx]);
             const deviceToken = receiverToken[0].device_token;
+            const receiverId = receiverToken[0].snsId;
             console.log("alarm: " + alarm_content);
             console.log("deviceToken: " + deviceToken);
             pushAlarm(alarm_content, deviceToken);
+            const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+            await pool.query("INSERT INTO alarm (user_idx, checked, content, create_at, place) VALUES (?, ?, ?, ?, ?)", [receiverId, 0, alarm_content, currentDate, 'home']);
             emojiData.push(snsId);
         }
     }        
