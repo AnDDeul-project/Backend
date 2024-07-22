@@ -5,6 +5,7 @@ export const signInkakao = async (req, res) => {
     const headers = req.headers["authorization"];
     const kakaoToken = headers.split(" ")[1];
     const accessToken = await signInKakao(kakaoToken);
+    console.log(accessToken);
     const has = await has_family(accessToken[1]);
     return res.status(200).json({status: 200, isSuccess: true, accessToken: accessToken[0], has : has });
     }catch(err){
