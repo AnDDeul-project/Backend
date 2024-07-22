@@ -10,7 +10,7 @@ paths:
       - name: place
         in: path
         required: true
-        description: home, checklist, family, postbox로 구분해뒀습니다!
+        description: home, checklist, family, postbox, garden으로 구분해뒀습니다!
         type: string
         example: "family"
 
