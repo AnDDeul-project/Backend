@@ -24,7 +24,8 @@ export const getCheck = async (req, res) => {
     } catch (err) {
         return res.status(401).json({status: 401, isSuccess: false, error: "유효하지 않은 토큰입니다."})
     }
-    snsId = req.params.mode=='false' ? snsId[0] : req.params.userid;//0이면 내거 1이면 다른사람거
+    snsId = req.params.mode=='false' ? snsId : req.params.userid;//0이면 내거 1이면 다른사람거
+    console.log("sndId : " + snsId);
     if(req.params.mode==1) snsId = req.params.userid;
     console.log("사용자의 체크리스트를 불러옵니다");
     const result = await callCheckService(snsId, req.params.date, req.params.mode);
