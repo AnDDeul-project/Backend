@@ -2,6 +2,7 @@ import { pool } from "../config/db.connect.js";
 import { BaseError } from "../config/error.js";
 import { status } from "../config/response.status.js";
 import crypto from "crypto";
+import moment from 'moment-timezone';
 
 export const verify_random = async (data) => {
     try{
@@ -62,9 +63,9 @@ export const rq_family = async(data) => {
 export const match_user = async (user_id, token, family_name) => {
     try{
         //const conn = await pool.getConnection();
-        console.log(token[0], user_id);
+        const currentDate = moment().tz('Asia/Seoul').format('YYYY-MM-DD');
         const result = await pool.query("UPDATE user SET family_code = ? , auth=1 , point = 0 WHERE snsId = ?", [token[0], user_id]);
-        await pool.query("INSERT INTO userfam(family_code, user_idx, fam_name) VALUES (?, ?, ?)", [token[0], user_id, family_name]);
+        await pool.query("INSERT INTO userfam(family_code, user_idx, fam_name, f_num, f_point, create_at) VALUES (?, ?, ?, ?, ?, ?)", [token[0], user_id, family_name, 0, 0, currentDate]);
         //conn.release();
         console.log(result[0]);
         if (result[0].length > 0) {
