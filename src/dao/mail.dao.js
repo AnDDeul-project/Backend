@@ -76,8 +76,7 @@ export const getQuestion = async(snsId) => {
         const dbDate = moment(result2[0][0].create_at);
         const currentDate = moment().tz('Asia/Seoul');
         let diffInDays = currentDate.diff(dbDate, 'days');
-        diffInDays = diffInDays +1;
-        const ques = await pool.query("SELECT content FROM question WHERE question_idx = ?", diffInDays);
+        const ques = await pool.query("SELECT content FROM question WHERE question_idx = ?", (diffInDays%45)+1);
         return ques[0];
     } catch(err) {
         console.log(err);
